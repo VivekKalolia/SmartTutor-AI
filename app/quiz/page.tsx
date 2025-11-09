@@ -564,6 +564,31 @@ export default function QuizPage() {
                       )}
                     </div>
 
+                    {showToast && toastMessage && (
+                      <div
+                        className={`rounded-lg border p-4 shadow-lg animate-in slide-in-from-bottom-2 ${
+                          toastMessage.type === "success"
+                            ? "border-green-500 bg-green-50 dark:bg-green-950"
+                            : "border-red-500 bg-red-50 dark:bg-red-950"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {toastMessage.type === "success" ? (
+                            <CheckCircle2 className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <XCircle className="h-4 w-4 text-red-600" />
+                          )}
+                          <p className={`text-sm font-medium ${
+                            toastMessage.type === "success"
+                              ? "text-green-800 dark:text-green-200"
+                              : "text-red-800 dark:text-red-200"
+                          }`}>
+                            {toastMessage.message}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
                     {feedback.type && (
                       <Card className="bg-muted/50">
                         <CardContent className="pt-6">
