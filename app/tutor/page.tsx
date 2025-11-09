@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Send, Copy, Sparkles, Paperclip, Cpu, Mic, Volume2, VolumeX } from "lucide-react";
+import { Send, Copy, Sparkles, Paperclip, Cpu, Mic, Volume2, VolumeX, Square } from "lucide-react";
 
 const aiModels = [
   { id: "llama-3b", name: "Llama 3B", description: "Lightweight, fast" },
@@ -312,7 +312,11 @@ export default function TutorPage() {
                   className={isRecording ? "bg-red-500 hover:bg-red-600" : ""}
                   style={{ cursor: "pointer" }}
                 >
-                  <Mic className={`h-4 w-4 ${isRecording ? "text-white" : ""}`} />
+                  {isRecording ? (
+                    <Square className="h-4 w-4 text-white fill-white" />
+                  ) : (
+                    <Mic className="h-4 w-4" />
+                  )}
                 </Button>
                 <Button
                   onClick={handleSend}
