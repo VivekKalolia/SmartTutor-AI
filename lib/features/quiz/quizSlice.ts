@@ -18,7 +18,7 @@ const quizSlice = createSlice({
   name: "quiz",
   initialState,
   reducers: {
-    setSubject: (state, action: PayloadAction<"math" | "science">) => {
+    setSubject: (state, action: PayloadAction<"math" | "science" | null>) => {
       state.currentSubject = action.payload;
       state.currentQuestionIndex = 0;
       state.answers = {};
