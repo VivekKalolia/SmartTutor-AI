@@ -111,13 +111,31 @@ export default function StudentManagement() {
                     </div>
                     <div className="flex-1">
                       <p className="font-medium">{student.name}</p>
-                      <div className="flex items-center gap-4 mt-2">
-                        <span className="text-sm text-muted-foreground">
-                          Math: {student.mathScore}%
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          Science: {student.scienceScore}%
-                        </span>
+                      <div className="flex flex-col gap-2 mt-2">
+                        <Card className="bg-[#1E3A8A]/10 border-[#1E3A8A]/20">
+                          <CardContent className="p-3">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-medium" style={{ color: "#1E3A8A" }}>
+                                Math
+                              </span>
+                              <span className="text-sm font-bold" style={{ color: "#1E3A8A" }}>
+                                {student.mathScore}%
+                              </span>
+                            </div>
+                          </CardContent>
+                        </Card>
+                        <Card className="bg-[#059669]/10 border-[#059669]/20">
+                          <CardContent className="p-3">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-medium" style={{ color: "#059669" }}>
+                                Science
+                              </span>
+                              <span className="text-sm font-bold" style={{ color: "#059669" }}>
+                                {student.scienceScore}%
+                              </span>
+                            </div>
+                          </CardContent>
+                        </Card>
                       </div>
                     </div>
                   </div>

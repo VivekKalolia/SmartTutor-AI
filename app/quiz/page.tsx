@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/store";
 import {
@@ -30,6 +30,8 @@ import {
   Play,
   Volume2,
   VolumeX,
+  Clock,
+  TrendingUp,
 } from "lucide-react";
 import { mathQuestions, scienceQuestions, aiAssistResponses } from "@/lib/demo-data";
 import { AIAssistSheet } from "@/components/ai-assist-sheet";
@@ -49,6 +51,10 @@ export default function QuizPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [questionTime, setQuestionTime] = useState(0);
+  const [questionStartTime, setQuestionStartTime] = useState<number | null>(null);
+  const [masteryImprovement, setMasteryImprovement] = useState(0);
+  const [questionTimes, setQuestionTimes] = useState<Record<number, number>>({});
 
   const questions =
     currentSubject === "math" ? mathQuestions : scienceQuestions;
@@ -76,6 +82,10 @@ export default function QuizPage() {
     setIsSubmitted(false);
     setShowToast(false);
     setToastMessage(null);
+    setQuestionTime(0);
+    setQuestionStartTime(null);
+    setMasteryImprovement(0);
+    setQuestionTimes({});
   };
 
   const handleAnswerSelect = (answerIndex: number) => {
@@ -95,6 +105,15 @@ export default function QuizPage() {
     const question = questions[currentQuestionIndex];
     const userAnswer = answers[currentQuestionIndex];
     const isCorrect = parseInt(userAnswer) === question.correctAnswer;
+
+    // Record time taken for this question
+    if (questionStartTime) {
+      const timeTaken = Math.floor((Date.now() - questionStartTime) / 1000);
+      setQuestionTimes((prev) => ({
+        ...prev,
+        [currentQuestionIndex]: timeTaken,
+      }));
+    }
 
     const message = isCorrect
       ? "Correct! Well done."
@@ -118,6 +137,8 @@ export default function QuizPage() {
     setToastMessage(null);
     setFeedback({ type: null, message: "" });
     setShowHint(false);
+    setQuestionTime(0);
+    setQuestionStartTime(null);
 
     if (currentQuestionIndex < questions.length - 1) {
       dispatch(setQuestionIndex(currentQuestionIndex + 1));
@@ -449,15 +470,36 @@ export default function QuizPage() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <Badge variant="secondary" className="mb-2">
+                    <Badge
+                      variant="secondary"
+                      className="mb-2"
+                      style={{
+                        backgroundColor: currentSubject === "math" ? "#1E3A8A" : "#059669",
+                        color: "white",
+                      }}
+                    >
                       {currentSubject === "math" ? "Math" : "Science"}
                     </Badge>
                     <p className="text-sm text-muted-foreground">
                       Question {currentQuestionIndex + 1} of {questions.length}
                     </p>
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    {answeredCount} answered
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Clock className="h-4 w-4" />
+                      {isSubmitted && questionTimes[currentQuestionIndex]
+                        ? `${questionTimes[currentQuestionIndex]}s`
+                        : `${questionTime}s`}
+                    </div>
+                    {masteryImprovement > 0 && (
+                      <div className="flex items-center gap-2 text-sm text-green-600">
+                        <TrendingUp className="h-4 w-4" />
+                        +{masteryImprovement.toFixed(1)}% mastery
+                      </div>
+                    )}
+                    <div className="text-sm text-muted-foreground">
+                      {answeredCount} answered
+                    </div>
                   </div>
                 </div>
 

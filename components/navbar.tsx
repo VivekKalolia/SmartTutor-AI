@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Bell, Settings } from "lucide-react";
+import { User, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -29,11 +29,6 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="relative" style={{ cursor: "pointer" }}>
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
-          </Button>
-
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-3" style={{ cursor: "pointer" }}>

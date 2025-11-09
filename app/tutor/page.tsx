@@ -165,7 +165,7 @@ export default function TutorPage() {
                   <Sparkles className="h-5 w-5 text-primary" />
                   AI Tutor
                 </CardTitle>
-                <Badge variant="secondary">Online</Badge>
+                <Badge variant="secondary" className="bg-green-500 text-white">Online</Badge>
               </div>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col min-h-0">
