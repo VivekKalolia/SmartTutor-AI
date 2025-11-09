@@ -105,6 +105,12 @@ export default function QuizPage() {
     setQuestionStartTime(null);
     setMasteryImprovement(0);
     setQuestionTimes({});
+    // Clear all mastery tracking
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('mastery-')) {
+        localStorage.removeItem(key);
+      }
+    });
   };
 
   const handleAnswerSelect = (answerIndex: number) => {
@@ -158,6 +164,10 @@ export default function QuizPage() {
     setShowHint(false);
     setQuestionTime(0);
     setQuestionStartTime(null);
+    
+    // Clear mastery tracking for next question
+    const questionKey = `${currentQuestionIndex}-${currentSubject}`;
+    localStorage.removeItem(`mastery-${questionKey}`);
 
     if (currentQuestionIndex < questions.length - 1) {
       dispatch(setQuestionIndex(currentQuestionIndex + 1));
@@ -718,7 +728,8 @@ export default function QuizPage() {
                             {questionTimes[currentQuestionIndex] && (
                               <div className="pt-3 border-t">
                                 <p className="text-xs text-muted-foreground">
-                                  Time taken: {questionTimes[currentQuestionIndex]} seconds
+                                  Time taken:{" "}
+                                  {questionTimes[currentQuestionIndex]} seconds
                                 </p>
                               </div>
                             )}
