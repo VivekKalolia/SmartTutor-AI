@@ -155,7 +155,7 @@ export default function QuizPage() {
 
     const message = isCorrect
       ? "Correct! Well done."
-      : `Incorrect. The correct answer is: ${question.options[question.correctAnswer]}`;
+      : "Incorrect... try again";
 
     setToastMessage({
       type: isCorrect ? "success" : "error",
@@ -583,8 +583,8 @@ export default function QuizPage() {
                         masteryProgress >= 70
                           ? "bg-green-500"
                           : masteryProgress >= 50
-                          ? "bg-yellow-500"
-                          : "bg-red-500"
+                            ? "bg-yellow-500"
+                            : "bg-red-500"
                       }`}
                       style={{ width: `${masteryProgress}%` }}
                     />
