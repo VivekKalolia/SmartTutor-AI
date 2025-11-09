@@ -160,12 +160,11 @@ export default function TutorPage() {
         <div className="flex-1 flex flex-col">
           <Card className="flex-1 flex flex-col">
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-center">
                 <CardTitle className="flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-primary" />
                   AI Tutor
                 </CardTitle>
-                <Badge variant="secondary" className="bg-green-500 text-white">Online</Badge>
               </div>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col min-h-0">

@@ -74,6 +74,9 @@ export default function QuizPage() {
   const [questionTimes, setQuestionTimes] = useState<Record<number, number>>(
     {}
   );
+  const [questionMasteryImprovements, setQuestionMasteryImprovements] = useState<Record<number, number>>(
+    {}
+  );
 
   const questions =
     currentSubject === "math" ? mathQuestions : scienceQuestions;
@@ -105,6 +108,7 @@ export default function QuizPage() {
     setQuestionStartTime(null);
     setMasteryImprovement(0);
     setQuestionTimes({});
+    setQuestionMasteryImprovements({});
     // Clear all mastery tracking
     Object.keys(localStorage).forEach((key) => {
       if (key.startsWith("mastery-")) {
@@ -270,7 +274,11 @@ export default function QuizPage() {
 
   // Calculate mastery improvement (mock DKT model) - only once per submission
   useEffect(() => {
-    if (isSubmitted && currentSubject && questionTimes[currentQuestionIndex] !== undefined) {
+    if (
+      isSubmitted &&
+      currentSubject &&
+      questionTimes[currentQuestionIndex] !== undefined
+    ) {
       const question = questions[currentQuestionIndex];
       const userAnswer = answers[currentQuestionIndex];
       const isCorrect =
@@ -289,9 +297,21 @@ export default function QuizPage() {
       if (!hasCalculated) {
         localStorage.setItem(`mastery-${questionKey}`, "true");
         setMasteryImprovement((prev) => prev + improvement);
+        // Store per-question mastery improvement
+        setQuestionMasteryImprovements((prev) => ({
+          ...prev,
+          [currentQuestionIndex]: improvement,
+        }));
       }
     }
-  }, [isSubmitted, questionTimes, currentQuestionIndex, currentSubject, questions, answers]);
+  }, [
+    isSubmitted,
+    questionTimes,
+    currentQuestionIndex,
+    currentSubject,
+    questions,
+    answers,
+  ]);
 
   return (
     <Layout>
@@ -520,6 +540,16 @@ export default function QuizPage() {
                                   {question.explanation}
                                 </p>
                               </div>
+                              {questionMasteryImprovements[idx] !== undefined && (
+                                <div className="mt-3 pt-3 border-t">
+                                  <div className="flex items-center gap-2">
+                                    <TrendingUp className="h-4 w-4 text-green-600" />
+                                    <p className="text-sm font-medium text-green-600">
+                                      Mastery improved: +{questionMasteryImprovements[idx].toFixed(1)}%
+                                    </p>
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           </CardContent>
                         </Card>
