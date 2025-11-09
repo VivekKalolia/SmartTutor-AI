@@ -12,7 +12,7 @@ import {
 } from "@/lib/features/quiz/quizSlice";
 import Layout from "@/components/layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -24,6 +24,10 @@ import {
   RotateCcw,
   Lightbulb,
   Sparkles,
+  Calculator,
+  Atom,
+  BookOpen,
+  Play,
 } from "lucide-react";
 import { mathQuestions, scienceQuestions, aiAssistResponses } from "@/lib/demo-data";
 import { AIAssistSheet } from "@/components/ai-assist-sheet";
@@ -167,7 +171,7 @@ export default function QuizPage() {
             <Button
               onClick={() => dispatch(toggleAIAssist())}
               variant="outline"
-              className="gap-2"
+              className="gap-2 cursor-pointer"
             >
               <Brain className="h-4 w-4" />
               Assist
@@ -179,52 +183,101 @@ export default function QuizPage() {
           <Card>
             <CardHeader>
               <CardTitle>Select a Subject</CardTitle>
+              <CardDescription>
+                Choose a subject to begin your adaptive quiz session
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="math" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger
-                    value="math"
-                    onClick={() => handleSubjectSelect("math")}
-                  >
-                    Math
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="science"
-                    onClick={() => handleSubjectSelect("science")}
-                  >
-                    Science
-                  </TabsTrigger>
+                  <TabsTrigger value="math">Math</TabsTrigger>
+                  <TabsTrigger value="science">Science</TabsTrigger>
                 </TabsList>
                 <TabsContent value="math" className="mt-6">
-                  <div className="space-y-4">
-                    <p className="text-muted-foreground">
-                      Practice calculus, algebra, and advanced mathematics
-                      concepts.
-                    </p>
-                    <Button
-                      onClick={() => handleSubjectSelect("math")}
-                      className="w-full"
-                      size="lg"
-                    >
-                      Start Math Quiz
-                    </Button>
-                  </div>
+                  <Card className="border-2">
+                    <CardContent className="pt-6">
+                      <div className="space-y-6">
+                        <div className="flex items-start gap-4">
+                          <div className="rounded-full bg-[#1E3A8A]/10 p-3">
+                            <Calculator className="h-8 w-8 text-[#1E3A8A]" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold mb-2">Mathematics Quiz</h3>
+                            <p className="text-muted-foreground mb-4">
+                              Practice calculus, algebra, geometry, and advanced mathematics concepts. 
+                              This adaptive quiz will test your understanding across multiple mathematical 
+                              domains and provide detailed feedback on your performance.
+                            </p>
+                            <div className="grid grid-cols-2 gap-4 mb-4">
+                              <div>
+                                <p className="text-sm font-medium">Topics Covered</p>
+                                <p className="text-sm text-muted-foreground">
+                                  Algebra, Calculus, Geometry, Statistics
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium">Questions</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {mathQuestions.length} questions
+                                </p>
+                              </div>
+                            </div>
+                            <Button
+                              onClick={() => handleSubjectSelect("math")}
+                              className="w-full cursor-pointer"
+                              size="lg"
+                            >
+                              <Play className="mr-2 h-5 w-5" />
+                              Start Math Quiz
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </TabsContent>
                 <TabsContent value="science" className="mt-6">
-                  <div className="space-y-4">
-                    <p className="text-muted-foreground">
-                      Test your understanding of physics, chemistry, and
-                      scientific principles.
-                    </p>
-                    <Button
-                      onClick={() => handleSubjectSelect("science")}
-                      className="w-full"
-                      size="lg"
-                    >
-                      Start Science Quiz
-                    </Button>
-                  </div>
+                  <Card className="border-2">
+                    <CardContent className="pt-6">
+                      <div className="space-y-6">
+                        <div className="flex items-start gap-4">
+                          <div className="rounded-full bg-[#059669]/10 p-3">
+                            <Atom className="h-8 w-8 text-[#059669]" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold mb-2">Science Quiz</h3>
+                            <p className="text-muted-foreground mb-4">
+                              Test your understanding of physics, chemistry, biology, and scientific 
+                              principles. This comprehensive quiz covers fundamental concepts and 
+                              real-world applications across various scientific disciplines.
+                            </p>
+                            <div className="grid grid-cols-2 gap-4 mb-4">
+                              <div>
+                                <p className="text-sm font-medium">Topics Covered</p>
+                                <p className="text-sm text-muted-foreground">
+                                  Physics, Chemistry, Biology, Earth Science
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium">Questions</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {scienceQuestions.length} questions
+                                </p>
+                              </div>
+                            </div>
+                            <Button
+                              onClick={() => handleSubjectSelect("science")}
+                              className="w-full cursor-pointer"
+                              size="lg"
+                            >
+                              <Play className="mr-2 h-5 w-5" />
+                              Start Science Quiz
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </TabsContent>
               </Tabs>
             </CardContent>
@@ -324,7 +377,7 @@ export default function QuizPage() {
                   </div>
 
                   <div className="flex gap-3">
-                    <Button onClick={handleRetry} className="flex-1">
+                    <Button onClick={handleRetry} className="flex-1 cursor-pointer">
                       <RotateCcw className="mr-2 h-4 w-4" />
                       Retry Quiz
                     </Button>
@@ -334,7 +387,7 @@ export default function QuizPage() {
                         setShowReview(false);
                       }}
                       variant="outline"
-                      className="flex-1"
+                      className="flex-1 cursor-pointer"
                     >
                       Start New Quiz
                     </Button>
@@ -369,7 +422,7 @@ export default function QuizPage() {
                         onClick={handleHint}
                         variant="outline"
                         size="sm"
-                        className="gap-2"
+                        className="gap-2 cursor-pointer"
                         disabled={showHint}
                       >
                         <Lightbulb className="h-4 w-4" />
@@ -478,12 +531,13 @@ export default function QuizPage() {
                         onClick={handlePrevious}
                         variant="outline"
                         disabled={currentQuestionIndex === 0}
+                        className="cursor-pointer"
                       >
                         Previous
                       </Button>
                       <Button
                         onClick={handleNext}
-                        className="flex-1"
+                        className="flex-1 cursor-pointer"
                         disabled={!answers[currentQuestionIndex]}
                       >
                         {currentQuestionIndex === questions.length - 1

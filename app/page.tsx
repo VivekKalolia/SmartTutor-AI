@@ -3,8 +3,7 @@
 import Layout from "@/components/layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Brain, MessageSquare } from "lucide-react";
+import { Brain, MessageSquare, TrendingUp, TrendingDown } from "lucide-react";
 import Link from "next/link";
 import {
   BarChart,
@@ -30,21 +29,31 @@ const SCIENCE_COLOR = "#059669";
 const mathShades = ["#1E3A8A", "#3B5BA8", "#5A7CC6", "#789DE4"];
 const scienceShades = ["#059669", "#10B981", "#34D399", "#6EE7B7"];
 
-// Assessment-based data - professors can create assessments and results update here
-const assessmentResults = [
-  { assessment: "Assessment 1", math: 72, science: 68, date: "Oct 15" },
-  { assessment: "Assessment 2", math: 78, science: 74, date: "Oct 29" },
-  { assessment: "Assessment 3", math: 85, science: 82, date: "Nov 12" },
-  { assessment: "Assessment 4", math: 88, science: 86, date: "Nov 26" },
+// Cumulative mastery pathway data - shows learning growth through assessment milestones
+const masteryPathway = [
+  { milestone: "Quiz 1", cumulative: 68, date: "Oct 8" },
+  { milestone: "Test 1", cumulative: 72, date: "Oct 15" },
+  { milestone: "Quiz 2", cumulative: 75, date: "Oct 22" },
+  { milestone: "Test 2", cumulative: 78, date: "Oct 29" },
+  { milestone: "Quiz 3", cumulative: 82, date: "Nov 5" },
+  { milestone: "Test 3", cumulative: 85, date: "Nov 12" },
+  { milestone: "Quiz 4", cumulative: 87, date: "Nov 19" },
+  { milestone: "Final", cumulative: 88, date: "Nov 26" },
 ];
 
-const topicBreakdown = [
-  { name: "Algebra", score: 88, color: mathShades[0] },
-  { name: "Calculus", score: 82, color: mathShades[1] },
-  { name: "Geometry", score: 75, color: mathShades[2] },
-  { name: "Physics", score: 85, color: scienceShades[0] },
-  { name: "Chemistry", score: 78, color: scienceShades[1] },
-  { name: "Biology", score: 72, color: scienceShades[2] },
+// Separate math and science topic breakdowns
+const mathTopics = [
+  { topic: "Algebra", mastery: 88, color: mathShades[0] },
+  { topic: "Calculus", mastery: 82, color: mathShades[1] },
+  { topic: "Geometry", mastery: 75, color: mathShades[2] },
+  { topic: "Statistics", mastery: 70, color: mathShades[3] },
+];
+
+const scienceTopics = [
+  { topic: "Physics", mastery: 85, color: scienceShades[0] },
+  { topic: "Chemistry", mastery: 78, color: scienceShades[1] },
+  { topic: "Biology", mastery: 72, color: scienceShades[2] },
+  { topic: "Earth Science", mastery: 68, color: scienceShades[3] },
 ];
 
 const pieData = [
@@ -55,7 +64,18 @@ const pieData = [
 export default function Dashboard() {
   const overallMathMastery = 88;
   const overallScienceMastery = 86;
-  const latestAssessment = assessmentResults[assessmentResults.length - 1];
+  const latestMilestone = masteryPathway[masteryPathway.length - 1];
+
+  // Learning statistics
+  const assessmentsCompleted = 24;
+  const averageScore = 87;
+  const topicsMastered = 12;
+  const recentImprovementRate = "+5.2%"; // Improvement over last 3 assessments
+  const weakestTopic = "Statistics";
+  const strongestTopic = "Algebra";
+  const quizAccuracy = "84%"; // Correct/Incorrect ratio
+  const recommendedNextTopic = "Statistics";
+  const assessmentRetakeCount = 3;
 
   return (
     <Layout>
@@ -98,15 +118,15 @@ export default function Dashboard() {
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>Math Mastery</CardTitle>
+              <CardTitle>Math Mastery Pathway</CardTitle>
               <CardDescription>
-                Latest Assessment: {latestAssessment.date}
+                Cumulative progress through assessment milestones
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Overall Score</span>
+                  <span className="text-sm font-medium">Overall Mastery</span>
                   <span className="text-2xl font-bold" style={{ color: MATH_COLOR }}>
                     {overallMathMastery}%
                   </span>
@@ -122,18 +142,19 @@ export default function Dashboard() {
                 </div>
               </div>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={assessmentResults}>
+                <LineChart data={masteryPathway}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
+                  <XAxis dataKey="milestone" />
                   <YAxis domain={[0, 100]} />
                   <Tooltip />
                   <Legend />
                   <Line
                     type="monotone"
-                    dataKey="math"
+                    dataKey="cumulative"
                     stroke={MATH_COLOR}
-                    strokeWidth={2}
-                    name="Math Score"
+                    strokeWidth={3}
+                    name="Cumulative Mastery %"
+                    dot={{ fill: MATH_COLOR, r: 4 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -142,15 +163,15 @@ export default function Dashboard() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Science Mastery</CardTitle>
+              <CardTitle>Science Mastery Pathway</CardTitle>
               <CardDescription>
-                Latest Assessment: {latestAssessment.date}
+                Cumulative progress through assessment milestones
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Overall Score</span>
+                  <span className="text-sm font-medium">Overall Mastery</span>
                   <span className="text-2xl font-bold" style={{ color: SCIENCE_COLOR }}>
                     {overallScienceMastery}%
                   </span>
@@ -166,18 +187,19 @@ export default function Dashboard() {
                 </div>
               </div>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={assessmentResults}>
+                <LineChart data={masteryPathway}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
+                  <XAxis dataKey="milestone" />
                   <YAxis domain={[0, 100]} />
                   <Tooltip />
                   <Legend />
                   <Line
                     type="monotone"
-                    dataKey="science"
+                    dataKey="cumulative"
                     stroke={SCIENCE_COLOR}
-                    strokeWidth={2}
-                    name="Science Score"
+                    strokeWidth={3}
+                    name="Cumulative Mastery %"
+                    dot={{ fill: SCIENCE_COLOR, r: 4 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -185,30 +207,65 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Topic Performance Breakdown</CardTitle>
-            <CardDescription>
-              Your scores across different topics
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={topicBreakdown}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis domain={[0, 100]} />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="score" name="Score %">
-                  {topicBreakdown.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Math Topics Mastery</CardTitle>
+              <CardDescription>
+                Performance across math syllabus topics
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={mathTopics}
+                  layout="vertical"
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" domain={[0, 100]} />
+                  <YAxis dataKey="topic" type="category" width={100} />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="mastery" name="Mastery %">
+                    {mathTopics.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Science Topics Mastery</CardTitle>
+              <CardDescription>
+                Performance across science syllabus topics
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={scienceTopics}
+                  layout="vertical"
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" domain={[0, 100]} />
+                  <YAxis dataKey="topic" type="category" width={100} />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="mastery" name="Mastery %">
+                    {scienceTopics.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
 
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
@@ -247,19 +304,42 @@ export default function Dashboard() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Assessments Completed</span>
-                <span className="text-2xl font-bold">{assessmentResults.length}</span>
+                <span className="text-2xl font-bold">{assessmentsCompleted}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Average Score</span>
-                <span className="text-2xl font-bold">87%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Study Hours</span>
-                <span className="text-2xl font-bold">142</span>
+                <span className="text-2xl font-bold">{averageScore}%</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Topics Mastered</span>
-                <span className="text-2xl font-bold">12</span>
+                <span className="text-2xl font-bold">{topicsMastered}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Recent Improvement Rate</span>
+                <span className="text-2xl font-bold text-green-600 flex items-center gap-1">
+                  <TrendingUp className="h-5 w-5" />
+                  {recentImprovementRate}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Weakest Topic</span>
+                <span className="text-lg font-semibold text-red-600">{weakestTopic}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Strongest Topic</span>
+                <span className="text-lg font-semibold text-green-600">{strongestTopic}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Quiz Accuracy</span>
+                <span className="text-2xl font-bold">{quizAccuracy}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Recommended Next Topic</span>
+                <span className="text-lg font-semibold text-primary">{recommendedNextTopic}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Assessment Retake Count</span>
+                <span className="text-2xl font-bold">{assessmentRetakeCount}</span>
               </div>
             </CardContent>
           </Card>
