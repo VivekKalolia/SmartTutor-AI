@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Brain, MessageSquare, Home } from "lucide-react";
+import { LayoutDashboard, Brain, MessageSquare, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -10,6 +10,7 @@ const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Smart Quiz", href: "/quiz", icon: Brain },
   { name: "AI Tutor", href: "/tutor", icon: MessageSquare },
+  { name: "Teacher Portal", href: "/teacher", icon: Upload },
 ];
 
 export function Sidebar() {
@@ -19,7 +20,7 @@ export function Sidebar() {
     <div className="flex h-screen w-64 flex-col border-r bg-background">
       <div className="flex h-16 items-center border-b px-6">
         <Link href="/" className="flex items-center gap-2">
-          <h1 className="text-xl font-bold text-primary">SmartTutor</h1>
+          <h1 className="text-xl font-bold text-primary">SmartTutor AI</h1>
         </Link>
       </div>
       <nav className="flex-1 space-y-1 p-4">
