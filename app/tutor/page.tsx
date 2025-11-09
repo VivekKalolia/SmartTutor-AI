@@ -9,38 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-  Send,
-  Copy,
-  Sparkles,
-  BookOpen,
-  Calculator,
-  Atom,
-  Lightbulb,
-} from "lucide-react";
-
-const samplePrompts = [
-  {
-    title: "Explain Calculus Concepts",
-    prompt: "Can you explain the fundamental theorem of calculus?",
-    icon: Calculator,
-  },
-  {
-    title: "Physics Problem Help",
-    prompt: "How do I solve problems involving Newton's laws of motion?",
-    icon: Atom,
-  },
-  {
-    title: "Study Tips",
-    prompt: "What are effective study strategies for STEM subjects?",
-    icon: Lightbulb,
-  },
-  {
-    title: "Algebra Review",
-    prompt: "Help me understand quadratic equations and their solutions.",
-    icon: BookOpen,
-  },
-];
+import { Send, Copy, Sparkles } from "lucide-react";
 
 const mockResponses: Record<string, string> = {
   default:
@@ -57,16 +26,32 @@ const mockResponses: Record<string, string> = {
 
 function getMockResponse(userMessage: string): string {
   const lowerMessage = userMessage.toLowerCase();
-  if (lowerMessage.includes("calculus") || lowerMessage.includes("derivative") || lowerMessage.includes("integral")) {
+  if (
+    lowerMessage.includes("calculus") ||
+    lowerMessage.includes("derivative") ||
+    lowerMessage.includes("integral")
+  ) {
     return mockResponses.calculus;
   }
-  if (lowerMessage.includes("newton") || lowerMessage.includes("physics") || lowerMessage.includes("force")) {
+  if (
+    lowerMessage.includes("newton") ||
+    lowerMessage.includes("physics") ||
+    lowerMessage.includes("force")
+  ) {
     return mockResponses.physics;
   }
-  if (lowerMessage.includes("study") || lowerMessage.includes("learn") || lowerMessage.includes("strategy")) {
+  if (
+    lowerMessage.includes("study") ||
+    lowerMessage.includes("learn") ||
+    lowerMessage.includes("strategy")
+  ) {
     return mockResponses.study;
   }
-  if (lowerMessage.includes("quadratic") || lowerMessage.includes("algebra") || lowerMessage.includes("equation")) {
+  if (
+    lowerMessage.includes("quadratic") ||
+    lowerMessage.includes("algebra") ||
+    lowerMessage.includes("equation")
+  ) {
     return mockResponses.algebra;
   }
   return mockResponses.default;
@@ -108,44 +93,13 @@ export default function TutorPage() {
     }, 1000);
   };
 
-  const handlePromptClick = (prompt: string) => {
-    setInput(prompt);
-  };
-
   const handleCopy = (content: string) => {
     navigator.clipboard.writeText(content);
   };
 
   return (
     <Layout>
-      <div className="flex h-[calc(100vh-8rem)] gap-6">
-        <div className="hidden lg:block w-64 flex-shrink-0">
-          <Card className="h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-primary" />
-                Quick Prompts
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {samplePrompts.map((prompt, idx) => {
-                const Icon = prompt.icon;
-                return (
-                  <Button
-                    key={idx}
-                    variant="outline"
-                    className="w-full justify-start h-auto py-3 text-left"
-                    onClick={() => handlePromptClick(prompt.prompt)}
-                  >
-                    <Icon className="h-4 w-4 mr-2 flex-shrink-0" />
-                    <span className="text-sm">{prompt.title}</span>
-                  </Button>
-                );
-              })}
-            </CardContent>
-          </Card>
-        </div>
-
+      <div className="flex h-[calc(100vh-8rem)]">
         <div className="flex-1 flex flex-col">
           <Card className="flex-1 flex flex-col">
             <CardHeader>
@@ -172,22 +126,6 @@ export default function TutorPage() {
                         Ask me anything about your coursework, concepts, or
                         study strategies.
                       </p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 mt-6 w-full max-w-md">
-                      {samplePrompts.map((prompt, idx) => {
-                        const Icon = prompt.icon;
-                        return (
-                          <Button
-                            key={idx}
-                            variant="outline"
-                            className="h-auto py-3 flex-col gap-2"
-                            onClick={() => handlePromptClick(prompt.prompt)}
-                          >
-                            <Icon className="h-4 w-4" />
-                            <span className="text-xs">{prompt.title}</span>
-                          </Button>
-                        );
-                      })}
                     </div>
                   </div>
                 ) : (
@@ -253,7 +191,10 @@ export default function TutorPage() {
                   placeholder="Ask a question about your coursework..."
                   className="flex-1"
                 />
-                <Button onClick={handleSend} disabled={!input.trim() || isLoading}>
+                <Button
+                  onClick={handleSend}
+                  disabled={!input.trim() || isLoading}
+                >
                   <Send className="h-4 w-4" />
                 </Button>
               </div>
@@ -264,4 +205,3 @@ export default function TutorPage() {
     </Layout>
   );
 }
-

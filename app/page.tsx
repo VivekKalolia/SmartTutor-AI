@@ -1,230 +1,248 @@
+"use client";
+
 import Layout from "@/components/layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { BookOpen, Calendar, FileText, TrendingUp, Users, Clock } from "lucide-react";
+import { Brain, MessageSquare, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 
-const courses = [
-  {
-    id: 1,
-    title: "Calculus I",
-    progress: 75,
-    assignments: 3,
-    nextDeadline: "Dec 15, 2024",
-    status: "in-progress",
-  },
-  {
-    id: 2,
-    title: "Physics Fundamentals",
-    progress: 60,
-    assignments: 2,
-    nextDeadline: "Dec 18, 2024",
-    status: "in-progress",
-  },
-  {
-    id: 3,
-    title: "Linear Algebra",
-    progress: 45,
-    assignments: 1,
-    nextDeadline: "Dec 20, 2024",
-    status: "in-progress",
-  },
+const mathMasteryData = [
+  { week: "Week 1", mastery: 45 },
+  { week: "Week 2", mastery: 52 },
+  { week: "Week 3", mastery: 58 },
+  { week: "Week 4", mastery: 65 },
+  { week: "Week 5", mastery: 72 },
+  { week: "Week 6", mastery: 78 },
+  { week: "Week 7", mastery: 82 },
+  { week: "Week 8", mastery: 85 },
 ];
 
-const assignments = [
-  {
-    id: 1,
-    title: "Differential Equations Problem Set",
-    course: "Calculus I",
-    dueDate: "Dec 15, 2024",
-    status: "pending",
-  },
-  {
-    id: 2,
-    title: "Mechanics Lab Report",
-    course: "Physics Fundamentals",
-    dueDate: "Dec 18, 2024",
-    status: "pending",
-  },
-  {
-    id: 3,
-    title: "Vector Spaces Assignment",
-    course: "Linear Algebra",
-    dueDate: "Dec 20, 2024",
-    status: "pending",
-  },
+const scienceMasteryData = [
+  { week: "Week 1", mastery: 40 },
+  { week: "Week 2", mastery: 48 },
+  { week: "Week 3", mastery: 55 },
+  { week: "Week 4", mastery: 62 },
+  { week: "Week 5", mastery: 68 },
+  { week: "Week 6", mastery: 74 },
+  { week: "Week 7", mastery: 79 },
+  { week: "Week 8", mastery: 83 },
+];
+
+const topicBreakdown = [
+  { name: "Algebra", math: 88, science: 0 },
+  { name: "Calculus", math: 82, science: 0 },
+  { name: "Geometry", math: 75, science: 0 },
+  { name: "Physics", math: 0, science: 85 },
+  { name: "Chemistry", math: 0, science: 78 },
+  { name: "Biology", math: 0, science: 72 },
+];
+
+const pieData = [
+  { name: "Math Mastery", value: 85, color: "hsl(262.1, 83.3%, 57.8%)" },
+  { name: "Science Mastery", value: 83, color: "hsl(262.1, 83.3%, 70%)" },
 ];
 
 export default function Dashboard() {
-  const overallProgress = Math.round(
-    courses.reduce((acc, course) => acc + course.progress, 0) / courses.length
-  );
+  const overallMathMastery = 85;
+  const overallScienceMastery = 83;
 
   return (
     <Layout>
       <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground mt-2">
-            Welcome back. Here's your learning overview.
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+            <p className="text-muted-foreground mt-2">
+              Track your learning progress and mastery
+            </p>
+          </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Overall Progress
-              </CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{overallProgress}%</div>
-              <Progress value={overallProgress} className="mt-2" />
-            </CardContent>
-          </Card>
+        <div className="grid gap-6 md:grid-cols-2">
+          <Link href="/quiz" className="block">
+            <Card className="h-full transition-all hover:shadow-lg cursor-pointer border-2 hover:border-primary">
+              <CardContent className="flex flex-col items-center justify-center p-12">
+                <Brain className="h-16 w-16 text-primary mb-4" />
+                <h2 className="text-2xl font-bold mb-2">Smart Quiz</h2>
+                <p className="text-muted-foreground text-center">
+                  Test your knowledge with adaptive quizzes in Math and Science
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Active Courses
-              </CardTitle>
-              <BookOpen className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{courses.length}</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Currently enrolled
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Pending Assignments
-              </CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{assignments.length}</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Due this month
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Upcoming Deadline
-              </CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">Dec 15</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {assignments[0]?.title}
-              </p>
-            </CardContent>
-          </Card>
+          <Link href="/tutor" className="block">
+            <Card className="h-full transition-all hover:shadow-lg cursor-pointer border-2 hover:border-primary">
+              <CardContent className="flex flex-col items-center justify-center p-12">
+                <MessageSquare className="h-16 w-16 text-primary mb-4" />
+                <h2 className="text-2xl font-bold mb-2">AI Tutor</h2>
+                <p className="text-muted-foreground text-center">
+                  Get personalized help and explanations for your coursework
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>Current Courses</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                Math Mastery Progress
+              </CardTitle>
               <CardDescription>
-                Track your progress across all enrolled courses
+                Your mastery level over time
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {courses.map((course) => (
-                <div
-                  key={course.id}
-                  className="flex items-center justify-between rounded-lg border p-4"
-                >
-                  <div className="space-y-1 flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold">{course.title}</h3>
-                      <Badge variant="secondary">{course.assignments} assignments</Badge>
-                    </div>
-                    <Progress value={course.progress} className="h-2" />
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        Due: {course.nextDeadline}
-                      </span>
-                    </div>
-                  </div>
+            <CardContent>
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">Overall Mastery</span>
+                  <span className="text-2xl font-bold text-primary">
+                    {overallMathMastery}%
+                  </span>
                 </div>
-              ))}
+                <Progress value={overallMathMastery} className="h-3" />
+              </div>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={mathMasteryData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="week" />
+                  <YAxis domain={[0, 100]} />
+                  <Tooltip />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="mastery"
+                    stroke="hsl(262.1, 83.3%, 57.8%)"
+                    strokeWidth={2}
+                    name="Mastery %"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Upcoming Assignments</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                Science Mastery Progress
+              </CardTitle>
               <CardDescription>
-                Important deadlines and pending tasks
+                Your mastery level over time
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {assignments.map((assignment) => (
-                <div
-                  key={assignment.id}
-                  className="flex items-start justify-between rounded-lg border p-4"
-                >
-                  <div className="space-y-1 flex-1">
-                    <h3 className="font-semibold">{assignment.title}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {assignment.course}
-                    </p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Badge variant="outline">{assignment.status}</Badge>
-                      <span className="text-sm text-muted-foreground">
-                        Due: {assignment.dueDate}
-                      </span>
-                    </div>
-                  </div>
+            <CardContent>
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">Overall Mastery</span>
+                  <span className="text-2xl font-bold text-primary">
+                    {overallScienceMastery}%
+                  </span>
                 </div>
-              ))}
+                <Progress value={overallScienceMastery} className="h-3" />
+              </div>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={scienceMasteryData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="week" />
+                  <YAxis domain={[0, 100]} />
+                  <Tooltip />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="mastery"
+                    stroke="hsl(262.1, 83.3%, 57.8%)"
+                    strokeWidth={2}
+                    name="Mastery %"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </div>
 
+        <Card>
+          <CardHeader>
+            <CardTitle>Topic Mastery Breakdown</CardTitle>
+            <CardDescription>
+              Your performance across different topics
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart data={topicBreakdown}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis domain={[0, 100]} />
+                <Tooltip />
+                <Legend />
+                <Bar
+                  dataKey="math"
+                  fill="hsl(262.1, 83.3%, 57.8%)"
+                  name="Math"
+                />
+                <Bar
+                  dataKey="science"
+                  fill="hsl(262.1, 83.3%, 70%)"
+                  name="Science"
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-              <CardDescription>
-                Access key features and learning tools
-              </CardDescription>
+              <CardTitle>Mastery Distribution</CardTitle>
+              <CardDescription>Overall subject mastery</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <Link href="/quiz">
-                <Button className="w-full justify-start" size="lg">
-                  <Brain className="mr-2 h-5 w-5" />
-                  Start Smart Quiz
-                </Button>
-              </Link>
-              <Link href="/tutor">
-                <Button className="w-full justify-start" variant="outline" size="lg">
-                  <MessageSquare className="mr-2 h-5 w-5" />
-                  Open AI Tutor
-                </Button>
-              </Link>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, value }) => `${name}: ${value}%`}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
               <CardTitle>Learning Statistics</CardTitle>
-              <CardDescription>
-                Your academic performance overview
-              </CardDescription>
+              <CardDescription>Your academic performance overview</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
@@ -239,6 +257,10 @@ export default function Dashboard() {
                 <span className="text-sm font-medium">Study Hours</span>
                 <span className="text-2xl font-bold">142</span>
               </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Topics Mastered</span>
+                <span className="text-2xl font-bold">12</span>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -246,4 +268,3 @@ export default function Dashboard() {
     </Layout>
   );
 }
-

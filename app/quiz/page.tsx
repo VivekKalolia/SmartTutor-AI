@@ -17,8 +17,15 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Brain, CheckCircle2, XCircle, RotateCcw, Eye } from "lucide-react";
-import { mathQuestions, scienceQuestions } from "@/lib/demo-data";
+import {
+  Brain,
+  CheckCircle2,
+  XCircle,
+  RotateCcw,
+  Lightbulb,
+  Sparkles,
+} from "lucide-react";
+import { mathQuestions, scienceQuestions, aiAssistResponses } from "@/lib/demo-data";
 import { AIAssistSheet } from "@/components/ai-assist-sheet";
 
 export default function QuizPage() {
@@ -30,6 +37,7 @@ export default function QuizPage() {
     message: string;
   }>({ type: null, message: "" });
   const [showReview, setShowReview] = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
   const questions =
     currentSubject === "math" ? mathQuestions : scienceQuestions;
@@ -39,6 +47,7 @@ export default function QuizPage() {
     dispatch(setQuestionIndex(0));
     setFeedback({ type: null, message: "" });
     setShowReview(false);
+    setShowHint(false);
   };
 
   const handleAnswerSelect = (answerIndex: number) => {
@@ -47,7 +56,12 @@ export default function QuizPage() {
     const question = questions[currentQuestionIndex];
     const isCorrect = answerIndex === question.correctAnswer;
 
-    dispatch(setAnswer({ questionIndex: currentQuestionIndex, answer: answerIndex.toString() }));
+    dispatch(
+      setAnswer({
+        questionIndex: currentQuestionIndex,
+        answer: answerIndex.toString(),
+      })
+    );
 
     setFeedback({
       type: isCorrect ? "correct" : "incorrect",
@@ -61,6 +75,7 @@ export default function QuizPage() {
     if (currentQuestionIndex < questions.length - 1) {
       dispatch(setQuestionIndex(currentQuestionIndex + 1));
       setFeedback({ type: null, message: "" });
+      setShowHint(false);
     } else {
       setShowReview(true);
     }
@@ -70,6 +85,7 @@ export default function QuizPage() {
     if (currentQuestionIndex > 0) {
       dispatch(setQuestionIndex(currentQuestionIndex - 1));
       setFeedback({ type: null, message: "" });
+      setShowHint(false);
     }
   };
 
@@ -77,6 +93,51 @@ export default function QuizPage() {
     dispatch(resetQuiz());
     setFeedback({ type: null, message: "" });
     setShowReview(false);
+    setShowHint(false);
+  };
+
+  const handleHint = () => {
+    setShowHint(true);
+  };
+
+  const getHintResponse = () => {
+    const question = questions[currentQuestionIndex];
+    if (!question) return aiAssistResponses.default;
+
+    const lowerQuestion = question.question.toLowerCase();
+    if (currentSubject === "math") {
+      if (
+        lowerQuestion.includes("derivative") ||
+        lowerQuestion.includes("differentiate")
+      ) {
+        return aiAssistResponses.math_derivative;
+      } else if (
+        lowerQuestion.includes("integral") ||
+        lowerQuestion.includes("integrate")
+      ) {
+        return aiAssistResponses.math_integral;
+      } else if (
+        lowerQuestion.includes("limit") ||
+        lowerQuestion.includes("approaches")
+      ) {
+        return aiAssistResponses.math_limit;
+      }
+    } else if (currentSubject === "science") {
+      if (
+        lowerQuestion.includes("physics") ||
+        lowerQuestion.includes("force") ||
+        lowerQuestion.includes("motion")
+      ) {
+        return aiAssistResponses.science_physics;
+      } else if (
+        lowerQuestion.includes("chemistry") ||
+        lowerQuestion.includes("chemical") ||
+        lowerQuestion.includes("reaction")
+      ) {
+        return aiAssistResponses.science_chemistry;
+      }
+    }
+    return `${aiAssistResponses.default}\n\nFor this problem: ${question.explanation}`;
   };
 
   const progress =
@@ -197,52 +258,67 @@ export default function QuizPage() {
                         userAnswer &&
                         parseInt(userAnswer) === question.correctAnswer;
                       return (
-                        <div
+                        <Card
                           key={question.id}
-                          className="rounded-lg border p-4 space-y-2"
+                          className={
+                            isCorrect
+                              ? "border-green-500 bg-green-50 dark:bg-green-950"
+                              : "border-red-500 bg-red-50 dark:bg-red-950"
+                          }
                         >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="font-semibold">
-                                  Question {idx + 1}
+                          <CardContent className="pt-6 space-y-3">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold">
+                                Question {idx + 1}
+                              </span>
+                              {isCorrect ? (
+                                <Badge
+                                  variant="default"
+                                  className="gap-1 bg-green-600"
+                                >
+                                  <CheckCircle2 className="h-3 w-3" />
+                                  Correct
+                                </Badge>
+                              ) : (
+                                <Badge variant="destructive" className="gap-1">
+                                  <XCircle className="h-3 w-3" />
+                                  Incorrect
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="font-medium">{question.question}</p>
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium">
+                                  Your answer:
                                 </span>
-                                {isCorrect ? (
-                                  <Badge variant="default" className="gap-1">
-                                    <CheckCircle2 className="h-3 w-3" />
-                                    Correct
-                                  </Badge>
-                                ) : (
-                                  <Badge variant="destructive" className="gap-1">
-                                    <XCircle className="h-3 w-3" />
-                                    Incorrect
-                                  </Badge>
-                                )}
-                              </div>
-                              <p className="font-medium">{question.question}</p>
-                              <div className="mt-2 space-y-1">
-                                <p className="text-sm text-muted-foreground">
-                                  Your answer:{" "}
+                                <span className="text-sm">
                                   {userAnswer
                                     ? question.options[parseInt(userAnswer)]
                                     : "Not answered"}
+                                </span>
+                              </div>
+                              {!isCorrect && (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm font-medium">
+                                    Correct answer:
+                                  </span>
+                                  <span className="text-sm">
+                                    {question.options[question.correctAnswer]}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="mt-3 pt-3 border-t">
+                                <p className="text-sm font-medium mb-1">
+                                  Explanation:
                                 </p>
-                                {!isCorrect && (
-                                  <p className="text-sm text-muted-foreground">
-                                    Correct answer:{" "}
-                                    {
-                                      question.options[question.correctAnswer]
-                                    }
-                                  </p>
-                                )}
-                                <p className="text-sm mt-2">
-                                  <strong>Explanation:</strong>{" "}
+                                <p className="text-sm text-muted-foreground">
                                   {question.explanation}
                                 </p>
                               </div>
                             </div>
-                          </div>
-                        </div>
+                          </CardContent>
+                        </Card>
                       );
                     })}
                   </div>
@@ -285,45 +361,76 @@ export default function QuizPage() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>
-                      {questions[currentQuestionIndex]?.question}
-                    </CardTitle>
+                    <div className="flex items-center justify-between">
+                      <CardTitle>
+                        {questions[currentQuestionIndex]?.question}
+                      </CardTitle>
+                      <Button
+                        onClick={handleHint}
+                        variant="outline"
+                        size="sm"
+                        className="gap-2"
+                        disabled={showHint}
+                      >
+                        <Lightbulb className="h-4 w-4" />
+                        Hint
+                      </Button>
+                    </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
+                    {showHint && (
+                      <Alert className="border-primary bg-primary/5">
+                        <Sparkles className="h-4 w-4 text-primary" />
+                        <AlertDescription className="mt-2">
+                          <p className="font-medium mb-2">Hint:</p>
+                          <p className="text-sm whitespace-pre-wrap">
+                            {getHintResponse()}
+                          </p>
+                        </AlertDescription>
+                      </Alert>
+                    )}
+
                     <div className="space-y-2">
                       {questions[currentQuestionIndex]?.options.map(
                         (option, idx) => {
                           const userAnswer = answers[currentQuestionIndex];
                           const isSelected = userAnswer === idx.toString();
                           const isCorrect =
-                            idx === questions[currentQuestionIndex].correctAnswer;
+                            idx ===
+                            questions[currentQuestionIndex].correctAnswer;
                           const showCorrect =
                             feedback.type !== null && isCorrect;
+                          const showIncorrect =
+                            feedback.type === "incorrect" &&
+                            isSelected &&
+                            !isCorrect;
 
                           return (
-                            <Button
+                            <Card
                               key={idx}
-                              onClick={() => handleAnswerSelect(idx)}
-                              variant={
+                              className={`cursor-pointer transition-all ${
                                 showCorrect
-                                  ? "default"
+                                  ? "border-green-500 bg-green-50 dark:bg-green-950"
+                                  : showIncorrect
+                                  ? "border-red-500 bg-red-50 dark:bg-red-950"
                                   : isSelected
-                                  ? "secondary"
-                                  : "outline"
-                              }
-                              className="w-full justify-start h-auto py-3 text-left"
-                              disabled={showReview}
+                                  ? "border-primary bg-primary/5"
+                                  : "hover:border-primary/50"
+                              }`}
+                              onClick={() => handleAnswerSelect(idx)}
                             >
-                              <span className="flex-1">{option}</span>
-                              {showCorrect && (
-                                <CheckCircle2 className="h-4 w-4 ml-2" />
-                              )}
-                              {isSelected &&
-                                !showCorrect &&
-                                feedback.type === "incorrect" && (
-                                  <XCircle className="h-4 w-4 ml-2 text-destructive" />
-                                )}
-                            </Button>
+                              <CardContent className="p-4">
+                                <div className="flex items-center justify-between">
+                                  <span className="flex-1">{option}</span>
+                                  {showCorrect && (
+                                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                                  )}
+                                  {showIncorrect && (
+                                    <XCircle className="h-5 w-5 text-red-600" />
+                                  )}
+                                </div>
+                              </CardContent>
+                            </Card>
                           );
                         }
                       )}
@@ -332,23 +439,38 @@ export default function QuizPage() {
                     {feedback.type && (
                       <Alert
                         variant={
-                          feedback.type === "correct" ? "default" : "destructive"
+                          feedback.type === "correct"
+                            ? "default"
+                            : "destructive"
+                        }
+                        className={
+                          feedback.type === "correct"
+                            ? "border-green-500 bg-green-50 dark:bg-green-950"
+                            : ""
                         }
                       >
-                        <AlertDescription>{feedback.message}</AlertDescription>
+                        {feedback.type === "correct" ? (
+                          <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        ) : (
+                          <XCircle className="h-4 w-4" />
+                        )}
+                        <AlertDescription className="ml-2">
+                          {feedback.message}
+                        </AlertDescription>
                       </Alert>
                     )}
 
                     {feedback.type && (
-                      <div className="rounded-lg border p-4 bg-muted/50">
-                        <p className="text-sm font-medium mb-1">Explanation:</p>
-                        <p className="text-sm text-muted-foreground">
-                          {
-                            questions[currentQuestionIndex]
-                              ?.explanation
-                          }
-                        </p>
-                      </div>
+                      <Card className="bg-muted/50">
+                        <CardContent className="pt-6">
+                          <p className="text-sm font-medium mb-2">
+                            Explanation:
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {questions[currentQuestionIndex]?.explanation}
+                          </p>
+                        </CardContent>
+                      </Card>
                     )}
 
                     <div className="flex gap-3 pt-4">
@@ -392,4 +514,3 @@ export default function QuizPage() {
     </Layout>
   );
 }
-
