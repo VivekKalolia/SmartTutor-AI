@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 const teacherNavigation = [
   { name: "Dashboard", href: "/teacher", icon: LayoutDashboard },
-  { name: "Document Upload", href: "/teacher/upload", icon: Upload },
+  { name: "Knowledge Base", href: "/teacher/upload", icon: Upload },
   { name: "Student Management", href: "/teacher/students", icon: Users },
   { name: "Settings", href: "/teacher/settings", icon: Settings },
 ];

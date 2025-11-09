@@ -68,7 +68,7 @@ export default function TeacherUpload() {
     <TeacherLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Document Upload</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Knowledge Base</h1>
           <p className="text-muted-foreground mt-2">
             Upload documents to enhance the AI Tutor with RAG-based responses
           </p>
@@ -78,7 +78,7 @@ export default function TeacherUpload() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary" />
-              Document Upload
+              Knowledge Base
             </CardTitle>
             <CardDescription>
               Upload PDF, DOCX, or TXT files. The AI Tutor will use these
