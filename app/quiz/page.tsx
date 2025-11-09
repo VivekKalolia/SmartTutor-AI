@@ -520,9 +520,9 @@ export default function QuizPage() {
                             idx ===
                             questions[currentQuestionIndex].correctAnswer;
                           const showCorrect =
-                            feedback.type !== null && isCorrect;
+                            isSubmitted && isCorrect;
                           const showIncorrect =
-                            feedback.type === "incorrect" &&
+                            isSubmitted &&
                             isSelected &&
                             !isCorrect;
 
@@ -538,8 +538,8 @@ export default function QuizPage() {
                                   ? "border-primary bg-primary/5"
                                   : "hover:border-primary/50"
                               }`}
-                              onClick={() => handleAnswerSelect(idx)}
-                              style={{ cursor: "pointer" }}
+                              onClick={() => !isSubmitted && handleAnswerSelect(idx)}
+                              style={{ cursor: isSubmitted ? "default" : "pointer" }}
                             >
                               <CardContent className="p-4">
                                 <div className="flex items-center justify-between">
