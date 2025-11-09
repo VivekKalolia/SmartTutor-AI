@@ -44,21 +44,22 @@ export default function QuizPage() {
   }>({ type: null, message: "" });
   const [showReview, setShowReview] = useState(false);
   const [showHint, setShowHint] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [speakingType, setSpeakingType] = useState<"question" | "feedback" | null>(null);
 
   const questions =
     currentSubject === "math" ? mathQuestions : scienceQuestions;
 
-  const handleTTS = (text: string) => {
-    if (isSpeaking) {
+  const handleTTS = (text: string, type: "question" | "feedback") => {
+    if (speakingType === type) {
       window.speechSynthesis.cancel();
-      setIsSpeaking(false);
+      setSpeakingType(null);
     } else {
+      window.speechSynthesis.cancel(); // Cancel any ongoing speech
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = () => setIsSpeaking(false);
+      utterance.onend = () => setSpeakingType(null);
+      utterance.onerror = () => setSpeakingType(null);
       window.speechSynthesis.speak(utterance);
-      setIsSpeaking(true);
+      setSpeakingType(type);
     }
   };
 
@@ -443,11 +444,11 @@ export default function QuizPage() {
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => handleTTS(questions[currentQuestionIndex]?.question || "")}
+                          onClick={() => handleTTS(questions[currentQuestionIndex]?.question || "", "question")}
                           style={{ cursor: "pointer" }}
-                          title={isSpeaking ? "Stop reading" : "Read question aloud"}
+                          title={speakingType === "question" ? "Stop reading" : "Read question aloud"}
                         >
-                          {isSpeaking ? (
+                          {speakingType === "question" ? (
                             <VolumeX className="h-4 w-4" />
                           ) : (
                             <Volume2 className="h-4 w-4" />
@@ -555,11 +556,11 @@ export default function QuizPage() {
                             variant="ghost"
                             size="icon"
                             className="h-6 w-6 flex-shrink-0 ml-2"
-                            onClick={() => handleTTS(feedback.message)}
+                            onClick={() => handleTTS(feedback.message, "feedback")}
                             style={{ cursor: "pointer" }}
-                            title={isSpeaking ? "Stop reading" : "Read feedback aloud"}
+                            title={speakingType === "feedback" ? "Stop reading" : "Read feedback aloud"}
                           >
-                            {isSpeaking ? (
+                            {speakingType === "feedback" ? (
                               <VolumeX className="h-3 w-3" />
                             ) : (
                               <Volume2 className="h-3 w-3" />
