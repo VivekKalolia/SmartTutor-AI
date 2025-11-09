@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Brain, MessageSquare, Upload } from "lucide-react";
+import { LayoutDashboard, Brain, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -10,7 +10,6 @@ const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Smart Quiz", href: "/quiz", icon: Brain },
   { name: "AI Tutor", href: "/tutor", icon: MessageSquare },
-  { name: "Teacher Portal", href: "/teacher", icon: Upload },
 ];
 
 export function Sidebar() {

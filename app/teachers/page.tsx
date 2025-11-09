@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Layout from "@/components/layout";
+import TeacherLayout from "@/components/teacher-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,7 +65,7 @@ export default function TeacherPortal() {
   };
 
   return (
-    <Layout>
+    <TeacherLayout>
       <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Teacher Portal</h1>
@@ -186,36 +186,8 @@ export default function TeacherPortal() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>How RAG Works</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="space-y-2">
-              <h3 className="font-semibold">1. Document Processing</h3>
-              <p className="text-sm text-muted-foreground">
-                Uploaded documents are processed and indexed for efficient
-                retrieval.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <h3 className="font-semibold">2. Context Retrieval</h3>
-              <p className="text-sm text-muted-foreground">
-                When students ask questions, the system retrieves relevant
-                information from your uploaded documents.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <h3 className="font-semibold">3. Enhanced Responses</h3>
-              <p className="text-sm text-muted-foreground">
-                The AI Tutor provides answers based on the content from your
-                documents, ensuring accuracy and relevance.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
       </div>
-    </Layout>
+    </TeacherLayout>
   );
 }
 

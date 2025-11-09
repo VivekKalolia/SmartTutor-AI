@@ -22,6 +22,14 @@ import {
   Line,
 } from "recharts";
 
+// Math color: #1E3A8A, Science color: #059669
+const MATH_COLOR = "#1E3A8A";
+const SCIENCE_COLOR = "#059669";
+
+// Shades for bar graphs
+const mathShades = ["#1E3A8A", "#3B5BA8", "#5A7CC6", "#789DE4"];
+const scienceShades = ["#059669", "#10B981", "#34D399", "#6EE7B7"];
+
 // Assessment-based data - professors can create assessments and results update here
 const assessmentResults = [
   { assessment: "Assessment 1", math: 72, science: 68, date: "Oct 15" },
@@ -31,17 +39,17 @@ const assessmentResults = [
 ];
 
 const topicBreakdown = [
-  { name: "Algebra", score: 88, color: "#8b5cf6" },
-  { name: "Calculus", score: 82, color: "#06b6d4" },
-  { name: "Geometry", score: 75, color: "#10b981" },
-  { name: "Physics", score: 85, color: "#f59e0b" },
-  { name: "Chemistry", score: 78, color: "#ef4444" },
-  { name: "Biology", score: 72, color: "#ec4899" },
+  { name: "Algebra", score: 88, color: mathShades[0] },
+  { name: "Calculus", score: 82, color: mathShades[1] },
+  { name: "Geometry", score: 75, color: mathShades[2] },
+  { name: "Physics", score: 85, color: scienceShades[0] },
+  { name: "Chemistry", score: 78, color: scienceShades[1] },
+  { name: "Biology", score: 72, color: scienceShades[2] },
 ];
 
 const pieData = [
-  { name: "Math", value: 88, color: "#8b5cf6" },
-  { name: "Science", value: 86, color: "#06b6d4" },
+  { name: "Math", value: 88, color: MATH_COLOR },
+  { name: "Science", value: 86, color: SCIENCE_COLOR },
 ];
 
 export default function Dashboard() {
@@ -99,11 +107,19 @@ export default function Dashboard() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium">Overall Score</span>
-                  <span className="text-2xl font-bold text-primary">
+                  <span className="text-2xl font-bold" style={{ color: MATH_COLOR }}>
                     {overallMathMastery}%
                   </span>
                 </div>
-                <Progress value={overallMathMastery} className="h-3" />
+                <div className="relative h-3 w-full overflow-hidden rounded-full bg-secondary">
+                  <div
+                    className="h-full transition-all"
+                    style={{
+                      width: `${overallMathMastery}%`,
+                      backgroundColor: MATH_COLOR,
+                    }}
+                  />
+                </div>
               </div>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={assessmentResults}>
@@ -115,7 +131,7 @@ export default function Dashboard() {
                   <Line
                     type="monotone"
                     dataKey="math"
-                    stroke="#8b5cf6"
+                    stroke={MATH_COLOR}
                     strokeWidth={2}
                     name="Math Score"
                   />
@@ -135,11 +151,19 @@ export default function Dashboard() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium">Overall Score</span>
-                  <span className="text-2xl font-bold text-[#06b6d4]">
+                  <span className="text-2xl font-bold" style={{ color: SCIENCE_COLOR }}>
                     {overallScienceMastery}%
                   </span>
                 </div>
-                <Progress value={overallScienceMastery} className="h-3" />
+                <div className="relative h-3 w-full overflow-hidden rounded-full bg-secondary">
+                  <div
+                    className="h-full transition-all"
+                    style={{
+                      width: `${overallScienceMastery}%`,
+                      backgroundColor: SCIENCE_COLOR,
+                    }}
+                  />
+                </div>
               </div>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={assessmentResults}>
@@ -151,7 +175,7 @@ export default function Dashboard() {
                   <Line
                     type="monotone"
                     dataKey="science"
-                    stroke="#06b6d4"
+                    stroke={SCIENCE_COLOR}
                     strokeWidth={2}
                     name="Science Score"
                   />
