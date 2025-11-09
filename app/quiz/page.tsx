@@ -171,7 +171,8 @@ export default function QuizPage() {
             <Button
               onClick={() => dispatch(toggleAIAssist())}
               variant="outline"
-              className="gap-2 cursor-pointer"
+              className="gap-2"
+              style={{ cursor: "pointer" }}
             >
               <Brain className="h-4 w-4" />
               Assist
@@ -224,8 +225,9 @@ export default function QuizPage() {
                             </div>
                             <Button
                               onClick={() => handleSubjectSelect("math")}
-                              className="w-full cursor-pointer"
+                              className="w-full"
                               size="lg"
+                              style={{ cursor: "pointer" }}
                             >
                               <Play className="mr-2 h-5 w-5" />
                               Start Math Quiz
@@ -267,8 +269,9 @@ export default function QuizPage() {
                             </div>
                             <Button
                               onClick={() => handleSubjectSelect("science")}
-                              className="w-full cursor-pointer"
+                              className="w-full"
                               size="lg"
+                              style={{ cursor: "pointer" }}
                             >
                               <Play className="mr-2 h-5 w-5" />
                               Start Science Quiz
@@ -377,7 +380,7 @@ export default function QuizPage() {
                   </div>
 
                   <div className="flex gap-3">
-                    <Button onClick={handleRetry} className="flex-1 cursor-pointer">
+                    <Button onClick={handleRetry} className="flex-1" style={{ cursor: "pointer" }}>
                       <RotateCcw className="mr-2 h-4 w-4" />
                       Retry Quiz
                     </Button>
@@ -387,7 +390,8 @@ export default function QuizPage() {
                         setShowReview(false);
                       }}
                       variant="outline"
-                      className="flex-1 cursor-pointer"
+                      className="flex-1"
+                      style={{ cursor: "pointer" }}
                     >
                       Start New Quiz
                     </Button>
@@ -422,8 +426,9 @@ export default function QuizPage() {
                         onClick={handleHint}
                         variant="outline"
                         size="sm"
-                        className="gap-2 cursor-pointer"
+                        className="gap-2"
                         disabled={showHint}
+                        style={{ cursor: showHint ? "not-allowed" : "pointer" }}
                       >
                         <Lightbulb className="h-4 w-4" />
                         Hint
@@ -461,7 +466,7 @@ export default function QuizPage() {
                           return (
                             <Card
                               key={idx}
-                              className={`cursor-pointer transition-all ${
+                              className={`transition-all ${
                                 showCorrect
                                   ? "border-green-500 bg-green-50 dark:bg-green-950"
                                   : showIncorrect
@@ -471,6 +476,7 @@ export default function QuizPage() {
                                   : "hover:border-primary/50"
                               }`}
                               onClick={() => handleAnswerSelect(idx)}
+                              style={{ cursor: "pointer" }}
                             >
                               <CardContent className="p-4">
                                 <div className="flex items-center justify-between">
@@ -531,14 +537,15 @@ export default function QuizPage() {
                         onClick={handlePrevious}
                         variant="outline"
                         disabled={currentQuestionIndex === 0}
-                        className="cursor-pointer"
+                        style={{ cursor: currentQuestionIndex === 0 ? "not-allowed" : "pointer" }}
                       >
                         Previous
                       </Button>
                       <Button
                         onClick={handleNext}
-                        className="flex-1 cursor-pointer"
+                        className="flex-1"
                         disabled={!answers[currentQuestionIndex]}
+                        style={{ cursor: !answers[currentQuestionIndex] ? "not-allowed" : "pointer" }}
                       >
                         {currentQuestionIndex === questions.length - 1
                           ? "Review Answers"
