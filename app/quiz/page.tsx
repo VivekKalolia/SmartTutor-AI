@@ -261,14 +261,15 @@ export default function QuizPage() {
     if (isSubmitted && currentSubject) {
       const question = questions[currentQuestionIndex];
       const userAnswer = answers[currentQuestionIndex];
-      const isCorrect = userAnswer && parseInt(userAnswer) === question.correctAnswer;
-      
+      const isCorrect =
+        userAnswer && parseInt(userAnswer) === question.correctAnswer;
+
       // Mock DKT improvement calculation
       // Improvement based on correctness and question difficulty
       const baseImprovement = isCorrect ? 2.5 : 0.8;
       const difficultyFactor = 0.5; // Mock difficulty
       const improvement = baseImprovement * (1 + difficultyFactor);
-      
+
       setMasteryImprovement((prev) => prev + improvement);
     }
   }, [isSubmitted, currentQuestionIndex, currentSubject, questions, answers]);
@@ -705,12 +706,23 @@ export default function QuizPage() {
                     {isSubmitted && feedback.type && (
                       <Card className="bg-muted/50">
                         <CardContent className="pt-6">
-                          <p className="text-sm font-medium mb-2">
-                            Explanation:
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {questions[currentQuestionIndex]?.explanation}
-                          </p>
+                          <div className="space-y-3">
+                            <div>
+                              <p className="text-sm font-medium mb-2">
+                                Explanation:
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                {questions[currentQuestionIndex]?.explanation}
+                              </p>
+                            </div>
+                            {questionTimes[currentQuestionIndex] && (
+                              <div className="pt-3 border-t">
+                                <p className="text-xs text-muted-foreground">
+                                  Time taken: {questionTimes[currentQuestionIndex]} seconds
+                                </p>
+                              </div>
+                            )}
+                          </div>
                         </CardContent>
                       </Card>
                     )}
