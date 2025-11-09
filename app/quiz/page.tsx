@@ -155,7 +155,7 @@ export default function QuizPage() {
 
     const message = isCorrect
       ? "Correct! Well done."
-      : "Incorrect... try again";
+      : "Incorrect. Please try again.";
 
     setToastMessage({
       type: isCorrect ? "success" : "error",
