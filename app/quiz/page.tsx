@@ -526,14 +526,31 @@ export default function QuizPage() {
                             : ""
                         }
                       >
-                        {feedback.type === "correct" ? (
-                          <CheckCircle2 className="h-4 w-4 text-green-600" />
-                        ) : (
-                          <XCircle className="h-4 w-4" />
-                        )}
-                        <AlertDescription className="ml-2">
-                          {feedback.message}
-                        </AlertDescription>
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start gap-2 flex-1">
+                            {feedback.type === "correct" ? (
+                              <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
+                            ) : (
+                              <XCircle className="h-4 w-4 mt-0.5" />
+                            )}
+                            <AlertDescription className="ml-2 flex-1">
+                              {feedback.message}
+                            </AlertDescription>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 flex-shrink-0 ml-2"
+                            onClick={() => {
+                              const utterance = new SpeechSynthesisUtterance(feedback.message);
+                              window.speechSynthesis.speak(utterance);
+                            }}
+                            style={{ cursor: "pointer" }}
+                            title="Read feedback aloud"
+                          >
+                            <Volume2 className="h-3 w-3" />
+                          </Button>
+                        </div>
                       </Alert>
                     )}
 
