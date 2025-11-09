@@ -312,6 +312,7 @@ export default function Dashboard() {
                     >
                       <RadialBar
                         dataKey="mastery"
+                        name="Mastery"
                         cornerRadius={4}
                         fill="#8884d8"
                       >
@@ -354,6 +355,7 @@ export default function Dashboard() {
                     >
                       <RadialBar
                         dataKey="mastery"
+                        name="Mastery"
                         cornerRadius={4}
                         fill="#8884d8"
                       >
