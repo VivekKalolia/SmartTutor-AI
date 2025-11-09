@@ -2,7 +2,13 @@
 
 import Layout from "@/components/layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Brain,
@@ -73,7 +79,7 @@ const scienceTopics = [
 export default function Dashboard() {
   const overallMathMastery = 88;
   const overallScienceMastery = 86;
-  
+
   const pieData = [
     { name: "Math", value: overallMathMastery, color: MATH_COLOR },
     { name: "Science", value: overallScienceMastery, color: SCIENCE_COLOR },
@@ -105,7 +111,10 @@ export default function Dashboard() {
 
         <div className="grid gap-6 md:grid-cols-2">
           <Link href="/quiz" className="block" style={{ cursor: "pointer" }}>
-            <Card className="h-full transition-all hover:shadow-lg border-2 hover:border-primary" style={{ cursor: "pointer" }}>
+            <Card
+              className="h-full transition-all hover:shadow-lg border-2 hover:border-primary"
+              style={{ cursor: "pointer" }}
+            >
               <CardContent className="flex flex-col items-center justify-center p-12">
                 <Brain className="h-16 w-16 text-primary mb-4" />
                 <h2 className="text-2xl font-bold mb-2">Smart Quiz</h2>
@@ -117,7 +126,10 @@ export default function Dashboard() {
           </Link>
 
           <Link href="/tutor" className="block" style={{ cursor: "pointer" }}>
-            <Card className="h-full transition-all hover:shadow-lg border-2 hover:border-primary" style={{ cursor: "pointer" }}>
+            <Card
+              className="h-full transition-all hover:shadow-lg border-2 hover:border-primary"
+              style={{ cursor: "pointer" }}
+            >
               <CardContent className="flex flex-col items-center justify-center p-12">
                 <MessageSquare className="h-16 w-16 text-primary mb-4" />
                 <h2 className="text-2xl font-bold mb-2">AI Tutor</h2>
@@ -141,7 +153,10 @@ export default function Dashboard() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium">Overall Mastery</span>
-                  <span className="text-2xl font-bold" style={{ color: MATH_COLOR }}>
+                  <span
+                    className="text-2xl font-bold"
+                    style={{ color: MATH_COLOR }}
+                  >
                     {overallMathMastery}%
                   </span>
                 </div>
@@ -186,7 +201,10 @@ export default function Dashboard() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium">Overall Mastery</span>
-                  <span className="text-2xl font-bold" style={{ color: SCIENCE_COLOR }}>
+                  <span
+                    className="text-2xl font-bold"
+                    style={{ color: SCIENCE_COLOR }}
+                  >
                     {overallScienceMastery}%
                   </span>
                 </div>
@@ -286,7 +304,8 @@ export default function Dashboard() {
             <CardHeader>
               <CardTitle>Subject Distribution</CardTitle>
               <CardDescription>
-                Topic mastery by subject (each can achieve 100% mastery independently)
+                Topic mastery by subject (each can achieve 100% mastery
+                independently)
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -325,12 +344,22 @@ export default function Dashboard() {
                     </RadialBarChart>
                   </ResponsiveContainer>
                   <div className="border-t mt-6 pt-6">
-                    <h4 className="font-semibold mb-3 text-sm">Math Topics Mastery</h4>
+                    <h4 className="font-semibold mb-3 text-sm">
+                      Math Topics Mastery
+                    </h4>
                     <div className="space-y-2">
                       {mathTopics.map((topic) => (
-                        <div key={topic.topic} className="flex items-center justify-between">
-                          <span className="text-sm text-muted-foreground">{topic.topic}</span>
-                          <span className="text-sm font-semibold" style={{ color: topic.color }}>
+                        <div
+                          key={topic.topic}
+                          className="flex items-center justify-between"
+                        >
+                          <span className="text-sm text-muted-foreground">
+                            {topic.topic}
+                          </span>
+                          <span
+                            className="text-sm font-semibold"
+                            style={{ color: topic.color }}
+                          >
                             {topic.mastery}%
                           </span>
                         </div>
@@ -368,12 +397,22 @@ export default function Dashboard() {
                     </RadialBarChart>
                   </ResponsiveContainer>
                   <div className="border-t mt-6 pt-6">
-                    <h4 className="font-semibold mb-3 text-sm">Science Topics Mastery</h4>
+                    <h4 className="font-semibold mb-3 text-sm">
+                      Science Topics Mastery
+                    </h4>
                     <div className="space-y-2">
                       {scienceTopics.map((topic) => (
-                        <div key={topic.topic} className="flex items-center justify-between">
-                          <span className="text-sm text-muted-foreground">{topic.topic}</span>
-                          <span className="text-sm font-semibold" style={{ color: topic.color }}>
+                        <div
+                          key={topic.topic}
+                          className="flex items-center justify-between"
+                        >
+                          <span className="text-sm text-muted-foreground">
+                            {topic.topic}
+                          </span>
+                          <span
+                            className="text-sm font-semibold"
+                            style={{ color: topic.color }}
+                          >
                             {topic.mastery}%
                           </span>
                         </div>
@@ -388,7 +427,9 @@ export default function Dashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Learning Statistics</CardTitle>
-              <CardDescription>Your academic performance overview</CardDescription>
+              <CardDescription>
+                Your academic performance overview
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4 mb-6">
@@ -464,7 +505,9 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between p-3 rounded-lg bg-primary/5 border border-primary/20">
                   <div className="flex items-center gap-2">
                     <Lightbulb className="h-4 w-4 text-primary" />
-                    <span className="text-sm font-medium">Recommended Next Topic</span>
+                    <span className="text-sm font-medium">
+                      Recommended Next Topic
+                    </span>
                   </div>
                   <span className="text-base font-semibold text-primary">
                     {recommendedNextTopic}
@@ -474,9 +517,13 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between p-3 rounded-lg border">
                   <div className="flex items-center gap-2">
                     <RefreshCw className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">Assessment Retakes</span>
+                    <span className="text-sm font-medium">
+                      Assessment Retakes
+                    </span>
                   </div>
-                  <span className="text-lg font-bold">{assessmentRetakeCount}</span>
+                  <span className="text-lg font-bold">
+                    {assessmentRetakeCount}
+                  </span>
                 </div>
               </div>
             </CardContent>

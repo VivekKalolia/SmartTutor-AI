@@ -6,8 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Upload, FileText, X, CheckCircle2, Sparkles } from "lucide-react";
+import { Upload, FileText, X, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 interface UploadedDocument {
   id: string;
@@ -35,14 +35,12 @@ export default function TeacherUpload() {
     },
   ]);
   const [uploading, setUploading] = useState(false);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setUploading(true);
-    setUploadSuccess(false);
 
     // Simulate upload and processing
     setTimeout(() => {
@@ -55,8 +53,7 @@ export default function TeacherUpload() {
       };
       setDocuments([...documents, newDoc]);
       setUploading(false);
-      setUploadSuccess(true);
-      setTimeout(() => setUploadSuccess(false), 3000);
+      toast.success("Document uploaded and processed successfully!");
     }, 2000);
   };
 
@@ -86,15 +83,6 @@ export default function TeacherUpload() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {uploadSuccess && (
-              <Alert className="border-green-500 bg-green-50 dark:bg-green-950">
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-800 dark:text-green-200">
-                  Document uploaded and processed successfully!
-                </AlertDescription>
-              </Alert>
-            )}
-
             <div className="border-2 border-dashed rounded-lg p-8 text-center">
               <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <p className="text-sm text-muted-foreground mb-4">

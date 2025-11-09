@@ -15,7 +15,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import {
   Brain,
@@ -33,6 +32,7 @@ import {
 } from "lucide-react";
 import { mathQuestions, scienceQuestions, aiAssistResponses } from "@/lib/demo-data";
 import { AIAssistSheet } from "@/components/ai-assist-sheet";
+import { toast } from "sonner";
 
 export default function QuizPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -84,11 +84,19 @@ export default function QuizPage() {
       })
     );
 
+    const message = isCorrect
+      ? "Correct! Well done."
+      : `Incorrect. The correct answer is: ${question.options[question.correctAnswer]}`;
+
+    if (isCorrect) {
+      toast.success(message);
+    } else {
+      toast.error(message);
+    }
+
     setFeedback({
       type: isCorrect ? "correct" : "incorrect",
-      message: isCorrect
-        ? "Correct! Well done."
-        : `Incorrect. The correct answer is: ${question.options[question.correctAnswer]}`,
+      message,
     });
   };
 
@@ -527,48 +535,6 @@ export default function QuizPage() {
                         }
                       )}
                     </div>
-
-                    {feedback.type && (
-                      <Alert
-                        variant={
-                          feedback.type === "correct"
-                            ? "default"
-                            : "destructive"
-                        }
-                        className={
-                          feedback.type === "correct"
-                            ? "border-green-500 bg-green-50 dark:bg-green-950"
-                            : ""
-                        }
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-start gap-2 flex-1">
-                            {feedback.type === "correct" ? (
-                              <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
-                            ) : (
-                              <XCircle className="h-4 w-4 mt-0.5" />
-                            )}
-                            <AlertDescription className="ml-2 flex-1">
-                              {feedback.message}
-                            </AlertDescription>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 flex-shrink-0 ml-2"
-                            onClick={() => handleTTS(feedback.message, "feedback")}
-                            style={{ cursor: "pointer" }}
-                            title={speakingType === "feedback" ? "Stop reading" : "Read feedback aloud"}
-                          >
-                            {speakingType === "feedback" ? (
-                              <VolumeX className="h-3 w-3" />
-                            ) : (
-                              <Volume2 className="h-3 w-3" />
-                            )}
-                          </Button>
-                        </div>
-                      </Alert>
-                    )}
 
                     {feedback.type && (
                       <Card className="bg-muted/50">
