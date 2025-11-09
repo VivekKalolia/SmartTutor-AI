@@ -70,11 +70,8 @@ export default function QuizPage() {
   const [questionStartTime, setQuestionStartTime] = useState<number | null>(
     null
   );
-  const [masteryImprovement, setMasteryImprovement] = useState(0);
+  const [masteryProgress, setMasteryProgress] = useState(65); // Mock initial mastery: 65%
   const [questionTimes, setQuestionTimes] = useState<Record<number, number>>(
-    {}
-  );
-  const [questionMasteryImprovements, setQuestionMasteryImprovements] = useState<Record<number, number>>(
     {}
   );
 
@@ -106,9 +103,8 @@ export default function QuizPage() {
     setToastMessage(null);
     setQuestionTime(0);
     setQuestionStartTime(null);
-    setMasteryImprovement(0);
+    setMasteryProgress(65); // Reset to mock initial mastery
     setQuestionTimes({});
-    setQuestionMasteryImprovements({});
     // Clear all mastery tracking
     Object.keys(localStorage).forEach((key) => {
       if (key.startsWith("mastery-")) {
@@ -143,6 +139,19 @@ export default function QuizPage() {
         [currentQuestionIndex]: timeTaken,
       }));
     }
+
+    // Update mastery progress based on correctness
+    setMasteryProgress((prev) => {
+      if (isCorrect) {
+        // Increase mastery by 3-5% for correct answers
+        const increase = 3 + Math.random() * 2; // Random between 3-5%
+        return Math.min(100, prev + increase);
+      } else {
+        // Decrease mastery by 2-4% for incorrect answers
+        const decrease = 2 + Math.random() * 2; // Random between 2-4%
+        return Math.max(0, prev - decrease);
+      }
+    });
 
     const message = isCorrect
       ? "Correct! Well done."
@@ -540,12 +549,17 @@ export default function QuizPage() {
                                   {question.explanation}
                                 </p>
                               </div>
-                              {questionMasteryImprovements[idx] !== undefined && (
+                              {questionMasteryImprovements[idx] !==
+                                undefined && (
                                 <div className="mt-3 pt-3 border-t">
                                   <div className="flex items-center gap-2">
                                     <TrendingUp className="h-4 w-4 text-green-600" />
                                     <p className="text-sm font-medium text-green-600">
-                                      Mastery improved: +{questionMasteryImprovements[idx].toFixed(1)}%
+                                      Mastery improved: +
+                                      {questionMasteryImprovements[idx].toFixed(
+                                        1
+                                      )}
+                                      %
                                     </p>
                                   </div>
                                 </div>
@@ -606,22 +620,30 @@ export default function QuizPage() {
                         ? `${questionTimes[currentQuestionIndex]}s`
                         : `${questionTime}s`}
                     </div>
-                    {masteryImprovement > 0 && (
-                      <div className="flex items-center gap-2 text-sm text-green-600">
-                        <TrendingUp className="h-4 w-4" />+
-                        {masteryImprovement.toFixed(1)}% mastery
-                      </div>
-                    )}
-                    {questionMasteryImprovements[currentQuestionIndex] !== undefined && (
-                      <div className="flex items-center gap-2 text-sm text-blue-600">
-                        <TrendingUp className="h-4 w-4" />
-                        Q{currentQuestionIndex + 1}: +{questionMasteryImprovements[currentQuestionIndex].toFixed(1)}% mastery
-                      </div>
-                    )}
                     <div className="text-sm text-muted-foreground">
                       {answeredCount} answered
                     </div>
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium">Mastery Progress</span>
+                    <span className="text-muted-foreground">
+                      {masteryProgress.toFixed(1)}%
+                    </span>
+                  </div>
+                  <Progress 
+                    value={masteryProgress} 
+                    className="h-3"
+                    style={{
+                      backgroundColor: masteryProgress >= 70 
+                        ? "rgb(34 197 94 / 0.2)" 
+                        : masteryProgress >= 50 
+                        ? "rgb(234 179 8 / 0.2)" 
+                        : "rgb(239 68 68 / 0.2)"
+                    }}
+                  />
                 </div>
 
                 <Progress value={progress} className="h-2" />
@@ -778,12 +800,18 @@ export default function QuizPage() {
                                 </p>
                               </div>
                             )}
-                            {questionMasteryImprovements[currentQuestionIndex] !== undefined && (
+                            {questionMasteryImprovements[
+                              currentQuestionIndex
+                            ] !== undefined && (
                               <div className="pt-3 border-t">
                                 <div className="flex items-center gap-2">
                                   <TrendingUp className="h-4 w-4 text-green-600" />
                                   <p className="text-xs font-medium text-green-600">
-                                    Mastery improved: +{questionMasteryImprovements[currentQuestionIndex].toFixed(1)}%
+                                    Mastery improved: +
+                                    {questionMasteryImprovements[
+                                      currentQuestionIndex
+                                    ].toFixed(1)}
+                                    %
                                   </p>
                                 </div>
                               </div>
