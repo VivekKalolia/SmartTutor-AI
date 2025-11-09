@@ -106,8 +106,8 @@ export default function QuizPage() {
     setMasteryImprovement(0);
     setQuestionTimes({});
     // Clear all mastery tracking
-    Object.keys(localStorage).forEach(key => {
-      if (key.startsWith('mastery-')) {
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("mastery-")) {
         localStorage.removeItem(key);
       }
     });
@@ -164,7 +164,7 @@ export default function QuizPage() {
     setShowHint(false);
     setQuestionTime(0);
     setQuestionStartTime(null);
-    
+
     // Clear mastery tracking for next question
     const questionKey = `${currentQuestionIndex}-${currentSubject}`;
     localStorage.removeItem(`mastery-${questionKey}`);
@@ -266,9 +266,9 @@ export default function QuizPage() {
     }
   }, [currentQuestionIndex, currentSubject, isSubmitted]);
 
-  // Calculate mastery improvement (mock DKT model)
+  // Calculate mastery improvement (mock DKT model) - only once per submission
   useEffect(() => {
-    if (isSubmitted && currentSubject) {
+    if (isSubmitted && currentSubject && questionTimes[currentQuestionIndex] !== undefined) {
       const question = questions[currentQuestionIndex];
       const userAnswer = answers[currentQuestionIndex];
       const isCorrect =
@@ -280,9 +280,16 @@ export default function QuizPage() {
       const difficultyFactor = 0.5; // Mock difficulty
       const improvement = baseImprovement * (1 + difficultyFactor);
 
-      setMasteryImprovement((prev) => prev + improvement);
+      // Use localStorage to track if we've already calculated for this question
+      const questionKey = `${currentQuestionIndex}-${currentSubject}`;
+      const hasCalculated = localStorage.getItem(`mastery-${questionKey}`);
+
+      if (!hasCalculated) {
+        localStorage.setItem(`mastery-${questionKey}`, "true");
+        setMasteryImprovement((prev) => prev + improvement);
+      }
     }
-  }, [isSubmitted, currentQuestionIndex, currentSubject, questions, answers]);
+  }, [isSubmitted, questionTimes, currentQuestionIndex, currentSubject, questions, answers]);
 
   return (
     <Layout>
