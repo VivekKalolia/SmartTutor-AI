@@ -2,29 +2,29 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Brain, MessageSquare, GraduationCap } from "lucide-react";
+import { Upload, FileText, Users, Settings, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Smart Quiz", href: "/quiz", icon: Brain },
-  { name: "AI Tutor", href: "/tutor", icon: MessageSquare },
+const teacherNavigation = [
+  { name: "Document Upload", href: "/teachers", icon: Upload },
+  { name: "Student Management", href: "/teachers/students", icon: Users },
+  { name: "Settings", href: "/teachers/settings", icon: Settings },
 ];
 
-export function Sidebar() {
+export function TeacherSidebar() {
   const pathname = usePathname();
 
   return (
     <div className="flex h-screen w-64 flex-col border-r bg-background">
       <div className="flex h-16 items-center border-b px-6">
-        <Link href="/" className="flex items-center gap-2" style={{ cursor: "pointer" }}>
+        <Link href="/teachers" className="flex items-center gap-2" style={{ cursor: "pointer" }}>
           <GraduationCap className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-bold text-primary">SmartTutor AI</h1>
+          <h1 className="text-xl font-bold text-primary">Teacher Portal</h1>
         </Link>
       </div>
       <nav className="flex-1 space-y-1 p-4">
-        {navigation.map((item) => {
+        {teacherNavigation.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
           return (
@@ -47,3 +47,4 @@ export function Sidebar() {
     </div>
   );
 }
+

@@ -9,7 +9,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Send, Copy, Sparkles } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Send, Copy, Sparkles, Paperclip, Cpu } from "lucide-react";
+
+const aiModels = [
+  { id: "llama-3b", name: "Llama 3B", description: "Lightweight, fast" },
+  { id: "deepseek", name: "DeepSeek", description: "Balanced performance" },
+  { id: "mistral", name: "Mistral 7B", description: "High accuracy" },
+  { id: "phi", name: "Phi-3", description: "Efficient reasoning" },
+];
 
 const mockResponses: Record<string, string> = {
   default:
@@ -63,6 +77,7 @@ export default function TutorPage() {
     (state: RootState) => state.tutor
   );
   const [input, setInput] = useState("");
+  const [selectedModel, setSelectedModel] = useState("deepseek");
 
   const handleSend = () => {
     if (!input.trim() || isLoading) return;
@@ -97,6 +112,21 @@ export default function TutorPage() {
     navigator.clipboard.writeText(content);
   };
 
+  const handleFileAttach = () => {
+    // File attachment handler - placeholder
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".pdf,.docx,.txt,.png,.jpg";
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        // Handle file attachment
+        console.log("File attached:", file.name);
+      }
+    };
+    input.click();
+  };
+
   return (
     <Layout>
       <div className="flex h-[calc(100vh-8rem)]">
@@ -108,7 +138,27 @@ export default function TutorPage() {
                   <Sparkles className="h-5 w-5 text-primary" />
                   AI Tutor
                 </CardTitle>
-                <Badge variant="secondary">Online</Badge>
+                <div className="flex items-center gap-3">
+                  <Select value={selectedModel} onValueChange={setSelectedModel}>
+                    <SelectTrigger className="w-[180px]" style={{ cursor: "pointer" }}>
+                      <Cpu className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Select model" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {aiModels.map((model) => (
+                        <SelectItem key={model.id} value={model.id} style={{ cursor: "pointer" }}>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{model.name}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {model.description}
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Badge variant="secondary">Online</Badge>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col min-h-0">
@@ -153,6 +203,7 @@ export default function TutorPage() {
                               size="icon"
                               className="h-6 w-6 flex-shrink-0"
                               onClick={() => handleCopy(message.content)}
+                              style={{ cursor: "pointer" }}
                             >
                               <Copy className="h-3 w-3" />
                             </Button>
@@ -179,6 +230,14 @@ export default function TutorPage() {
               </div>
 
               <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleFileAttach}
+                  style={{ cursor: "pointer" }}
+                >
+                  <Paperclip className="h-4 w-4" />
+                </Button>
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
@@ -194,6 +253,7 @@ export default function TutorPage() {
                 <Button
                   onClick={handleSend}
                   disabled={!input.trim() || isLoading}
+                  style={{ cursor: "pointer" }}
                 >
                   <Send className="h-4 w-4" />
                 </Button>

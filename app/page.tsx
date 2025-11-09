@@ -103,8 +103,8 @@ export default function Dashboard() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <Link href="/quiz" className="block">
-            <Card className="h-full transition-all hover:shadow-lg cursor-pointer border-2 hover:border-primary">
+          <Link href="/quiz" className="block" style={{ cursor: "pointer" }}>
+            <Card className="h-full transition-all hover:shadow-lg border-2 hover:border-primary" style={{ cursor: "pointer" }}>
               <CardContent className="flex flex-col items-center justify-center p-12">
                 <Brain className="h-16 w-16 text-primary mb-4" />
                 <h2 className="text-2xl font-bold mb-2">Smart Quiz</h2>
@@ -115,8 +115,8 @@ export default function Dashboard() {
             </Card>
           </Link>
 
-          <Link href="/tutor" className="block">
-            <Card className="h-full transition-all hover:shadow-lg cursor-pointer border-2 hover:border-primary">
+          <Link href="/tutor" className="block" style={{ cursor: "pointer" }}>
+            <Card className="h-full transition-all hover:shadow-lg border-2 hover:border-primary" style={{ cursor: "pointer" }}>
               <CardContent className="flex flex-col items-center justify-center p-12">
                 <MessageSquare className="h-16 w-16 text-primary mb-4" />
                 <h2 className="text-2xl font-bold mb-2">AI Tutor</h2>
@@ -306,6 +306,36 @@ export default function Dashboard() {
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
+              
+              <div className="mt-6 space-y-4">
+                <div>
+                  <h4 className="font-semibold mb-3 text-sm">Math Topics Mastery</h4>
+                  <div className="space-y-2">
+                    {mathTopics.map((topic) => (
+                      <div key={topic.topic} className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">{topic.topic}</span>
+                        <span className="text-sm font-semibold" style={{ color: topic.color }}>
+                          {topic.mastery}%
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="font-semibold mb-3 text-sm">Science Topics Mastery</h4>
+                  <div className="space-y-2">
+                    {scienceTopics.map((topic) => (
+                      <div key={topic.topic} className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">{topic.topic}</span>
+                        <span className="text-sm font-semibold" style={{ color: topic.color }}>
+                          {topic.mastery}%
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
