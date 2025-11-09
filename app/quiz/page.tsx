@@ -612,6 +612,12 @@ export default function QuizPage() {
                         {masteryImprovement.toFixed(1)}% mastery
                       </div>
                     )}
+                    {questionMasteryImprovements[currentQuestionIndex] !== undefined && (
+                      <div className="flex items-center gap-2 text-sm text-blue-600">
+                        <TrendingUp className="h-4 w-4" />
+                        Q{currentQuestionIndex + 1}: +{questionMasteryImprovements[currentQuestionIndex].toFixed(1)}% mastery
+                      </div>
+                    )}
                     <div className="text-sm text-muted-foreground">
                       {answeredCount} answered
                     </div>
@@ -770,6 +776,16 @@ export default function QuizPage() {
                                   Time taken:{" "}
                                   {questionTimes[currentQuestionIndex]} seconds
                                 </p>
+                              </div>
+                            )}
+                            {questionMasteryImprovements[currentQuestionIndex] !== undefined && (
+                              <div className="pt-3 border-t">
+                                <div className="flex items-center gap-2">
+                                  <TrendingUp className="h-4 w-4 text-green-600" />
+                                  <p className="text-xs font-medium text-green-600">
+                                    Mastery improved: +{questionMasteryImprovements[currentQuestionIndex].toFixed(1)}%
+                                  </p>
+                                </div>
                               </div>
                             )}
                           </div>
