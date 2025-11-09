@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Send, Copy, Sparkles, Paperclip, Cpu, Mic, Volume2 } from "lucide-react";
+import { Send, Copy, Sparkles, Paperclip, Cpu, Mic, Volume2, VolumeX } from "lucide-react";
 
 const aiModels = [
   { id: "llama-3b", name: "Llama 3B", description: "Lightweight, fast" },
@@ -80,6 +80,20 @@ export default function TutorPage() {
   const [input, setInput] = useState("");
   const [selectedModel, setSelectedModel] = useState("deepseek");
   const [isRecording, setIsRecording] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  const handleTTS = (text: string) => {
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    } else {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      window.speechSynthesis.speak(utterance);
+      setIsSpeaking(true);
+    }
+  };
 
   const handleSend = () => {
     if (!input.trim() || isLoading) return;
@@ -196,14 +210,15 @@ export default function TutorPage() {
                                   variant="ghost"
                                   size="icon"
                                   className="h-6 w-6"
-                                  onClick={() => {
-                                    const utterance = new SpeechSynthesisUtterance(message.content);
-                                    window.speechSynthesis.speak(utterance);
-                                  }}
+                                  onClick={() => handleTTS(message.content)}
                                   style={{ cursor: "pointer" }}
-                                  title="Read answer aloud"
+                                  title={isSpeaking ? "Stop reading" : "Read answer aloud"}
                                 >
-                                  <Volume2 className="h-3 w-3" />
+                                  {isSpeaking ? (
+                                    <VolumeX className="h-3 w-3" />
+                                  ) : (
+                                    <Volume2 className="h-3 w-3" />
+                                  )}
                                 </Button>
                                 <Button
                                   variant="ghost"

@@ -27,8 +27,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  PieChart,
-  Pie,
+  RadialBarChart,
+  RadialBar,
   Cell,
   LineChart,
   Line,
@@ -285,59 +285,100 @@ export default function Dashboard() {
             <CardHeader>
               <CardTitle>Subject Distribution</CardTitle>
               <CardDescription>
-                Relative distribution between subjects (each can achieve 100% mastery independently)
+                Topic mastery by subject (each can achieve 100% mastery independently)
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={pieData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, value }) => `${name}: ${value}%`}
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-              
-              <div className="mt-6 space-y-4">
-                <div>
-                  <h4 className="font-semibold mb-3 text-sm">Math Topics Mastery</h4>
-                  <div className="space-y-2">
-                    {mathTopics.map((topic) => (
-                      <div key={topic.topic} className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">{topic.topic}</span>
-                        <span className="text-sm font-semibold" style={{ color: topic.color }}>
-                          {topic.mastery}%
-                        </span>
-                      </div>
-                    ))}
+              <Tabs defaultValue="math" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="math">Math</TabsTrigger>
+                  <TabsTrigger value="science">Science</TabsTrigger>
+                </TabsList>
+                <TabsContent value="math" className="mt-4">
+                  <ResponsiveContainer width="100%" height={300}>
+                    <RadialBarChart
+                      cx="50%"
+                      cy="50%"
+                      innerRadius="20%"
+                      outerRadius="80%"
+                      data={mathTopics.map((topic) => ({
+                        name: topic.topic,
+                        value: topic.mastery,
+                        fill: topic.color,
+                      }))}
+                      startAngle={90}
+                      endAngle={-270}
+                    >
+                      <RadialBar
+                        dataKey="value"
+                        cornerRadius={4}
+                        fill="#8884d8"
+                      >
+                        {mathTopics.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </RadialBar>
+                      <Tooltip />
+                      <Legend />
+                    </RadialBarChart>
+                  </ResponsiveContainer>
+                  <div className="border-t mt-6 pt-6">
+                    <h4 className="font-semibold mb-3 text-sm">Math Topics Mastery</h4>
+                    <div className="space-y-2">
+                      {mathTopics.map((topic) => (
+                        <div key={topic.topic} className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">{topic.topic}</span>
+                          <span className="text-sm font-semibold" style={{ color: topic.color }}>
+                            {topic.mastery}%
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                
-                <div>
-                  <h4 className="font-semibold mb-3 text-sm">Science Topics Mastery</h4>
-                  <div className="space-y-2">
-                    {scienceTopics.map((topic) => (
-                      <div key={topic.topic} className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">{topic.topic}</span>
-                        <span className="text-sm font-semibold" style={{ color: topic.color }}>
-                          {topic.mastery}%
-                        </span>
-                      </div>
-                    ))}
+                </TabsContent>
+                <TabsContent value="science" className="mt-4">
+                  <ResponsiveContainer width="100%" height={300}>
+                    <RadialBarChart
+                      cx="50%"
+                      cy="50%"
+                      innerRadius="20%"
+                      outerRadius="80%"
+                      data={scienceTopics.map((topic) => ({
+                        name: topic.topic,
+                        value: topic.mastery,
+                        fill: topic.color,
+                      }))}
+                      startAngle={90}
+                      endAngle={-270}
+                    >
+                      <RadialBar
+                        dataKey="value"
+                        cornerRadius={4}
+                        fill="#8884d8"
+                      >
+                        {scienceTopics.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </RadialBar>
+                      <Tooltip />
+                      <Legend />
+                    </RadialBarChart>
+                  </ResponsiveContainer>
+                  <div className="border-t mt-6 pt-6">
+                    <h4 className="font-semibold mb-3 text-sm">Science Topics Mastery</h4>
+                    <div className="space-y-2">
+                      {scienceTopics.map((topic) => (
+                        <div key={topic.topic} className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">{topic.topic}</span>
+                          <span className="text-sm font-semibold" style={{ color: topic.color }}>
+                            {topic.mastery}%
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </div>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
 

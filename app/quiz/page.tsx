@@ -29,6 +29,7 @@ import {
   BookOpen,
   Play,
   Volume2,
+  VolumeX,
 } from "lucide-react";
 import { mathQuestions, scienceQuestions, aiAssistResponses } from "@/lib/demo-data";
 import { AIAssistSheet } from "@/components/ai-assist-sheet";
@@ -43,9 +44,23 @@ export default function QuizPage() {
   }>({ type: null, message: "" });
   const [showReview, setShowReview] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   const questions =
     currentSubject === "math" ? mathQuestions : scienceQuestions;
+
+  const handleTTS = (text: string) => {
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    } else {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      window.speechSynthesis.speak(utterance);
+      setIsSpeaking(true);
+    }
+  };
 
   const handleSubjectSelect = (subject: "math" | "science") => {
     dispatch(setSubject(subject));
@@ -428,16 +443,15 @@ export default function QuizPage() {
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => {
-                            const utterance = new SpeechSynthesisUtterance(
-                              questions[currentQuestionIndex]?.question || ""
-                            );
-                            window.speechSynthesis.speak(utterance);
-                          }}
+                          onClick={() => handleTTS(questions[currentQuestionIndex]?.question || "")}
                           style={{ cursor: "pointer" }}
-                          title="Read question aloud"
+                          title={isSpeaking ? "Stop reading" : "Read question aloud"}
                         >
-                          <Volume2 className="h-4 w-4" />
+                          {isSpeaking ? (
+                            <VolumeX className="h-4 w-4" />
+                          ) : (
+                            <Volume2 className="h-4 w-4" />
+                          )}
                         </Button>
                       </div>
                       <Button
@@ -541,14 +555,15 @@ export default function QuizPage() {
                             variant="ghost"
                             size="icon"
                             className="h-6 w-6 flex-shrink-0 ml-2"
-                            onClick={() => {
-                              const utterance = new SpeechSynthesisUtterance(feedback.message);
-                              window.speechSynthesis.speak(utterance);
-                            }}
+                            onClick={() => handleTTS(feedback.message)}
                             style={{ cursor: "pointer" }}
-                            title="Read feedback aloud"
+                            title={isSpeaking ? "Stop reading" : "Read feedback aloud"}
                           >
-                            <Volume2 className="h-3 w-3" />
+                            {isSpeaking ? (
+                              <VolumeX className="h-3 w-3" />
+                            ) : (
+                              <Volume2 className="h-3 w-3" />
+                            )}
                           </Button>
                         </div>
                       </Alert>
