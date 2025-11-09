@@ -15,6 +15,7 @@ const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Smart Quiz", href: "/quiz", icon: Brain },
   { name: "AI Tutor", href: "/tutor", icon: MessageSquare },
+  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function Sidebar() {

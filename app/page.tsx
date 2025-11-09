@@ -304,14 +304,14 @@ export default function Dashboard() {
                       outerRadius="80%"
                       data={mathTopics.map((topic) => ({
                         name: topic.topic,
-                        value: topic.mastery,
+                        mastery: topic.mastery,
                         fill: topic.color,
                       }))}
                       startAngle={90}
                       endAngle={-270}
                     >
                       <RadialBar
-                        dataKey="value"
+                        dataKey="mastery"
                         cornerRadius={4}
                         fill="#8884d8"
                       >
@@ -346,14 +346,14 @@ export default function Dashboard() {
                       outerRadius="80%"
                       data={scienceTopics.map((topic) => ({
                         name: topic.topic,
-                        value: topic.mastery,
+                        mastery: topic.mastery,
                         fill: topic.color,
                       }))}
                       startAngle={90}
                       endAngle={-270}
                     >
                       <RadialBar
-                        dataKey="value"
+                        dataKey="mastery"
                         cornerRadius={4}
                         fill="#8884d8"
                       >

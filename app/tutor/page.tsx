@@ -310,10 +310,10 @@ export default function TutorPage() {
                   variant="outline"
                   size="icon"
                   onClick={handleVoiceRecord}
-                  className={isRecording ? "bg-red-100" : ""}
+                  className={isRecording ? "bg-red-500 hover:bg-red-600" : ""}
                   style={{ cursor: "pointer" }}
                 >
-                  <Mic className={`h-4 w-4 ${isRecording ? "text-red-600" : ""}`} />
+                  <Mic className={`h-4 w-4 ${isRecording ? "text-white" : ""}`} />
                 </Button>
                 <Button
                   onClick={handleSend}

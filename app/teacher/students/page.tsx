@@ -6,6 +6,24 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Users, Search } from "lucide-react";
 
+// Math color: #1E3A8A, Science color: #059669
+const MATH_COLOR = "#1E3A8A";
+const SCIENCE_COLOR = "#059669";
+
+// Map topics to their subject colors
+const topicColors: Record<string, string> = {
+  // Math topics
+  "Algebra": MATH_COLOR,
+  "Calculus": MATH_COLOR,
+  "Geometry": MATH_COLOR,
+  "Statistics": MATH_COLOR,
+  // Science topics
+  "Physics": SCIENCE_COLOR,
+  "Chemistry": SCIENCE_COLOR,
+  "Biology": SCIENCE_COLOR,
+  "Earth Science": SCIENCE_COLOR,
+};
+
 const students = [
   {
     id: "1",
@@ -112,7 +130,14 @@ export default function StudentManagement() {
                         {student.weakAreas.length > 0 && (
                           <div className="flex flex-wrap gap-1 mt-2">
                             {student.weakAreas.map((area) => (
-                              <Badge key={area} variant="destructive" className="text-xs">
+                              <Badge
+                                key={area}
+                                className="text-xs"
+                                style={{
+                                  backgroundColor: topicColors[area] || "#dc2626",
+                                  color: "white",
+                                }}
+                              >
                                 {area}
                               </Badge>
                             ))}
