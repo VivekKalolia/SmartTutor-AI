@@ -3,7 +3,20 @@
 import Layout from "@/components/layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Brain, MessageSquare, TrendingUp, TrendingDown } from "lucide-react";
+import {
+  Brain,
+  MessageSquare,
+  TrendingUp,
+  TrendingDown,
+  CheckCircle2,
+  Target,
+  Award,
+  BarChart3,
+  AlertCircle,
+  BookOpen,
+  RefreshCw,
+  Lightbulb,
+} from "lucide-react";
 import Link from "next/link";
 import {
   BarChart,
@@ -301,45 +314,94 @@ export default function Dashboard() {
               <CardTitle>Learning Statistics</CardTitle>
               <CardDescription>Your academic performance overview</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Assessments Completed</span>
-                <span className="text-2xl font-bold">{assessmentsCompleted}</span>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="rounded-lg border p-4 bg-muted/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-xs font-medium text-muted-foreground">
+                      Assessments Completed
+                    </span>
+                  </div>
+                  <p className="text-2xl font-bold">{assessmentsCompleted}</p>
+                </div>
+                <div className="rounded-lg border p-4 bg-muted/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Target className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-xs font-medium text-muted-foreground">
+                      Average Score
+                    </span>
+                  </div>
+                  <p className="text-2xl font-bold">{averageScore}%</p>
+                </div>
+                <div className="rounded-lg border p-4 bg-muted/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Award className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-xs font-medium text-muted-foreground">
+                      Topics Mastered
+                    </span>
+                  </div>
+                  <p className="text-2xl font-bold">{topicsMastered}</p>
+                </div>
+                <div className="rounded-lg border p-4 bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800">
+                  <div className="flex items-center gap-2 mb-2">
+                    <TrendingUp className="h-4 w-4 text-green-600" />
+                    <span className="text-xs font-medium text-green-700 dark:text-green-400">
+                      Improvement Rate
+                    </span>
+                  </div>
+                  <p className="text-2xl font-bold text-green-600">
+                    {recentImprovementRate}
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Average Score</span>
-                <span className="text-2xl font-bold">{averageScore}%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Topics Mastered</span>
-                <span className="text-2xl font-bold">{topicsMastered}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Recent Improvement Rate</span>
-                <span className="text-2xl font-bold text-green-600 flex items-center gap-1">
-                  <TrendingUp className="h-5 w-5" />
-                  {recentImprovementRate}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Weakest Topic</span>
-                <span className="text-lg font-semibold text-red-600">{weakestTopic}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Strongest Topic</span>
-                <span className="text-lg font-semibold text-green-600">{strongestTopic}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Quiz Accuracy</span>
-                <span className="text-2xl font-bold">{quizAccuracy}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Recommended Next Topic</span>
-                <span className="text-lg font-semibold text-primary">{recommendedNextTopic}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Assessment Retake Count</span>
-                <span className="text-2xl font-bold">{assessmentRetakeCount}</span>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 text-red-600" />
+                    <span className="text-sm font-medium">Weakest Topic</span>
+                  </div>
+                  <span className="text-base font-semibold text-red-600">
+                    {weakestTopic}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <span className="text-sm font-medium">Strongest Topic</span>
+                  </div>
+                  <span className="text-base font-semibold text-green-600">
+                    {strongestTopic}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between p-3 rounded-lg border">
+                  <div className="flex items-center gap-2">
+                    <Target className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Quiz Accuracy</span>
+                  </div>
+                  <span className="text-lg font-bold">{quizAccuracy}</span>
+                </div>
+
+                <div className="flex items-center justify-between p-3 rounded-lg bg-primary/5 border border-primary/20">
+                  <div className="flex items-center gap-2">
+                    <Lightbulb className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-medium">Recommended Next Topic</span>
+                  </div>
+                  <span className="text-base font-semibold text-primary">
+                    {recommendedNextTopic}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between p-3 rounded-lg border">
+                  <div className="flex items-center gap-2">
+                    <RefreshCw className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Assessment Retakes</span>
+                  </div>
+                  <span className="text-lg font-bold">{assessmentRetakeCount}</span>
+                </div>
               </div>
             </CardContent>
           </Card>
