@@ -281,47 +281,6 @@ export default function QuizPage() {
     }
   }, [currentQuestionIndex, currentSubject, isSubmitted]);
 
-  // Calculate mastery improvement (mock DKT model) - only once per submission
-  useEffect(() => {
-    if (
-      isSubmitted &&
-      currentSubject &&
-      questionTimes[currentQuestionIndex] !== undefined
-    ) {
-      const question = questions[currentQuestionIndex];
-      const userAnswer = answers[currentQuestionIndex];
-      const isCorrect =
-        userAnswer && parseInt(userAnswer) === question.correctAnswer;
-
-      // Mock DKT improvement calculation
-      // Improvement based on correctness and question difficulty
-      const baseImprovement = isCorrect ? 2.5 : 0.8;
-      const difficultyFactor = 0.5; // Mock difficulty
-      const improvement = baseImprovement * (1 + difficultyFactor);
-
-      // Use localStorage to track if we've already calculated for this question
-      const questionKey = `${currentQuestionIndex}-${currentSubject}`;
-      const hasCalculated = localStorage.getItem(`mastery-${questionKey}`);
-
-      if (!hasCalculated) {
-        localStorage.setItem(`mastery-${questionKey}`, "true");
-        setMasteryImprovement((prev) => prev + improvement);
-        // Store per-question mastery improvement
-        setQuestionMasteryImprovements((prev) => ({
-          ...prev,
-          [currentQuestionIndex]: improvement,
-        }));
-      }
-    }
-  }, [
-    isSubmitted,
-    questionTimes,
-    currentQuestionIndex,
-    currentSubject,
-    questions,
-    answers,
-  ]);
-
   return (
     <Layout>
       <div className="space-y-6">
@@ -549,21 +508,6 @@ export default function QuizPage() {
                                   {question.explanation}
                                 </p>
                               </div>
-                              {questionMasteryImprovements[idx] !==
-                                undefined && (
-                                <div className="mt-3 pt-3 border-t">
-                                  <div className="flex items-center gap-2">
-                                    <TrendingUp className="h-4 w-4 text-green-600" />
-                                    <p className="text-sm font-medium text-green-600">
-                                      Mastery improved: +
-                                      {questionMasteryImprovements[idx].toFixed(
-                                        1
-                                      )}
-                                      %
-                                    </p>
-                                  </div>
-                                </div>
-                              )}
                             </div>
                           </CardContent>
                         </Card>
@@ -798,22 +742,6 @@ export default function QuizPage() {
                                   Time taken:{" "}
                                   {questionTimes[currentQuestionIndex]} seconds
                                 </p>
-                              </div>
-                            )}
-                            {questionMasteryImprovements[
-                              currentQuestionIndex
-                            ] !== undefined && (
-                              <div className="pt-3 border-t">
-                                <div className="flex items-center gap-2">
-                                  <TrendingUp className="h-4 w-4 text-green-600" />
-                                  <p className="text-xs font-medium text-green-600">
-                                    Mastery improved: +
-                                    {questionMasteryImprovements[
-                                      currentQuestionIndex
-                                    ].toFixed(1)}
-                                    %
-                                  </p>
-                                </div>
                               </div>
                             )}
                           </div>
