@@ -46,6 +46,8 @@ export default function QuizPage() {
   const [showReview, setShowReview] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [speakingType, setSpeakingType] = useState<"question" | "feedback" | null>(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const questions =
     currentSubject === "math" ? mathQuestions : scienceQuestions;
@@ -70,6 +72,8 @@ export default function QuizPage() {
     setFeedback({ type: null, message: "" });
     setShowReview(false);
     setShowHint(false);
+    setShowToast(false);
+    setToastMessage(null);
   };
 
   const handleAnswerSelect = (answerIndex: number) => {
@@ -85,29 +89,50 @@ export default function QuizPage() {
       })
     );
 
-    const message = isCorrect
-      ? "Correct! Well done."
-      : `Incorrect. The correct answer is: ${question.options[question.correctAnswer]}`;
-
-    if (isCorrect) {
-      toast.success(message);
-    } else {
-      toast.error(message);
-    }
-
     setFeedback({
       type: isCorrect ? "correct" : "incorrect",
-      message,
+      message: isCorrect
+        ? "Correct! Well done."
+        : `Incorrect. The correct answer is: ${question.options[question.correctAnswer]}`,
     });
   };
 
   const handleNext = () => {
+    if (!answers[currentQuestionIndex]) return;
+
+    const question = questions[currentQuestionIndex];
+    const userAnswer = answers[currentQuestionIndex];
+    const isCorrect = parseInt(userAnswer) === question.correctAnswer;
+
+    const message = isCorrect
+      ? "Correct! Well done."
+      : `Incorrect. The correct answer is: ${question.options[question.correctAnswer]}`;
+
+    // Show toast below the question
+    setToastMessage({
+      type: isCorrect ? "success" : "error",
+      message,
+    });
+    setShowToast(true);
+    setFeedback({
+      type: isCorrect ? "correct" : "incorrect",
+      message,
+    });
+
     if (currentQuestionIndex < questions.length - 1) {
-      dispatch(setQuestionIndex(currentQuestionIndex + 1));
-      setFeedback({ type: null, message: "" });
-      setShowHint(false);
+      setTimeout(() => {
+        dispatch(setQuestionIndex(currentQuestionIndex + 1));
+        setFeedback({ type: null, message: "" });
+        setShowHint(false);
+        setShowToast(false);
+        setToastMessage(null);
+      }, 2000);
     } else {
-      setShowReview(true);
+      setTimeout(() => {
+        setShowReview(true);
+        setShowToast(false);
+        setToastMessage(null);
+      }, 2000);
     }
   };
 
@@ -116,6 +141,8 @@ export default function QuizPage() {
       dispatch(setQuestionIndex(currentQuestionIndex - 1));
       setFeedback({ type: null, message: "" });
       setShowHint(false);
+      setShowToast(false);
+      setToastMessage(null);
     }
   };
 
@@ -567,7 +594,7 @@ export default function QuizPage() {
                       >
                         {currentQuestionIndex === questions.length - 1
                           ? "Review Answers"
-                          : "Next Question"}
+                          : "Submit"}
                       </Button>
                     </div>
                   </CardContent>
