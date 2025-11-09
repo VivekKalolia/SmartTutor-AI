@@ -70,8 +70,8 @@ const scienceTopics = [
 ];
 
 const pieData = [
-  { name: "Math", value: 88, color: MATH_COLOR },
-  { name: "Science", value: 86, color: SCIENCE_COLOR },
+  { name: "Math", value: overallMathMastery, color: MATH_COLOR },
+  { name: "Science", value: overallScienceMastery, color: SCIENCE_COLOR },
 ];
 
 export default function Dashboard() {
@@ -284,7 +284,9 @@ export default function Dashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Subject Distribution</CardTitle>
-              <CardDescription>Overall subject mastery</CardDescription>
+              <CardDescription>
+                Relative distribution between subjects (each can achieve 100% mastery independently)
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>

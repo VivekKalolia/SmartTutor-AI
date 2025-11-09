@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Upload, FileText, Users, Settings, GraduationCap } from "lucide-react";
+import { Upload, FileText, Users, Settings, GraduationCap, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const teacherNavigation = [
-  { name: "Document Upload", href: "/teachers", icon: Upload },
-  { name: "Student Management", href: "/teachers/students", icon: Users },
-  { name: "Settings", href: "/teachers/settings", icon: Settings },
+  { name: "Dashboard", href: "/teacher", icon: LayoutDashboard },
+  { name: "Document Upload", href: "/teacher/upload", icon: Upload },
+  { name: "Student Management", href: "/teacher/students", icon: Users },
+  { name: "Settings", href: "/teacher/settings", icon: Settings },
 ];
 
 export function TeacherSidebar() {
@@ -18,7 +19,7 @@ export function TeacherSidebar() {
   return (
     <div className="flex h-screen w-64 flex-col border-r bg-background">
       <div className="flex h-16 items-center border-b px-6">
-        <Link href="/teachers" className="flex items-center gap-2" style={{ cursor: "pointer" }}>
+        <Link href="/teacher" className="flex items-center gap-2" style={{ cursor: "pointer" }}>
           <GraduationCap className="h-6 w-6 text-primary" />
           <h1 className="text-xl font-bold text-primary">Teacher Portal</h1>
         </Link>

@@ -1,193 +1,208 @@
 "use client";
 
-import { useState } from "react";
-import Layout from "@/components/layout";
+import TeacherLayout from "@/components/teacher-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Upload, FileText, X, CheckCircle2, Sparkles } from "lucide-react";
+import {
+  Users,
+  TrendingUp,
+  Award,
+  BookOpen,
+  BarChart3,
+  Target,
+} from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  Cell,
+} from "recharts";
 
-interface UploadedDocument {
-  id: string;
-  name: string;
-  size: string;
-  uploadDate: Date;
-  status: "uploaded" | "processing" | "ready";
-}
+const studentPerformance = [
+  { name: "John Smith", math: 88, science: 86, avgScore: 87 },
+  { name: "Emily Chen", math: 92, science: 89, avgScore: 90.5 },
+  { name: "Michael Brown", math: 75, science: 78, avgScore: 76.5 },
+  { name: "Sarah Wilson", math: 95, science: 93, avgScore: 94 },
+  { name: "David Lee", math: 82, science: 85, avgScore: 83.5 },
+];
 
-export default function TeacherPortal() {
-  const [documents, setDocuments] = useState<UploadedDocument[]>([
-    {
-      id: "1",
-      name: "Calculus_Textbook_Chapter1.pdf",
-      size: "2.4 MB",
-      uploadDate: new Date("2024-11-01"),
-      status: "ready",
-    },
-    {
-      id: "2",
-      name: "Physics_Lab_Manual.pdf",
-      size: "1.8 MB",
-      uploadDate: new Date("2024-11-05"),
-      status: "ready",
-    },
-  ]);
-  const [uploading, setUploading] = useState(false);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
+const classStats = {
+  totalStudents: 25,
+  averageMathScore: 86,
+  averageScienceScore: 86,
+  studentsCompleted: 20,
+  topicsCovered: 16,
+};
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+const subjectDistribution = [
+  { subject: "Math", students: 25, avgScore: 86 },
+  { subject: "Science", students: 25, avgScore: 86 },
+];
 
-    setUploading(true);
-    setUploadSuccess(false);
-
-    // Simulate upload and processing
-    setTimeout(() => {
-      const newDoc: UploadedDocument = {
-        id: Date.now().toString(),
-        name: file.name,
-        size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
-        uploadDate: new Date(),
-        status: "ready",
-      };
-      setDocuments([...documents, newDoc]);
-      setUploading(false);
-      setUploadSuccess(true);
-      setTimeout(() => setUploadSuccess(false), 3000);
-    }, 2000);
-  };
-
-  const handleDelete = (id: string) => {
-    setDocuments(documents.filter((doc) => doc.id !== id));
-  };
-
+export default function TeacherDashboard() {
   return (
-    <Layout>
+    <TeacherLayout>
       <div className="space-y-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Teacher Portal</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Teacher Dashboard</h1>
           <p className="text-muted-foreground mt-2">
-            Upload documents to enhance the AI Tutor with RAG-based responses
+            Overview of student performance and class statistics
           </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Total Students
+              </CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{classStats.totalStudents}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Enrolled in class
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Average Math Score
+              </CardTitle>
+              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{classStats.averageMathScore}%</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Class average
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Average Science Score
+              </CardTitle>
+              <Target className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{classStats.averageScienceScore}%</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Class average
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Topics Covered
+              </CardTitle>
+              <BookOpen className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{classStats.topicsCovered}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                In curriculum
+              </p>
+            </CardContent>
+          </Card>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary" />
-              Document Upload
-            </CardTitle>
+            <CardTitle>Student Performance Overview</CardTitle>
             <CardDescription>
-              Upload PDF, DOCX, or TXT files. The AI Tutor will use these
-              documents to provide contextually relevant answers.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {uploadSuccess && (
-              <Alert className="border-green-500 bg-green-50 dark:bg-green-950">
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-800 dark:text-green-200">
-                  Document uploaded and processed successfully!
-                </AlertDescription>
-              </Alert>
-            )}
-
-            <div className="border-2 border-dashed rounded-lg p-8 text-center">
-              <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-sm text-muted-foreground mb-4">
-                Drag and drop files here, or click to select
-              </p>
-              <Input
-                type="file"
-                accept=".pdf,.docx,.txt"
-                onChange={handleFileUpload}
-                disabled={uploading}
-                className="hidden"
-                id="file-upload"
-              />
-              <Button
-                asChild
-                disabled={uploading}
-                className="gap-2"
-              >
-                <label htmlFor="file-upload" className="cursor-pointer">
-                  {uploading ? "Uploading..." : "Choose File"}
-                </label>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Uploaded Documents</CardTitle>
-            <CardDescription>
-              {documents.length} document{documents.length !== 1 ? "s" : ""}{" "}
-              available for RAG chatbot
+              Individual student scores across Math and Science
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {documents.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                No documents uploaded yet. Upload your first document to get
-                started.
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {documents.map((doc) => (
-                  <div
-                    key={doc.id}
-                    className="flex items-center justify-between p-4 border rounded-lg"
-                  >
-                    <div className="flex items-center gap-3 flex-1">
-                      <FileText className="h-5 w-5 text-muted-foreground" />
-                      <div className="flex-1">
-                        <p className="font-medium">{doc.name}</p>
-                        <div className="flex items-center gap-3 mt-1">
-                          <span className="text-xs text-muted-foreground">
-                            {doc.size}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            • Uploaded {doc.uploadDate.toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
-                      <Badge
-                        variant={
-                          doc.status === "ready"
-                            ? "default"
-                            : doc.status === "processing"
-                            ? "secondary"
-                            : "outline"
-                        }
-                      >
-                        {doc.status === "ready"
-                          ? "Ready"
-                          : doc.status === "processing"
-                          ? "Processing"
-                          : "Uploaded"}
-                      </Badge>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(doc.id)}
-                      className="ml-4"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart data={studentPerformance}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis domain={[0, 100]} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="math" fill="#1E3A8A" name="Math" />
+                <Bar dataKey="science" fill="#059669" name="Science" />
+              </BarChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Top Performing Students</CardTitle>
+              <CardDescription>Students with highest average scores</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {studentPerformance
+                  .sort((a, b) => b.avgScore - a.avgScore)
+                  .slice(0, 5)
+                  .map((student, idx) => (
+                    <div
+                      key={student.name}
+                      className="flex items-center justify-between p-3 rounded-lg border"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Badge variant="secondary">#{idx + 1}</Badge>
+                        <span className="font-medium">{student.name}</span>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className="text-sm text-muted-foreground">
+                          Math: {student.math}%
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          Science: {student.science}%
+                        </span>
+                        <span className="font-semibold text-primary">
+                          {student.avgScore}%
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Subject Performance</CardTitle>
+              <CardDescription>Average scores by subject</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={subjectDistribution}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="subject" />
+                  <YAxis domain={[0, 100]} />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="avgScore" name="Average Score %">
+                    {subjectDistribution.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.subject === "Math" ? "#1E3A8A" : "#059669"}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </Layout>
+    </TeacherLayout>
   );
 }
-

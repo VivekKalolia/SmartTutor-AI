@@ -16,7 +16,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Send, Copy, Sparkles, Paperclip, Cpu } from "lucide-react";
+import {
+  Send,
+  Copy,
+  Sparkles,
+  Paperclip,
+  Cpu,
+  Mic,
+} from "lucide-react";
 
 const aiModels = [
   { id: "llama-3b", name: "Llama 3B", description: "Lightweight, fast" },
@@ -78,6 +85,7 @@ export default function TutorPage() {
   );
   const [input, setInput] = useState("");
   const [selectedModel, setSelectedModel] = useState("deepseek");
+  const [isRecording, setIsRecording] = useState(false);
 
   const handleSend = () => {
     if (!input.trim() || isLoading) return;
@@ -113,18 +121,26 @@ export default function TutorPage() {
   };
 
   const handleFileAttach = () => {
-    // File attachment handler - placeholder
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".pdf,.docx,.txt,.png,.jpg";
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
-        // Handle file attachment
         console.log("File attached:", file.name);
       }
     };
     input.click();
+  };
+
+  const handleVoiceRecord = () => {
+    setIsRecording(!isRecording);
+    // Placeholder for Whisper integration
+    if (!isRecording) {
+      console.log("Starting voice recording...");
+    } else {
+      console.log("Stopping voice recording...");
+    }
   };
 
   return (
@@ -138,27 +154,7 @@ export default function TutorPage() {
                   <Sparkles className="h-5 w-5 text-primary" />
                   AI Tutor
                 </CardTitle>
-                <div className="flex items-center gap-3">
-                  <Select value={selectedModel} onValueChange={setSelectedModel}>
-                    <SelectTrigger className="w-[180px]" style={{ cursor: "pointer" }}>
-                      <Cpu className="h-4 w-4 mr-2" />
-                      <SelectValue placeholder="Select model" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {aiModels.map((model) => (
-                        <SelectItem key={model.id} value={model.id} style={{ cursor: "pointer" }}>
-                          <div className="flex flex-col">
-                            <span className="font-medium">{model.name}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {model.description}
-                            </span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Badge variant="secondary">Online</Badge>
-                </div>
+                <Badge variant="secondary">Online</Badge>
               </div>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col min-h-0">
@@ -229,15 +225,7 @@ export default function TutorPage() {
                 )}
               </div>
 
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleFileAttach}
-                  style={{ cursor: "pointer" }}
-                >
-                  <Paperclip className="h-4 w-4" />
-                </Button>
+              <div className="flex gap-2 items-center">
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
@@ -250,6 +238,45 @@ export default function TutorPage() {
                   placeholder="Ask a question about your coursework..."
                   className="flex-1"
                 />
+                <Select value={selectedModel} onValueChange={setSelectedModel}>
+                  <SelectTrigger className="w-[140px]" style={{ cursor: "pointer" }}>
+                    <Cpu className="h-4 w-4 mr-2" />
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {aiModels.map((model) => (
+                      <SelectItem
+                        key={model.id}
+                        value={model.id}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <div className="flex flex-col">
+                          <span className="font-medium">{model.name}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {model.description}
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleFileAttach}
+                  style={{ cursor: "pointer" }}
+                >
+                  <Paperclip className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleVoiceRecord}
+                  className={isRecording ? "bg-red-100" : ""}
+                  style={{ cursor: "pointer" }}
+                >
+                  <Mic className={`h-4 w-4 ${isRecording ? "text-red-600" : ""}`} />
+                </Button>
                 <Button
                   onClick={handleSend}
                   disabled={!input.trim() || isLoading}
