@@ -166,8 +166,10 @@ export default function QuizPage() {
     setQuestionStartTime(null);
 
     // Clear mastery tracking for next question
-    const questionKey = `${currentQuestionIndex}-${currentSubject}`;
-    localStorage.removeItem(`mastery-${questionKey}`);
+    if (currentSubject) {
+      const questionKey = `${currentQuestionIndex}-${currentSubject}`;
+      localStorage.removeItem(`mastery-${questionKey}`);
+    }
 
     if (currentQuestionIndex < questions.length - 1) {
       dispatch(setQuestionIndex(currentQuestionIndex + 1));
