@@ -10,20 +10,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Send,
-  Copy,
-  Sparkles,
-  Paperclip,
-  Cpu,
-  Mic,
-} from "lucide-react";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Send, Copy, Sparkles, Paperclip, Cpu, Mic } from "lucide-react";
 
 const aiModels = [
   { id: "llama-3b", name: "Llama 3B", description: "Lightweight, fast" },
@@ -143,6 +137,8 @@ export default function TutorPage() {
     }
   };
 
+  const selectedModelData = aiModels.find((m) => m.id === selectedModel) || aiModels[1];
+
   return (
     <Layout>
       <div className="flex h-[calc(100vh-8rem)]">
@@ -238,16 +234,25 @@ export default function TutorPage() {
                   placeholder="Ask a question about your coursework..."
                   className="flex-1"
                 />
-                <Select value={selectedModel} onValueChange={setSelectedModel}>
-                  <SelectTrigger className="w-[140px]" style={{ cursor: "pointer" }}>
-                    <Cpu className="h-4 w-4 mr-2" />
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      style={{ cursor: "pointer" }}
+                      title={`${selectedModelData.name} - ${selectedModelData.description}`}
+                    >
+                      <Cpu className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>Select AI Model</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
                     {aiModels.map((model) => (
-                      <SelectItem
+                      <DropdownMenuItem
                         key={model.id}
-                        value={model.id}
+                        onClick={() => setSelectedModel(model.id)}
+                        className={selectedModel === model.id ? "bg-accent" : ""}
                         style={{ cursor: "pointer" }}
                       >
                         <div className="flex flex-col">
@@ -256,10 +261,10 @@ export default function TutorPage() {
                             {model.description}
                           </span>
                         </div>
-                      </SelectItem>
+                      </DropdownMenuItem>
                     ))}
-                  </SelectContent>
-                </Select>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <Button
                   variant="outline"
                   size="icon"

@@ -69,14 +69,14 @@ const scienceTopics = [
   { topic: "Earth Science", mastery: 68, color: scienceShades[3] },
 ];
 
-const pieData = [
-  { name: "Math", value: overallMathMastery, color: MATH_COLOR },
-  { name: "Science", value: overallScienceMastery, color: SCIENCE_COLOR },
-];
-
 export default function Dashboard() {
   const overallMathMastery = 88;
   const overallScienceMastery = 86;
+  
+  const pieData = [
+    { name: "Math", value: overallMathMastery, color: MATH_COLOR },
+    { name: "Science", value: overallScienceMastery, color: SCIENCE_COLOR },
+  ];
   const latestMilestone = masteryPathway[masteryPathway.length - 1];
 
   // Learning statistics

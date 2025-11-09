@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 const teacherNavigation = [
   { name: "Dashboard", href: "/teacher", icon: LayoutDashboard },
   { name: "Knowledge Base", href: "/teacher/upload", icon: Upload },
-  { name: "Student Management", href: "/teacher/students", icon: Users },
+  { name: "Students", href: "/teacher/students", icon: Users },
   { name: "Settings", href: "/teacher/settings", icon: Settings },
 ];
 
