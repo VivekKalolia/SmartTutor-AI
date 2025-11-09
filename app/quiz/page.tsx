@@ -577,17 +577,18 @@ export default function QuizPage() {
                       {masteryProgress.toFixed(1)}%
                     </span>
                   </div>
-                  <Progress 
-                    value={masteryProgress} 
-                    className="h-3"
-                    style={{
-                      backgroundColor: masteryProgress >= 70 
-                        ? "rgb(34 197 94 / 0.2)" 
-                        : masteryProgress >= 50 
-                        ? "rgb(234 179 8 / 0.2)" 
-                        : "rgb(239 68 68 / 0.2)"
-                    }}
-                  />
+                  <div className="relative h-3 w-full overflow-hidden rounded-full bg-secondary">
+                    <div
+                      className={`h-full transition-all duration-500 ${
+                        masteryProgress >= 70
+                          ? "bg-green-500"
+                          : masteryProgress >= 50
+                          ? "bg-yellow-500"
+                          : "bg-red-500"
+                      }`}
+                      style={{ width: `${masteryProgress}%` }}
+                    />
+                  </div>
                 </div>
 
                 <Progress value={progress} className="h-2" />
