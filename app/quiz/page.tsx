@@ -46,6 +46,7 @@ export default function QuizPage() {
   const [showReview, setShowReview] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [speakingType, setSpeakingType] = useState<"question" | "feedback" | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
@@ -72,15 +73,13 @@ export default function QuizPage() {
     setFeedback({ type: null, message: "" });
     setShowReview(false);
     setShowHint(false);
+    setIsSubmitted(false);
     setShowToast(false);
     setToastMessage(null);
   };
 
   const handleAnswerSelect = (answerIndex: number) => {
-    if (showReview) return;
-
-    const question = questions[currentQuestionIndex];
-    const isCorrect = answerIndex === question.correctAnswer;
+    if (showReview || isSubmitted) return;
 
     dispatch(
       setAnswer({
@@ -88,17 +87,10 @@ export default function QuizPage() {
         answer: answerIndex.toString(),
       })
     );
-
-    setFeedback({
-      type: isCorrect ? "correct" : "incorrect",
-      message: isCorrect
-        ? "Correct! Well done."
-        : `Incorrect. The correct answer is: ${question.options[question.correctAnswer]}`,
-    });
   };
 
-  const handleNext = () => {
-    if (!answers[currentQuestionIndex]) return;
+  const handleSubmit = () => {
+    if (!answers[currentQuestionIndex] || isSubmitted) return;
 
     const question = questions[currentQuestionIndex];
     const userAnswer = answers[currentQuestionIndex];
@@ -108,7 +100,6 @@ export default function QuizPage() {
       ? "Correct! Well done."
       : `Incorrect. The correct answer is: ${question.options[question.correctAnswer]}`;
 
-    // Show toast below the question
     setToastMessage({
       type: isCorrect ? "success" : "error",
       message,
@@ -118,31 +109,31 @@ export default function QuizPage() {
       type: isCorrect ? "correct" : "incorrect",
       message,
     });
+    setIsSubmitted(true);
+  };
+
+  const handleNextQuestion = () => {
+    setIsSubmitted(false);
+    setShowToast(false);
+    setToastMessage(null);
+    setFeedback({ type: null, message: "" });
+    setShowHint(false);
 
     if (currentQuestionIndex < questions.length - 1) {
-      setTimeout(() => {
-        dispatch(setQuestionIndex(currentQuestionIndex + 1));
-        setFeedback({ type: null, message: "" });
-        setShowHint(false);
-        setShowToast(false);
-        setToastMessage(null);
-      }, 2000);
+      dispatch(setQuestionIndex(currentQuestionIndex + 1));
     } else {
-      setTimeout(() => {
-        setShowReview(true);
-        setShowToast(false);
-        setToastMessage(null);
-      }, 2000);
+      setShowReview(true);
     }
   };
 
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
+      setIsSubmitted(false);
+      setShowToast(false);
+      setToastMessage(null);
       dispatch(setQuestionIndex(currentQuestionIndex - 1));
       setFeedback({ type: null, message: "" });
       setShowHint(false);
-      setShowToast(false);
-      setToastMessage(null);
     }
   };
 
@@ -151,6 +142,9 @@ export default function QuizPage() {
     setFeedback({ type: null, message: "" });
     setShowReview(false);
     setShowHint(false);
+    setIsSubmitted(false);
+    setShowToast(false);
+    setToastMessage(null);
   };
 
   const handleHint = () => {
@@ -566,7 +560,7 @@ export default function QuizPage() {
 
                     {showToast && toastMessage && (
                       <div
-                        className={`rounded-lg border p-4 shadow-lg animate-in slide-in-from-bottom-2 ${
+                        className={`rounded-lg border p-4 shadow-lg ${
                           toastMessage.type === "success"
                             ? "border-green-500 bg-green-50 dark:bg-green-950"
                             : "border-red-500 bg-red-50 dark:bg-red-950"
@@ -589,7 +583,7 @@ export default function QuizPage() {
                       </div>
                     )}
 
-                    {feedback.type && (
+                    {isSubmitted && feedback.type && (
                       <Card className="bg-muted/50">
                         <CardContent className="pt-6">
                           <p className="text-sm font-medium mb-2">
@@ -611,16 +605,26 @@ export default function QuizPage() {
                       >
                         Previous
                       </Button>
-                      <Button
-                        onClick={handleNext}
-                        className="flex-1"
-                        disabled={!answers[currentQuestionIndex]}
-                        style={{ cursor: !answers[currentQuestionIndex] ? "not-allowed" : "pointer" }}
-                      >
-                        {currentQuestionIndex === questions.length - 1
-                          ? "Review Answers"
-                          : "Submit"}
-                      </Button>
+                      {!isSubmitted ? (
+                        <Button
+                          onClick={handleSubmit}
+                          className="flex-1"
+                          disabled={!answers[currentQuestionIndex]}
+                          style={{ cursor: !answers[currentQuestionIndex] ? "not-allowed" : "pointer" }}
+                        >
+                          Submit
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={handleNextQuestion}
+                          className="flex-1"
+                          style={{ cursor: "pointer" }}
+                        >
+                          {currentQuestionIndex === questions.length - 1
+                            ? "Review Answers"
+                            : "Next"}
+                        </Button>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
