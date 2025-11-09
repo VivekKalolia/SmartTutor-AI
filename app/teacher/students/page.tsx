@@ -3,7 +3,8 @@
 import TeacherLayout from "@/components/teacher-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Users, Search } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Users, Search, AlertCircle } from "lucide-react";
 
 const students = [
   {
@@ -11,24 +12,32 @@ const students = [
     name: "John Smith",
     mathScore: 88,
     scienceScore: 86,
+    weakAreas: ["Statistics"],
+    helpSummary: "Needs additional support with statistical analysis and probability concepts.",
   },
   {
     id: "2",
     name: "Emily Chen",
     mathScore: 92,
     scienceScore: 89,
+    weakAreas: [],
+    helpSummary: "Performing well across all topics. Minor improvement needed in advanced calculus.",
   },
   {
     id: "3",
     name: "Michael Brown",
     mathScore: 75,
     scienceScore: 78,
+    weakAreas: ["Algebra", "Physics"],
+    helpSummary: "Requires focused assistance with algebraic equations and fundamental physics principles.",
   },
   {
     id: "4",
     name: "Sarah Wilson",
     mathScore: 95,
     scienceScore: 93,
+    weakAreas: [],
+    helpSummary: "Excellent performance. Consider advanced topics for further enrichment.",
   },
 ];
 
@@ -76,7 +85,7 @@ export default function StudentManagement() {
               {students.map((student) => (
                 <div
                   key={student.id}
-                  className="flex items-center justify-between p-4 border rounded-lg"
+                  className="flex items-start justify-between p-4 border rounded-lg gap-4"
                 >
                   <div className="flex items-center gap-4 flex-1">
                     <div className="rounded-full bg-primary/10 p-2">
@@ -91,6 +100,28 @@ export default function StudentManagement() {
                         <span className="text-sm text-muted-foreground">
                           Science: {student.scienceScore}%
                         </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex-1 max-w-md">
+                    <div className="flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-muted-foreground mb-1">
+                          Support Needed:
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {student.helpSummary}
+                        </p>
+                        {student.weakAreas.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {student.weakAreas.map((area) => (
+                              <Badge key={area} variant="destructive" className="text-xs">
+                                {area}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

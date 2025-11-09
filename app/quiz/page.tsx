@@ -28,6 +28,7 @@ import {
   Atom,
   BookOpen,
   Play,
+  Volume2,
 } from "lucide-react";
 import { mathQuestions, scienceQuestions, aiAssistResponses } from "@/lib/demo-data";
 import { AIAssistSheet } from "@/components/ai-assist-sheet";
@@ -419,9 +420,26 @@ export default function QuizPage() {
                 <Card>
                   <CardHeader>
                     <div className="flex items-center justify-between">
-                      <CardTitle>
-                        {questions[currentQuestionIndex]?.question}
-                      </CardTitle>
+                      <div className="flex items-center gap-2 flex-1">
+                        <CardTitle>
+                          {questions[currentQuestionIndex]?.question}
+                        </CardTitle>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => {
+                            const utterance = new SpeechSynthesisUtterance(
+                              questions[currentQuestionIndex]?.question || ""
+                            );
+                            window.speechSynthesis.speak(utterance);
+                          }}
+                          style={{ cursor: "pointer" }}
+                          title="Read question aloud"
+                        >
+                          <Volume2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                       <Button
                         onClick={handleHint}
                         variant="outline"

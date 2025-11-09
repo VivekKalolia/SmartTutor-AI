@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Send, Copy, Sparkles, Paperclip, Cpu, Mic } from "lucide-react";
+import { Send, Copy, Sparkles, Paperclip, Cpu, Mic, Volume2 } from "lucide-react";
 
 const aiModels = [
   { id: "llama-3b", name: "Llama 3B", description: "Lightweight, fast" },
@@ -189,17 +189,34 @@ export default function TutorPage() {
                           <p className="text-sm whitespace-pre-wrap">
                             {message.content}
                           </p>
-                          {message.role === "assistant" && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-6 w-6 flex-shrink-0"
-                              onClick={() => handleCopy(message.content)}
-                              style={{ cursor: "pointer" }}
-                            >
-                              <Copy className="h-3 w-3" />
-                            </Button>
-                          )}
+                          <div className="flex gap-1 flex-shrink-0">
+                            {message.role === "assistant" && (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6"
+                                  onClick={() => {
+                                    const utterance = new SpeechSynthesisUtterance(message.content);
+                                    window.speechSynthesis.speak(utterance);
+                                  }}
+                                  style={{ cursor: "pointer" }}
+                                  title="Read answer aloud"
+                                >
+                                  <Volume2 className="h-3 w-3" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6"
+                                  onClick={() => handleCopy(message.content)}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  <Copy className="h-3 w-3" />
+                                </Button>
+                              </>
+                            )}
+                          </div>
                         </div>
                         <p className="text-xs opacity-70 mt-2">
                           {message.timestamp.toLocaleTimeString()}
