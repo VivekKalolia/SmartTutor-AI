@@ -1,6 +1,7 @@
 "use client";
 
 import { User, Settings } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,21 +12,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+
+const pageTitles: Record<string, string> = {
+  "/": "Dashboard",
+  "/quiz": "Smart Quiz",
+  "/tutor": "AI Tutor",
+  "/settings": "Settings",
+};
 
 export function Navbar() {
+  const pathname = usePathname();
+  const pageTitle = pageTitles[pathname] || "Dashboard";
+  
   // Demo student data
   const studentName = "John Smith";
   const studentEmail = "john.smith@university.edu";
-  const studentId = "STU-2024-001";
   const initials = "JS";
 
   return (
     <div className="border-b bg-background">
       <div className="flex h-16 items-center justify-between px-6">
         <div className="flex items-center gap-4">
-          <h2 className="text-lg font-semibold">Student Portal</h2>
-          <Badge variant="secondary">{studentId}</Badge>
+          <h2 className="text-lg font-semibold">{pageTitle}</h2>
         </div>
 
         <div className="flex items-center gap-4">

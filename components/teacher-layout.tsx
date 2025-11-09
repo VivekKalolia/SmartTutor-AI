@@ -1,7 +1,8 @@
 "use client";
 
 import { TeacherSidebar } from "@/components/teacher-sidebar";
-import { User, Bell, Settings } from "lucide-react";
+import { User, Settings } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,17 +13,25 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+
+const teacherPageTitles: Record<string, string> = {
+  "/teacher": "Dashboard",
+  "/teacher/upload": "Knowledge Base",
+  "/teacher/students": "Students",
+  "/teacher/settings": "Settings",
+};
 
 export default function TeacherLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const pageTitle = teacherPageTitles[pathname] || "Dashboard";
+  
   // Demo teacher data
   const teacherName = "Dr. Sarah Johnson";
   const teacherEmail = "sarah.johnson@university.edu";
-  const teacherId = "TCH-2024-001";
   const initials = "SJ";
 
   return (
@@ -32,16 +41,10 @@ export default function TeacherLayout({
         <div className="border-b bg-background">
           <div className="flex h-16 items-center justify-between px-6">
             <div className="flex items-center gap-4">
-              <h2 className="text-lg font-semibold">Teacher Portal</h2>
-              <Badge variant="secondary">{teacherId}</Badge>
+              <h2 className="text-lg font-semibold">{pageTitle}</h2>
             </div>
 
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" className="relative" style={{ cursor: "pointer" }}>
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
-              </Button>
-
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center gap-3" style={{ cursor: "pointer" }}>
@@ -61,16 +64,16 @@ export default function TeacherLayout({
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer">
+                  <DropdownMenuItem className="cursor-pointer" style={{ cursor: "pointer" }}>
                     <User className="mr-2 h-4 w-4" />
                     Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
+                  <DropdownMenuItem className="cursor-pointer" style={{ cursor: "pointer" }}>
                     <Settings className="mr-2 h-4 w-4" />
                     Settings
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer">Log out</DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer" style={{ cursor: "pointer" }}>Log out</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

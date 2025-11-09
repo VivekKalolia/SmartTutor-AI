@@ -21,7 +21,7 @@ export function TeacherSidebar() {
       <div className="flex h-16 items-center border-b px-6">
         <Link href="/teacher" className="flex items-center gap-2" style={{ cursor: "pointer" }}>
           <GraduationCap className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-bold text-primary">Teacher Portal</h1>
+          <h1 className="text-xl font-bold text-primary">SmartTutor AI</h1>
         </Link>
       </div>
       <nav className="flex-1 space-y-1 p-4">
@@ -45,6 +45,12 @@ export function TeacherSidebar() {
           );
         })}
       </nav>
+      <div className="border-t p-4">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <GraduationCap className="h-4 w-4" />
+          <span>Teacher Portal</span>
+        </div>
+      </div>
     </div>
   );
 }
