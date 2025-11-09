@@ -2,7 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Brain, MessageSquare, GraduationCap } from "lucide-react";
+import {
+  LayoutDashboard,
+  Brain,
+  MessageSquare,
+  GraduationCap,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -18,7 +23,11 @@ export function Sidebar() {
   return (
     <div className="flex h-screen w-64 flex-col border-r bg-background">
       <div className="flex h-16 items-center border-b px-6">
-        <Link href="/" className="flex items-center gap-2" style={{ cursor: "pointer" }}>
+        <Link
+          href="/"
+          className="flex items-center gap-2"
+          style={{ cursor: "pointer" }}
+        >
           <GraduationCap className="h-6 w-6 text-primary" />
           <h1 className="text-xl font-bold text-primary">SmartTutor AI</h1>
         </Link>
@@ -28,7 +37,11 @@ export function Sidebar() {
           const Icon = item.icon;
           const isActive = pathname === item.href;
           return (
-            <Link key={item.name} href={item.href} style={{ cursor: "pointer" }}>
+            <Link
+              key={item.name}
+              href={item.href}
+              style={{ cursor: "pointer" }}
+            >
               <Button
                 variant={isActive ? "default" : "ghost"}
                 className={cn(
