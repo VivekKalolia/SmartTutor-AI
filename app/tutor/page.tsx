@@ -80,18 +80,19 @@ export default function TutorPage() {
   const [input, setInput] = useState("");
   const [selectedModel, setSelectedModel] = useState("deepseek");
   const [isRecording, setIsRecording] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
 
-  const handleTTS = (text: string) => {
-    if (isSpeaking) {
+  const handleTTS = (text: string, messageId: string) => {
+    if (speakingMessageId === messageId) {
       window.speechSynthesis.cancel();
-      setIsSpeaking(false);
+      setSpeakingMessageId(null);
     } else {
+      window.speechSynthesis.cancel(); // Cancel any ongoing speech
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = () => setIsSpeaking(false);
+      utterance.onend = () => setSpeakingMessageId(null);
+      utterance.onerror = () => setSpeakingMessageId(null);
       window.speechSynthesis.speak(utterance);
-      setIsSpeaking(true);
+      setSpeakingMessageId(messageId);
     }
   };
 
@@ -210,11 +211,11 @@ export default function TutorPage() {
                                   variant="ghost"
                                   size="icon"
                                   className="h-6 w-6"
-                                  onClick={() => handleTTS(message.content)}
+                                  onClick={() => handleTTS(message.content, message.id)}
                                   style={{ cursor: "pointer" }}
-                                  title={isSpeaking ? "Stop reading" : "Read answer aloud"}
+                                  title={speakingMessageId === message.id ? "Stop reading" : "Read answer aloud"}
                                 >
-                                  {isSpeaking ? (
+                                  {speakingMessageId === message.id ? (
                                     <VolumeX className="h-3 w-3" />
                                   ) : (
                                     <Volume2 className="h-3 w-3" />
