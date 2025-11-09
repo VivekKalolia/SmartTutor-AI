@@ -12,7 +12,13 @@ import {
 } from "@/lib/features/quiz/quizSlice";
 import Layout from "@/components/layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -33,7 +39,11 @@ import {
   Clock,
   TrendingUp,
 } from "lucide-react";
-import { mathQuestions, scienceQuestions, aiAssistResponses } from "@/lib/demo-data";
+import {
+  mathQuestions,
+  scienceQuestions,
+  aiAssistResponses,
+} from "@/lib/demo-data";
 import { AIAssistSheet } from "@/components/ai-assist-sheet";
 import { toast } from "sonner";
 
@@ -47,14 +57,23 @@ export default function QuizPage() {
   }>({ type: null, message: "" });
   const [showReview, setShowReview] = useState(false);
   const [showHint, setShowHint] = useState(false);
-  const [speakingType, setSpeakingType] = useState<"question" | "feedback" | null>(null);
+  const [speakingType, setSpeakingType] = useState<
+    "question" | "feedback" | null
+  >(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [toastMessage, setToastMessage] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
   const [questionTime, setQuestionTime] = useState(0);
-  const [questionStartTime, setQuestionStartTime] = useState<number | null>(null);
+  const [questionStartTime, setQuestionStartTime] = useState<number | null>(
+    null
+  );
   const [masteryImprovement, setMasteryImprovement] = useState(0);
-  const [questionTimes, setQuestionTimes] = useState<Record<number, number>>({});
+  const [questionTimes, setQuestionTimes] = useState<Record<number, number>>(
+    {}
+  );
 
   const questions =
     currentSubject === "math" ? mathQuestions : scienceQuestions;
@@ -225,6 +244,35 @@ export default function QuizPage() {
       : count;
   }, 0);
 
+  // Timer effect - start timer when question changes
+  useEffect(() => {
+    if (currentSubject && !isSubmitted) {
+      setQuestionStartTime(Date.now());
+      setQuestionTime(0);
+      const interval = setInterval(() => {
+        setQuestionTime((prev) => prev + 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [currentQuestionIndex, currentSubject, isSubmitted]);
+
+  // Calculate mastery improvement (mock DKT model)
+  useEffect(() => {
+    if (isSubmitted && currentSubject) {
+      const question = questions[currentQuestionIndex];
+      const userAnswer = answers[currentQuestionIndex];
+      const isCorrect = userAnswer && parseInt(userAnswer) === question.correctAnswer;
+      
+      // Mock DKT improvement calculation
+      // Improvement based on correctness and question difficulty
+      const baseImprovement = isCorrect ? 2.5 : 0.8;
+      const difficultyFactor = 0.5; // Mock difficulty
+      const improvement = baseImprovement * (1 + difficultyFactor);
+      
+      setMasteryImprovement((prev) => prev + improvement);
+    }
+  }, [isSubmitted, currentQuestionIndex, currentSubject, questions, answers]);
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -271,15 +319,21 @@ export default function QuizPage() {
                             <Calculator className="h-8 w-8 text-[#1E3A8A]" />
                           </div>
                           <div className="flex-1">
-                            <h3 className="text-xl font-bold mb-2">Mathematics Quiz</h3>
+                            <h3 className="text-xl font-bold mb-2">
+                              Mathematics Quiz
+                            </h3>
                             <p className="text-muted-foreground mb-4">
-                              Practice calculus, algebra, geometry, and advanced mathematics concepts. 
-                              This adaptive quiz will test your understanding across multiple mathematical 
-                              domains and provide detailed feedback on your performance.
+                              Practice calculus, algebra, geometry, and advanced
+                              mathematics concepts. This adaptive quiz will test
+                              your understanding across multiple mathematical
+                              domains and provide detailed feedback on your
+                              performance.
                             </p>
                             <div className="grid grid-cols-2 gap-4 mb-4">
                               <div>
-                                <p className="text-sm font-medium">Topics Covered</p>
+                                <p className="text-sm font-medium">
+                                  Topics Covered
+                                </p>
                                 <p className="text-sm text-muted-foreground">
                                   Algebra, Calculus, Geometry, Statistics
                                 </p>
@@ -315,15 +369,21 @@ export default function QuizPage() {
                             <Atom className="h-8 w-8 text-[#059669]" />
                           </div>
                           <div className="flex-1">
-                            <h3 className="text-xl font-bold mb-2">Science Quiz</h3>
+                            <h3 className="text-xl font-bold mb-2">
+                              Science Quiz
+                            </h3>
                             <p className="text-muted-foreground mb-4">
-                              Test your understanding of physics, chemistry, biology, and scientific 
-                              principles. This comprehensive quiz covers fundamental concepts and 
-                              real-world applications across various scientific disciplines.
+                              Test your understanding of physics, chemistry,
+                              biology, and scientific principles. This
+                              comprehensive quiz covers fundamental concepts and
+                              real-world applications across various scientific
+                              disciplines.
                             </p>
                             <div className="grid grid-cols-2 gap-4 mb-4">
                               <div>
-                                <p className="text-sm font-medium">Topics Covered</p>
+                                <p className="text-sm font-medium">
+                                  Topics Covered
+                                </p>
                                 <p className="text-sm text-muted-foreground">
                                   Physics, Chemistry, Biology, Earth Science
                                 </p>
@@ -448,7 +508,11 @@ export default function QuizPage() {
                   </div>
 
                   <div className="flex gap-3">
-                    <Button onClick={handleRetry} className="flex-1" style={{ cursor: "pointer" }}>
+                    <Button
+                      onClick={handleRetry}
+                      className="flex-1"
+                      style={{ cursor: "pointer" }}
+                    >
                       <RotateCcw className="mr-2 h-4 w-4" />
                       Retry Quiz
                     </Button>
@@ -474,7 +538,8 @@ export default function QuizPage() {
                       variant="secondary"
                       className="mb-2"
                       style={{
-                        backgroundColor: currentSubject === "math" ? "#1E3A8A" : "#059669",
+                        backgroundColor:
+                          currentSubject === "math" ? "#1E3A8A" : "#059669",
                         color: "white",
                       }}
                     >
@@ -493,8 +558,8 @@ export default function QuizPage() {
                     </div>
                     {masteryImprovement > 0 && (
                       <div className="flex items-center gap-2 text-sm text-green-600">
-                        <TrendingUp className="h-4 w-4" />
-                        +{masteryImprovement.toFixed(1)}% mastery
+                        <TrendingUp className="h-4 w-4" />+
+                        {masteryImprovement.toFixed(1)}% mastery
                       </div>
                     )}
                     <div className="text-sm text-muted-foreground">
@@ -516,9 +581,18 @@ export default function QuizPage() {
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => handleTTS(questions[currentQuestionIndex]?.question || "", "question")}
+                          onClick={() =>
+                            handleTTS(
+                              questions[currentQuestionIndex]?.question || "",
+                              "question"
+                            )
+                          }
                           style={{ cursor: "pointer" }}
-                          title={speakingType === "question" ? "Stop reading" : "Read question aloud"}
+                          title={
+                            speakingType === "question"
+                              ? "Stop reading"
+                              : "Read question aloud"
+                          }
                         >
                           {speakingType === "question" ? (
                             <VolumeX className="h-4 w-4" />
@@ -561,12 +635,9 @@ export default function QuizPage() {
                           const isCorrect =
                             idx ===
                             questions[currentQuestionIndex].correctAnswer;
-                          const showCorrect =
-                            isSubmitted && isCorrect;
+                          const showCorrect = isSubmitted && isCorrect;
                           const showIncorrect =
-                            isSubmitted &&
-                            isSelected &&
-                            !isCorrect;
+                            isSubmitted && isSelected && !isCorrect;
 
                           return (
                             <Card
@@ -575,13 +646,17 @@ export default function QuizPage() {
                                 showCorrect
                                   ? "border-green-500 bg-green-50 dark:bg-green-950"
                                   : showIncorrect
-                                  ? "border-red-500 bg-red-50 dark:bg-red-950"
-                                  : isSelected
-                                  ? "border-primary bg-primary/5"
-                                  : "hover:border-primary/50"
+                                    ? "border-red-500 bg-red-50 dark:bg-red-950"
+                                    : isSelected
+                                      ? "border-primary bg-primary/5"
+                                      : "hover:border-primary/50"
                               }`}
-                              onClick={() => !isSubmitted && handleAnswerSelect(idx)}
-                              style={{ cursor: isSubmitted ? "default" : "pointer" }}
+                              onClick={() =>
+                                !isSubmitted && handleAnswerSelect(idx)
+                              }
+                              style={{
+                                cursor: isSubmitted ? "default" : "pointer",
+                              }}
                             >
                               <CardContent className="p-4">
                                 <div className="flex items-center justify-between">
@@ -614,11 +689,13 @@ export default function QuizPage() {
                           ) : (
                             <XCircle className="h-4 w-4 text-red-600" />
                           )}
-                          <p className={`text-sm font-medium ${
-                            toastMessage.type === "success"
-                              ? "text-green-800 dark:text-green-200"
-                              : "text-red-800 dark:text-red-200"
-                          }`}>
+                          <p
+                            className={`text-sm font-medium ${
+                              toastMessage.type === "success"
+                                ? "text-green-800 dark:text-green-200"
+                                : "text-red-800 dark:text-red-200"
+                            }`}
+                          >
                             {toastMessage.message}
                           </p>
                         </div>
@@ -643,7 +720,12 @@ export default function QuizPage() {
                         onClick={handlePrevious}
                         variant="outline"
                         disabled={currentQuestionIndex === 0}
-                        style={{ cursor: currentQuestionIndex === 0 ? "not-allowed" : "pointer" }}
+                        style={{
+                          cursor:
+                            currentQuestionIndex === 0
+                              ? "not-allowed"
+                              : "pointer",
+                        }}
                       >
                         Previous
                       </Button>
@@ -652,7 +734,11 @@ export default function QuizPage() {
                           onClick={handleSubmit}
                           className="flex-1"
                           disabled={!answers[currentQuestionIndex]}
-                          style={{ cursor: !answers[currentQuestionIndex] ? "not-allowed" : "pointer" }}
+                          style={{
+                            cursor: !answers[currentQuestionIndex]
+                              ? "not-allowed"
+                              : "pointer",
+                          }}
                         >
                           Submit
                         </Button>
