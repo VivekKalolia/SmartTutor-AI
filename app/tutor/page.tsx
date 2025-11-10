@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from "@/lib/store";
 import { addMessage, setLoading } from "@/lib/features/tutor/tutorSlice";
 import Layout from "@/components/layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -241,15 +242,17 @@ export default function TutorPage() {
                         </div>
                         {message.role === "assistant" && (
                           (() => {
-                            const citation = extractCitation(message.content);
-                            return citation ? (
-                              <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-                                <FileText className="h-3 w-3" />
-                                <span>
-                                  Source: <span className="font-medium">{citation}</span>
-                                </span>
-                              </div>
-                            ) : null;
+                            const citation = extractCitation(message.content) || "Knowledge Base";
+                            return (
+                              <Alert className="mt-2 py-2 pr-3">
+                                <div className="flex items-center gap-2">
+                                  <FileText className="h-4 w-4 text-muted-foreground" />
+                                  <AlertDescription className="text-xs">
+                                    Source: <span className="font-medium">{citation}</span>
+                                  </AlertDescription>
+                                </div>
+                              </Alert>
+                            );
                           })()
                         )}
                         <p className="text-xs opacity-70 mt-2">
