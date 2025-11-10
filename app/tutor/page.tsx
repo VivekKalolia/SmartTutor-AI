@@ -132,12 +132,14 @@ export default function TutorPage() {
 
   useEffect(() => {
     if (!messagesContainerRef.current) return;
-    const container = messagesContainerRef.current;
-    const scrollOptions: ScrollToOptions = {
-      top: container.scrollHeight,
-      behavior: "smooth",
-    };
-    container.scrollTo(scrollOptions);
+    if (messages.length > 0) {
+      const container = messagesContainerRef.current;
+      const scrollOptions: ScrollToOptions = {
+        top: container.scrollHeight,
+        behavior: "smooth",
+      };
+      container.scrollTo(scrollOptions);
+    }
     updateScrollFades();
   }, [messages]);
 
@@ -250,17 +252,17 @@ export default function TutorPage() {
                 ref={messagesContainerRef}
               >
                 {messages.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+                  <div className="flex h-full flex-col items-center justify-center text-center space-y-6 pt-8">
                     <div className="rounded-full bg-primary/10 p-4">
                       <Sparkles className="h-8 w-8 text-primary" />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <h3 className="text-lg font-semibold">
                         How can I help you today?
                       </h3>
-                      <p className="text-muted-foreground mt-2">
-                        Ask me anything about your coursework, concepts, or study
-                        strategies.
+                      <p className="text-muted-foreground max-w-sm mx-auto">
+                        Ask me anything about your coursework, concepts, or
+                        study strategies.
                       </p>
                     </div>
                   </div>

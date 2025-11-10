@@ -78,6 +78,19 @@ export default function QuizPage() {
   const questions =
     currentSubject === "math" ? mathQuestions : scienceQuestions;
 
+  const formatTime = (totalSeconds: number) => {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    const parts = [];
+    if (hours > 0) parts.push(`${hours}h`);
+    if (minutes > 0 || hours > 0) parts.push(`${minutes}m`);
+    parts.push(`${seconds}s`);
+
+    return parts.join(" ");
+  };
+
   const handleTTS = (text: string, type: "question" | "feedback") => {
     if (speakingType === type) {
       window.speechSynthesis.cancel();
@@ -553,11 +566,8 @@ export default function QuizPage() {
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Clock className="h-4 w-4" />
                       {isSubmitted && questionTimes[currentQuestionIndex]
-                        ? `${questionTimes[currentQuestionIndex]}s`
-                        : `${questionTime}s`}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {submittedCount} answered
+                        ? formatTime(questionTimes[currentQuestionIndex])
+                        : formatTime(questionTime)}
                     </div>
                   </div>
                 </div>
@@ -602,59 +612,59 @@ export default function QuizPage() {
                 </div>
 
                 <Card>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 flex-1">
-                        <CardTitle>
+                  <CardHeader className="space-y-4">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        onClick={() => dispatch(toggleAIAssist())}
+                        variant="outline"
+                        size="sm"
+                        className="gap-2"
+                        style={{ cursor: "pointer" }}
+                      >
+                        <Brain className="h-4 w-4" />
+                        AI Assist
+                      </Button>
+                      <Button
+                        onClick={handleHint}
+                        variant="outline"
+                        size="sm"
+                        className="gap-2"
+                        disabled={showHint}
+                        style={{ cursor: showHint ? "not-allowed" : "pointer" }}
+                      >
+                        <Lightbulb className="h-4 w-4" />
+                        Hint
+                      </Button>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <CardTitle className="flex-1">
+                        <span className="text-lg font-semibold sm:text-xl">
                           {questions[currentQuestionIndex]?.question}
-                        </CardTitle>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() =>
-                            handleTTS(
-                              questions[currentQuestionIndex]?.question || "",
-                              "question"
-                            )
-                          }
-                          style={{ cursor: "pointer" }}
-                          title={
-                            speakingType === "question"
-                              ? "Stop reading"
-                              : "Read question aloud"
-                          }
-                        >
-                          {speakingType === "question" ? (
-                            <VolumeX className="h-4 w-4" />
-                          ) : (
-                            <Volume2 className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          onClick={() => dispatch(toggleAIAssist())}
-                          variant="outline"
-                          size="sm"
-                          className="gap-2"
-                          style={{ cursor: "pointer" }}
-                        >
-                          <Brain className="h-4 w-4" />
-                          AI Assist
-                        </Button>
-                        <Button
-                          onClick={handleHint}
-                          variant="outline"
-                          size="sm"
-                          className="gap-2"
-                          disabled={showHint}
-                          style={{ cursor: showHint ? "not-allowed" : "pointer" }}
-                        >
-                          <Lightbulb className="h-4 w-4" />
-                          Hint
-                        </Button>
-                      </div>
+                        </span>
+                      </CardTitle>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() =>
+                          handleTTS(
+                            questions[currentQuestionIndex]?.question || "",
+                            "question"
+                          )
+                        }
+                        style={{ cursor: "pointer" }}
+                        title={
+                          speakingType === "question"
+                            ? "Stop reading"
+                            : "Read question aloud"
+                        }
+                      >
+                        {speakingType === "question" ? (
+                          <VolumeX className="h-4 w-4" />
+                        ) : (
+                          <Volume2 className="h-4 w-4" />
+                        )}
+                      </Button>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -760,8 +770,9 @@ export default function QuizPage() {
                             {questionTimes[currentQuestionIndex] && (
                               <div className="pt-3 border-t">
                                 <p className="text-xs text-muted-foreground">
-                                  Time taken:{" "}
-                                  {questionTimes[currentQuestionIndex]} seconds
+                                  Time taken: {formatTime(
+                                    questionTimes[currentQuestionIndex]
+                                  )}
                                 </p>
                               </div>
                             )}
