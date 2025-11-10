@@ -207,8 +207,8 @@ export default function TutorPage() {
     <Layout>
       <div className="flex h-[calc(100vh-8rem)]">
         <div className="flex-1 flex flex-col">
-          <Card className="flex-1 flex flex-col">
-            <CardHeader>
+          <Card className="flex-1 flex flex-col overflow-hidden">
+            <CardHeader className="flex-shrink-0">
               <div className="flex items-center justify-center">
                 <CardTitle className="flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-primary" />
@@ -216,7 +216,7 @@ export default function TutorPage() {
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col min-h-0">
+            <CardContent className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <div
                 className="flex-1 overflow-y-auto space-y-4 pb-48"
                 ref={messagesContainerRef}
@@ -477,7 +477,7 @@ export default function TutorPage() {
                   placeholder="Ask a question about your coursework..."
                   className="pr-32"
                 />
-                <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center gap-1">
+                <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
