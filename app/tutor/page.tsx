@@ -257,7 +257,7 @@ export default function TutorPage() {
                                       }
                                       onMouseLeave={() => {
                                         if (citationHideTimer) window.clearTimeout(citationHideTimer);
-                                        const t = window.setTimeout(() => setHoveredCitation(null), 1200);
+                                        const t = window.setTimeout(() => setHoveredCitation(null), 750);
                                         setCitationHideTimer(t);
                                       }}
                                     >
@@ -277,7 +277,7 @@ export default function TutorPage() {
                                             }}
                                             onMouseLeave={() => {
                                               if (citationHideTimer) window.clearTimeout(citationHideTimer);
-                                              const t = window.setTimeout(() => setHoveredCitation(null), 1200);
+                                              const t = window.setTimeout(() => setHoveredCitation(null), 750);
                                               setCitationHideTimer(t);
                                             }}
                                           >
