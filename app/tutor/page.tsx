@@ -18,7 +18,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Send, Copy, Sparkles, Paperclip, Cpu, Mic, Volume2, VolumeX, Square } from "lucide-react";
+import {
+  Send,
+  Copy,
+  Sparkles,
+  Paperclip,
+  Cpu,
+  Mic,
+  Volume2,
+  VolumeX,
+  Square,
+} from "lucide-react";
 import { FileText } from "lucide-react";
 
 const aiModels = [
@@ -96,13 +106,17 @@ export default function TutorPage() {
   const [input, setInput] = useState("");
   const [selectedModel, setSelectedModel] = useState("deepseek");
   const [isRecording, setIsRecording] = useState(false);
-  const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
+  const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(
+    null
+  );
   const [hoveredCitation, setHoveredCitation] = useState<{
     messageId: string;
     index: number;
     title: string;
   } | null>(null);
-  const [citationHideTimer, setCitationHideTimer] = useState<number | null>(null);
+  const [citationHideTimer, setCitationHideTimer] = useState<number | null>(
+    null
+  );
 
   const handleTTS = (text: string, messageId: string) => {
     if (speakingMessageId === messageId) {
@@ -174,7 +188,8 @@ export default function TutorPage() {
     }
   };
 
-  const selectedModelData = aiModels.find((m) => m.id === selectedModel) || aiModels[1];
+  const selectedModelData =
+    aiModels.find((m) => m.id === selectedModel) || aiModels[1];
 
   return (
     <Layout>
@@ -216,8 +231,8 @@ export default function TutorPage() {
                       rawCitations.length > 0
                         ? rawCitations
                         : message.role === "assistant"
-                        ? ["Knowledge Base"]
-                        : [];
+                          ? ["Knowledge Base"]
+                          : [];
                     const displayContent =
                       message.role === "assistant"
                         ? stripCitationTags(message.content)
@@ -227,7 +242,9 @@ export default function TutorPage() {
                       <div
                         key={message.id}
                         className={`flex ${
-                          message.role === "user" ? "justify-end" : "justify-start"
+                          message.role === "user"
+                            ? "justify-end"
+                            : "justify-start"
                         }`}
                       >
                         <div
@@ -242,57 +259,77 @@ export default function TutorPage() {
                               <p className="text-sm whitespace-pre-wrap">
                                 {displayContent}
                               </p>
-                              {message.role === "assistant" && citationList.length > 0 && (
-                                <div className="flex flex-wrap gap-2">
-                                  {citationList.map((citation, idx) => (
-                                    <div
-                                      key={`${message.id}-citation-${idx}`}
-                                      className="relative"
-                                      onMouseEnter={() =>
-                                        setHoveredCitation({
-                                          messageId: message.id,
-                                          index: idx,
-                                          title: citation,
-                                        })
-                                      }
-                                      onMouseLeave={() => {
-                                        if (citationHideTimer) window.clearTimeout(citationHideTimer);
-                                        const t = window.setTimeout(() => setHoveredCitation(null), 750);
-                                        setCitationHideTimer(t);
-                                      }}
-                                    >
-                                      <button
-                                        type="button"
-                                        className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-[11px] font-semibold text-primary transition hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary"
-                                        aria-label={`View citation ${idx + 1}`}
+                              {message.role === "assistant" &&
+                                citationList.length > 0 && (
+                                  <div className="flex flex-wrap gap-2">
+                                    {citationList.map((citation, idx) => (
+                                      <div
+                                        key={`${message.id}-citation-${idx}`}
+                                        className="relative"
+                                        onMouseEnter={() =>
+                                          setHoveredCitation({
+                                            messageId: message.id,
+                                            index: idx,
+                                            title: citation,
+                                          })
+                                        }
+                                        onMouseLeave={() => {
+                                          if (citationHideTimer)
+                                            window.clearTimeout(
+                                              citationHideTimer
+                                            );
+                                          const t = window.setTimeout(
+                                            () => setHoveredCitation(null),
+                                            250
+                                          );
+                                          setCitationHideTimer(t);
+                                        }}
                                       >
-                                        {idx + 1}
-                                      </button>
-                                      {hoveredCitation?.messageId === message.id &&
-                                        hoveredCitation.index === idx && (
-                                          <div
-                                            className="absolute z-30 mt-2 w-64 rounded-md border bg-background p-3 shadow-lg"
-                                            onMouseEnter={() => {
-                                              if (citationHideTimer) window.clearTimeout(citationHideTimer);
-                                            }}
-                                            onMouseLeave={() => {
-                                              if (citationHideTimer) window.clearTimeout(citationHideTimer);
-                                              const t = window.setTimeout(() => setHoveredCitation(null), 750);
-                                              setCitationHideTimer(t);
-                                            }}
-                                          >
-                                            <div className="text-sm leading-relaxed text-muted-foreground">
-                                              Highlighted passage preview from the referenced material. This UI is illustrative for provenance.
+                                        <button
+                                          type="button"
+                                          className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-[11px] font-semibold text-primary transition hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary"
+                                          aria-label={`View citation ${idx + 1}`}
+                                        >
+                                          {idx + 1}
+                                        </button>
+                                        {hoveredCitation?.messageId ===
+                                          message.id &&
+                                          hoveredCitation.index === idx && (
+                                            <div
+                                              className="absolute z-30 mt-2 w-64 rounded-md border bg-background p-3 shadow-lg"
+                                              onMouseEnter={() => {
+                                                if (citationHideTimer)
+                                                  window.clearTimeout(
+                                                    citationHideTimer
+                                                  );
+                                              }}
+                                              onMouseLeave={() => {
+                                                if (citationHideTimer)
+                                                  window.clearTimeout(
+                                                    citationHideTimer
+                                                  );
+                                                const t = window.setTimeout(
+                                                  () =>
+                                                    setHoveredCitation(null),
+                                                  450
+                                                );
+                                                setCitationHideTimer(t);
+                                              }}
+                                            >
+                                              <div className="text-sm leading-relaxed text-muted-foreground">
+                                                Highlighted passage preview from
+                                                the referenced material. This UI
+                                                is illustrative for provenance.
+                                              </div>
+                                              <div className="mt-2 border-t pt-2 text-xs font-medium text-muted-foreground">
+                                                Cited from: {citation}
+                                              </div>
                                             </div>
-                                            <div className="mt-2 border-t pt-2 text-xs font-medium text-muted-foreground">
-                                              Cited from: {citation}
-                                            </div>
-                                          </div>
-                                        )}
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
+                                          )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
                             </div>
                             <div className="flex gap-1 flex-shrink-0">
                               {message.role === "assistant" && (
@@ -301,9 +338,15 @@ export default function TutorPage() {
                                     variant="ghost"
                                     size="icon"
                                     className="h-6 w-6"
-                                    onClick={() => handleTTS(message.content, message.id)}
+                                    onClick={() =>
+                                      handleTTS(message.content, message.id)
+                                    }
                                     style={{ cursor: "pointer" }}
-                                    title={speakingMessageId === message.id ? "Stop reading" : "Read answer aloud"}
+                                    title={
+                                      speakingMessageId === message.id
+                                        ? "Stop reading"
+                                        : "Read answer aloud"
+                                    }
                                   >
                                     {speakingMessageId === message.id ? (
                                       <VolumeX className="h-3 w-3" />
@@ -324,16 +367,20 @@ export default function TutorPage() {
                               )}
                             </div>
                           </div>
-                          {message.role === "assistant" && citationList.length > 0 && (
-                            <Alert className="mt-2 w-fit px-2.5 py-1.5">
-                              <div className="flex items-center gap-2">
-                                <FileText className="h-4 w-4 text-muted-foreground" />
-                                <AlertDescription className="text-xs">
-                                  Source: <span className="font-medium">{citationList[0]}</span>
-                                </AlertDescription>
-                              </div>
-                            </Alert>
-                          )}
+                          {message.role === "assistant" &&
+                            citationList.length > 0 && (
+                              <Alert className="mt-2 w-fit px-2.5 py-1.5">
+                                <div className="flex items-center gap-2">
+                                  <FileText className="h-4 w-4 text-muted-foreground" />
+                                  <AlertDescription className="text-xs">
+                                    Source:{" "}
+                                    <span className="font-medium">
+                                      {citationList[0]}
+                                    </span>
+                                  </AlertDescription>
+                                </div>
+                              </Alert>
+                            )}
                           <p className="text-xs opacity-70 mt-2">
                             {message.timestamp.toLocaleTimeString(undefined, {
                               hour: "numeric",
@@ -390,7 +437,9 @@ export default function TutorPage() {
                       <DropdownMenuItem
                         key={model.id}
                         onClick={() => setSelectedModel(model.id)}
-                        className={selectedModel === model.id ? "bg-accent" : ""}
+                        className={
+                          selectedModel === model.id ? "bg-accent" : ""
+                        }
                         style={{ cursor: "pointer" }}
                       >
                         <div className="flex flex-col">
