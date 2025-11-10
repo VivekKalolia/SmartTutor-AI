@@ -238,17 +238,17 @@ export default function TutorPage() {
             </div>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col min-h-0 overflow-hidden">
-            <div className="relative flex-1">
+            <div className="relative flex-1 min-h-0">
               <div
-                className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-background to-transparent transition-opacity duration-300"
+                className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-background to-transparent transition-opacity duration-300 z-10"
                 style={{ opacity: showTopFade ? 1 : 0 }}
               />
               <div
-                className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-background to-transparent transition-opacity duration-300"
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-background to-transparent transition-opacity duration-300 z-10"
                 style={{ opacity: showBottomFade ? 1 : 0 }}
               />
               <div
-                className="h-full overflow-y-auto space-y-4 pb-56"
+                className="absolute inset-0 overflow-y-auto space-y-4 pb-56"
                 ref={messagesContainerRef}
               >
                 {messages.length === 0 ? (
@@ -354,7 +354,8 @@ export default function TutorPage() {
                                                     citationHideTimer
                                                   );
                                                 const t = window.setTimeout(
-                                                  () => setHoveredCitation(null),
+                                                  () =>
+                                                    setHoveredCitation(null),
                                                   450
                                                 );
                                                 setCitationHideTimer(t);
@@ -364,45 +365,48 @@ export default function TutorPage() {
                                                 In differential calculus, the
                                                 Fundamental Theorem of Calculus
                                                 bridges antiderivatives with
-                                                definite integrals by showing that
-                                                accumulation of rates reconstructs
-                                                the original quantity. When a
-                                                function f is continuous on [a,
-                                                b], any antiderivative F satisfies
-                                                ∫ₐᵇ f(x) dx = F(b) − F(a). This
+                                                definite integrals by showing
+                                                that accumulation of rates
+                                                reconstructs the original
+                                                quantity. When a function f is
+                                                continuous on [a, b], any
+                                                antiderivative F satisfies ∫ₐᵇ
+                                                f(x) dx = F(b) − F(a). This
                                                 identity not only provides an
-                                                efficient strategy for evaluation,
-                                                but also clarifies why
-                                                differentiation and integration
-                                                act as inverse processes under
-                                                appropriate regularity conditions.
-                                                In applications, one often selects
+                                                efficient strategy for
+                                                evaluation, but also clarifies
+                                                why differentiation and
+                                                integration act as inverse
+                                                processes under appropriate
+                                                regularity conditions. In
+                                                applications, one often selects
                                                 a convenient
                                                 antiderivative—sometimes built
                                                 from elementary transformations,
-                                                sometimes via substitution—so that
-                                                boundary evaluation yields a
-                                                closed‑form result. Longer note:
-                                                For sequences of increasingly
-                                                refined partitions, the Riemann
-                                                sums converge provided
-                                                oscillations diminish
+                                                sometimes via substitution—so
+                                                that boundary evaluation yields
+                                                a closed‑form result. Longer
+                                                note: For sequences of
+                                                increasingly refined partitions,
+                                                the Riemann sums converge
+                                                provided oscillations diminish
                                                 sufficiently; continuity ensures
                                                 this. In practice, numerical
                                                 quadrature approximates the
                                                 integral when symbolic
                                                 antiderivatives are unavailable.
-                                                Error bounds depend on smoothness
-                                                (e.g., the trapezoidal and Simpson
-                                                rules exploit first and second
+                                                Error bounds depend on
+                                                smoothness (e.g., the
+                                                trapezoidal and Simpson rules
+                                                exploit first and second
                                                 derivatives respectively). These
                                                 ideas generalize to
                                                 measure‑theoretic integration,
                                                 where limits, dominated
                                                 convergence, and absolute
                                                 integrability formalize the
-                                                intuition that “small pieces” add
-                                                up consistently.
+                                                intuition that “small pieces”
+                                                add up consistently.
                                               </div>
                                               <div className="mt-2 border-t pt-2 text-xs font-medium text-muted-foreground">
                                                 Cited from: {citation}

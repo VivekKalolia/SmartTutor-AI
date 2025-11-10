@@ -36,37 +36,25 @@ export function Sidebar() {
 
   return (
     <TooltipProvider>
-      <div
-        className={cn(
-          "flex h-screen flex-col border-r bg-background transition-all duration-300",
-          collapsed ? "w-20" : "w-64"
-        )}
-      >
-        <div className={cn("flex h-16 items-center justify-between border-b px-4")}>
-          <Link
-            href="/"
-            className={cn("flex items-center gap-2", collapsed && "justify-center")}
-            style={{ cursor: "pointer" }}
-          >
-            <GraduationCap className="h-6 w-6 text-primary" />
-            {!collapsed && (
-              <h1 className="text-xl font-bold text-primary">SmartTutor AI</h1>
-            )}
-          </Link>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleCollapsed}
-            className="h-8 w-8"
-            style={{ cursor: "pointer" }}
-          >
-            {collapsed ? (
-              <ChevronRight className="h-4 w-4" />
-            ) : (
-              <ChevronLeft className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
+      <div className="relative">
+        <div
+          className={cn(
+            "flex h-screen flex-col border-r bg-background transition-all duration-300",
+            collapsed ? "w-20" : "w-64"
+          )}
+        >
+          <div className={cn("flex h-16 items-center border-b px-4", collapsed ? "justify-center" : "justify-start")}>
+            <Link
+              href="/"
+              className={cn("flex items-center gap-2", collapsed && "justify-center")}
+              style={{ cursor: "pointer" }}
+            >
+              <GraduationCap className="h-6 w-6 text-primary" />
+              {!collapsed && (
+                <h1 className="text-xl font-bold text-primary">SmartTutor AI</h1>
+              )}
+            </Link>
+          </div>
         <nav className={cn("flex-1 space-y-1", collapsed ? "px-2 py-4" : "p-4")}>
           {navigation.map((item) => {
             const Icon = item.icon;
@@ -123,6 +111,19 @@ export function Sidebar() {
             </div>
           )}
         </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleCollapsed}
+          className="absolute right-0 top-1/2 -translate-y-1/2 -translate-x-1/2 h-8 w-8 rounded-full border bg-background shadow-sm hover:bg-accent z-10"
+          style={{ cursor: "pointer" }}
+        >
+          {collapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronLeft className="h-4 w-4" />
+          )}
+        </Button>
       </div>
     </TooltipProvider>
   );

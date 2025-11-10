@@ -74,6 +74,8 @@ export default function QuizPage() {
   const [questionTimes, setQuestionTimes] = useState<Record<number, number>>(
     {}
   );
+  const [retryCounts, setRetryCounts] = useState<Record<number, number>>({});
+  const [correctAnswers, setCorrectAnswers] = useState<Record<number, boolean>>({});
 
   const questions =
     currentSubject === "math" ? mathQuestions : scienceQuestions;
@@ -118,6 +120,8 @@ export default function QuizPage() {
     setQuestionStartTime(null);
     setMasteryProgress(65); // Reset to mock initial mastery
     setQuestionTimes({});
+    setRetryCounts({});
+    setCorrectAnswers({});
     // Clear all mastery tracking
     Object.keys(localStorage).forEach((key) => {
       if (key.startsWith("mastery-")) {
@@ -143,6 +147,20 @@ export default function QuizPage() {
     const question = questions[currentQuestionIndex];
     const userAnswer = answers[currentQuestionIndex];
     const isCorrect = parseInt(userAnswer) === question.correctAnswer;
+
+    // Track correct answer status
+    setCorrectAnswers((prev) => ({
+      ...prev,
+      [currentQuestionIndex]: isCorrect,
+    }));
+
+    // Increment retry count if incorrect
+    if (!isCorrect) {
+      setRetryCounts((prev) => ({
+        ...prev,
+        [currentQuestionIndex]: (prev[currentQuestionIndex] || 0) + 1,
+      }));
+    }
 
     // Record time taken for this question
     if (questionStartTime) {
@@ -180,6 +198,23 @@ export default function QuizPage() {
       message,
     });
     setIsSubmitted(true);
+  };
+
+  const handleRetryQuestion = () => {
+    // Clear current answer and allow retry
+    dispatch(
+      setAnswer({
+        questionIndex: currentQuestionIndex,
+        answer: "",
+      })
+    );
+    setIsSubmitted(false);
+    setShowToast(false);
+    setToastMessage(null);
+    setFeedback({ type: null, message: "" });
+    setShowHint(false);
+    setQuestionTime(0);
+    setQuestionStartTime(Date.now());
   };
 
   const handleNextQuestion = () => {
@@ -224,6 +259,8 @@ export default function QuizPage() {
     setShowToast(false);
     setToastMessage(null);
     setQuestionTimes({});
+    setRetryCounts({});
+    setCorrectAnswers({});
     setQuestionTime(0);
     setQuestionStartTime(null);
     setMasteryProgress(65);
@@ -684,14 +721,14 @@ export default function QuizPage() {
                     <div className="space-y-2">
                       {questions[currentQuestionIndex]?.options.map(
                         (option, idx) => {
-                          const userAnswer = answers[currentQuestionIndex];
-                          const isSelected = userAnswer === idx.toString();
-                          const isCorrect =
-                            idx ===
-                            questions[currentQuestionIndex].correctAnswer;
-                          const showCorrect = isSubmitted && isCorrect;
-                          const showIncorrect =
-                            isSubmitted && isSelected && !isCorrect;
+                            const userAnswer = answers[currentQuestionIndex];
+                            const isSelected = userAnswer === idx.toString();
+                            const isCorrect =
+                              idx ===
+                              questions[currentQuestionIndex].correctAnswer;
+                            const showCorrect = isSubmitted && isCorrect && correctAnswers[currentQuestionIndex];
+                            const showIncorrect =
+                              isSubmitted && isSelected && !isCorrect && !correctAnswers[currentQuestionIndex];
 
                           return (
                             <Card
@@ -756,32 +793,6 @@ export default function QuizPage() {
                       </div>
                     )}
 
-                    {isSubmitted && feedback.type && (
-                      <Card className="bg-muted/50">
-                        <CardContent className="pt-6">
-                          <div className="space-y-3">
-                            <div>
-                              <p className="text-sm font-medium mb-2">
-                                Explanation:
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                {questions[currentQuestionIndex]?.explanation}
-                              </p>
-                            </div>
-                            {questionTimes[currentQuestionIndex] && (
-                              <div className="pt-3 border-t">
-                                <p className="text-xs text-muted-foreground">
-                                  Time taken: {formatTime(
-                                    questionTimes[currentQuestionIndex]
-                                  )}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-
                     <div className="flex gap-3 pt-4">
                       <Button
                         onClick={handlePrevious}
@@ -809,7 +820,7 @@ export default function QuizPage() {
                         >
                           Submit
                         </Button>
-                      ) : (
+                      ) : correctAnswers[currentQuestionIndex] ? (
                         <Button
                           onClick={handleNextQuestion}
                           className="flex-1"
@@ -818,6 +829,15 @@ export default function QuizPage() {
                           {currentQuestionIndex === questions.length - 1
                             ? "Review Answers"
                             : "Next"}
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={handleRetryQuestion}
+                          variant="outline"
+                          className="flex-1"
+                          style={{ cursor: "pointer" }}
+                        >
+                          Retry
                         </Button>
                       )}
                     </div>
