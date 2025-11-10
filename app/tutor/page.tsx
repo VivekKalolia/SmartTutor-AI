@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/store";
 import { addMessage, setLoading } from "@/lib/features/tutor/tutorSlice";
 import Layout from "@/components/layout";
+import { PageHero } from "@/components/page-hero";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -205,18 +206,21 @@ export default function TutorPage() {
 
   return (
     <Layout>
-      <div className="flex h-[calc(100vh-8rem)]">
-        <div className="flex-1 flex flex-col">
-          <Card className="flex-1 flex flex-col overflow-hidden">
-            <CardHeader className="flex-shrink-0">
-              <div className="flex items-center justify-center">
-                <CardTitle className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  AI Tutor
-                </CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="flex-1 flex flex-col min-h-0 overflow-hidden">
+      <div className="space-y-6">
+        <PageHero
+          title="AI Tutor"
+          description="Conversational guidance grounded in your course materials with context-aware suggestions and study support."
+        />
+        <Card className="flex flex-1 flex-col overflow-hidden min-h-[600px] lg:min-h-[calc(100vh-22rem)]">
+          <CardHeader className="flex-shrink-0">
+            <div className="flex items-center justify-center">
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-primary" />
+                AI Tutor
+              </CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <div
                 className="flex-1 overflow-y-auto space-y-4 pb-48"
                 ref={messagesContainerRef}
@@ -464,92 +468,93 @@ export default function TutorPage() {
                 <div ref={messagesEndRef} />
               </div>
 
-              <div className="relative flex-shrink-0 pt-4 border-t">
-                <Input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSend();
-                    }
-                  }}
-                  placeholder="Ask a question about your coursework..."
-                  className="h-12 pr-48"
-                />
-                <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="pointer-events-auto flex h-10 w-10 items-center justify-center bg-transparent"
-                        style={{ cursor: "pointer" }}
-                        title={`${selectedModelData.name} - ${selectedModelData.description}`}
-                      >
-                        <Cpu className="h-4 w-4 text-muted-foreground" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuLabel>Select AI Model</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      {aiModels.map((model) => (
-                        <DropdownMenuItem
-                          key={model.id}
-                          onClick={() => setSelectedModel(model.id)}
-                          className={
-                            selectedModel === model.id ? "bg-accent" : ""
-                          }
+              <div className="flex-shrink-0 border-t pt-4">
+                <div className="flex items-center gap-3 rounded-2xl border border-border bg-background px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-primary/20">
+                  <Input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSend();
+                      }
+                    }}
+                    placeholder="Ask a question about your coursework..."
+                    className="flex-1 border-0 bg-transparent px-0 py-0 text-base shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                  />
+                  <div className="flex items-center gap-2">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-10 w-10 rounded-full bg-transparent"
                           style={{ cursor: "pointer" }}
+                          title={`${selectedModelData.name} - ${selectedModelData.description}`}
                         >
-                          <div className="flex flex-col">
-                            <span className="font-medium">{model.name}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {model.description}
-                            </span>
-                          </div>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="pointer-events-auto flex h-10 w-10 items-center justify-center bg-transparent"
-                    onClick={handleFileAttach}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <Paperclip className="h-4 w-4 text-muted-foreground" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={`pointer-events-auto flex h-10 w-10 items-center justify-center ${
-                      isRecording ? "bg-red-100" : "bg-transparent"
-                    }`}
-                    onClick={handleVoiceRecord}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {isRecording ? (
-                      <Square className="h-4 w-4 text-red-600" />
-                    ) : (
-                      <Mic className="h-4 w-4 text-muted-foreground" />
-                    )}
-                  </Button>
-                  <Button
-                    size="icon"
-                    className="pointer-events-auto flex h-10 w-10 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/90"
-                    onClick={handleSend}
-                    disabled={!input.trim() || isLoading}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
+                          <Cpu className="h-4 w-4 text-muted-foreground" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuLabel>Select AI Model</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {aiModels.map((model) => (
+                          <DropdownMenuItem
+                            key={model.id}
+                            onClick={() => setSelectedModel(model.id)}
+                            className={
+                              selectedModel === model.id ? "bg-accent" : ""
+                            }
+                            style={{ cursor: "pointer" }}
+                          >
+                            <div className="flex flex-col">
+                              <span className="font-medium">{model.name}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {model.description}
+                              </span>
+                            </div>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-10 w-10 rounded-full bg-transparent"
+                      onClick={handleFileAttach}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <Paperclip className="h-4 w-4 text-muted-foreground" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className={`h-10 w-10 rounded-full ${
+                        isRecording ? "bg-red-100" : "bg-transparent"
+                      }`}
+                      onClick={handleVoiceRecord}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {isRecording ? (
+                        <Square className="h-4 w-4 text-red-600" />
+                      ) : (
+                        <Mic className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </Button>
+                    <Button
+                      size="icon"
+                      className="h-10 w-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+                      onClick={handleSend}
+                      disabled={!input.trim() || isLoading}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
-        </div>
       </div>
       {/* tooltip handled inline per citation */}
     </Layout>
