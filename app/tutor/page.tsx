@@ -7,7 +7,6 @@ import { addMessage, setLoading } from "@/lib/features/tutor/tutorSlice";
 import Layout from "@/components/layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -98,7 +97,11 @@ export default function TutorPage() {
   const [selectedModel, setSelectedModel] = useState("deepseek");
   const [isRecording, setIsRecording] = useState(false);
   const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
-  const [openCitation, setOpenCitation] = useState<{ title: string } | null>(null);
+  const [hoveredCitation, setHoveredCitation] = useState<{
+    messageId: string;
+    index: number;
+    title: string;
+  } | null>(null);
 
   const handleTTS = (text: string, messageId: string) => {
     if (speakingMessageId === messageId) {
@@ -241,21 +244,37 @@ export default function TutorPage() {
                               {message.role === "assistant" && citationList.length > 0 && (
                                 <div className="flex flex-wrap gap-2">
                                   {citationList.map((citation, idx) => (
-                                    <button
+                                    <div
                                       key={`${message.id}-citation-${idx}`}
-                                      type="button"
-                                      className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-[11px] font-semibold text-primary transition hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary"
-                                      aria-label={`View citation ${idx + 1}`}
-                                      onClick={() =>
-                                        setOpenCitation({
+                                      className="relative"
+                                      onMouseEnter={() =>
+                                        setHoveredCitation({
+                                          messageId: message.id,
+                                          index: idx,
                                           title: citation,
-                                          passage:
-                                            "Highlighted passage preview from the referenced material. This UI is illustrative for provenance.",
                                         })
                                       }
+                                      onMouseLeave={() => setHoveredCitation(null)}
                                     >
-                                      {idx + 1}
-                                    </button>
+                                      <button
+                                        type="button"
+                                        className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-[11px] font-semibold text-primary transition hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary"
+                                        aria-label={`View citation ${idx + 1}`}
+                                      >
+                                        {idx + 1}
+                                      </button>
+                                      {hoveredCitation?.messageId === message.id &&
+                                        hoveredCitation.index === idx && (
+                                          <div className="absolute z-30 mt-2 w-64 rounded-md border bg-background p-3 shadow-lg">
+                                            <div className="text-sm leading-relaxed text-muted-foreground">
+                                              Highlighted passage preview from the referenced material. This UI is illustrative for provenance.
+                                            </div>
+                                            <div className="mt-3 text-xs font-medium text-muted-foreground text-right">
+                                              {citation}
+                                            </div>
+                                          </div>
+                                        )}
+                                    </div>
                                   ))}
                                 </div>
                               )}
@@ -402,29 +421,7 @@ export default function TutorPage() {
           </Card>
         </div>
       </div>
-      {/* Global citation sheet */}
-      <Sheet
-        open={!!openCitation}
-        onOpenChange={(o) => !o && setOpenCitation(null)}
-        modal={false}
-      >
-        <SheetContent className="w-full sm:max-w-md" side="bottom" noOverlay={true}>
-          <SheetHeader>
-            <SheetTitle className="flex items-center gap-2">
-              <FileText className="h-4 w-4 text-primary" />
-              Citation
-            </SheetTitle>
-          </SheetHeader>
-          <div className="mt-4 space-y-3 text-sm">
-            <div className="rounded-md bg-muted/80 p-4 text-sm leading-relaxed text-muted-foreground">
-              {openCitation?.passage}
-            </div>
-            <div className="text-xs font-medium text-muted-foreground text-right">
-              {openCitation?.title}
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
+      {/* tooltip handled inline per citation */}
     </Layout>
   );
 }
