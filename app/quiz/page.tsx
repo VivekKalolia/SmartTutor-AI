@@ -256,12 +256,9 @@ export default function QuizPage() {
     return `${aiAssistResponses.default}\n\nFor this problem: ${question.explanation}`;
   };
 
-  const progress =
-    questions.length > 0
-      ? ((currentQuestionIndex + 1) / questions.length) * 100
-      : 0;
-
   const answeredCount = Object.keys(answers).length;
+  const questionCompletion =
+    questions.length > 0 ? (answeredCount / questions.length) * 100 : 0;
   const correctCount = questions.reduce((count, q, idx) => {
     const userAnswer = answers[idx];
     return userAnswer && parseInt(userAnswer) === q.correctAnswer
@@ -292,15 +289,15 @@ export default function QuizPage() {
             </p>
           </div>
           {currentSubject && (
-            <Button
-              onClick={() => dispatch(toggleAIAssist())}
-              variant="outline"
-              className="gap-2"
-              style={{ cursor: "pointer" }}
-            >
-              <Brain className="h-4 w-4" />
-              Assist
-            </Button>
+          <Button
+            onClick={() => dispatch(toggleAIAssist())}
+            variant="outline"
+            className="gap-2"
+            style={{ cursor: "pointer" }}
+          >
+            <Brain className="h-4 w-4" />
+            AI Assist
+          </Button>
           )}
         </div>
 
@@ -591,7 +588,26 @@ export default function QuizPage() {
                   </div>
                 </div>
 
-                <Progress value={progress} className="h-2" />
+                <div className="rounded-lg border bg-background p-4 shadow-sm">
+                  <div className="flex items-center justify-between text-sm font-medium">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      Questions Completed
+                    </div>
+                    <span className="text-muted-foreground">
+                      {answeredCount} / {questions.length}
+                    </span>
+                  </div>
+                  <Progress value={questionCompletion} className="mt-3 h-2" />
+                  <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>
+                      {answeredCount === questions.length && questions.length > 0
+                        ? "All questions answered"
+                        : "Keep going!"}
+                    </span>
+                    <span>{Math.round(questionCompletion)}%</span>
+                  </div>
+                </div>
 
                 <Card>
                   <CardHeader>

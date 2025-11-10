@@ -245,6 +245,8 @@ export default function TutorPage() {
                           message.role === "user"
                             ? "justify-end"
                             : "justify-start"
+                        } ${
+                          message.role === "assistant" ? "mb-6" : "mb-3"
                         }`}
                       >
                         <div
