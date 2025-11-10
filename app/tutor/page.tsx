@@ -475,15 +475,15 @@ export default function TutorPage() {
                     }
                   }}
                   placeholder="Ask a question about your coursework..."
-                  className="pr-32"
+                  className="h-12 pr-48"
                 />
-                <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="pointer-events-auto h-8 w-8 bg-transparent"
+                        className="pointer-events-auto flex h-10 w-10 items-center justify-center bg-transparent"
                         style={{ cursor: "pointer" }}
                         title={`${selectedModelData.name} - ${selectedModelData.description}`}
                       >
@@ -515,7 +515,7 @@ export default function TutorPage() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="pointer-events-auto h-8 w-8 bg-transparent"
+                    className="pointer-events-auto flex h-10 w-10 items-center justify-center bg-transparent"
                     onClick={handleFileAttach}
                     style={{ cursor: "pointer" }}
                   >
@@ -524,7 +524,7 @@ export default function TutorPage() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className={`pointer-events-auto h-8 w-8 ${
+                    className={`pointer-events-auto flex h-10 w-10 items-center justify-center ${
                       isRecording ? "bg-red-100" : "bg-transparent"
                     }`}
                     onClick={handleVoiceRecord}
@@ -538,7 +538,7 @@ export default function TutorPage() {
                   </Button>
                   <Button
                     size="icon"
-                    className="pointer-events-auto h-8 w-8 bg-primary text-primary-foreground hover:bg-primary/90"
+                    className="pointer-events-auto flex h-10 w-10 items-center justify-center bg-primary text-primary-foreground hover:bg-primary/90"
                     onClick={handleSend}
                     disabled={!input.trim() || isLoading}
                     style={{ cursor: "pointer" }}
