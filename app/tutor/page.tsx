@@ -102,6 +102,7 @@ export default function TutorPage() {
     index: number;
     title: string;
   } | null>(null);
+  const [citationHideTimer, setCitationHideTimer] = useState<number | null>(null);
 
   const handleTTS = (text: string, messageId: string) => {
     if (speakingMessageId === messageId) {
@@ -246,7 +247,7 @@ export default function TutorPage() {
                                   {citationList.map((citation, idx) => (
                                     <div
                                       key={`${message.id}-citation-${idx}`}
-                                      className="relative inline-block"
+                                      className="relative"
                                       onMouseEnter={() =>
                                         setHoveredCitation({
                                           messageId: message.id,
@@ -254,7 +255,11 @@ export default function TutorPage() {
                                           title: citation,
                                         })
                                       }
-                                      onMouseLeave={() => setHoveredCitation(null)}
+                                      onMouseLeave={() => {
+                                        if (citationHideTimer) window.clearTimeout(citationHideTimer);
+                                        const t = window.setTimeout(() => setHoveredCitation(null), 1200);
+                                        setCitationHideTimer(t);
+                                      }}
                                     >
                                       <button
                                         type="button"
@@ -266,21 +271,21 @@ export default function TutorPage() {
                                       {hoveredCitation?.messageId === message.id &&
                                         hoveredCitation.index === idx && (
                                           <div
-                                            className="absolute left-1/2 z-30 mt-2 w-72 -translate-x-1/2 rounded-md border bg-background p-3 shadow-lg"
-                                            onMouseEnter={() =>
-                                              setHoveredCitation({
-                                                messageId: message.id,
-                                                index: idx,
-                                                title: citation,
-                                              })
-                                            }
-                                            onMouseLeave={() => setHoveredCitation(null)}
+                                            className="absolute z-30 mt-2 w-64 rounded-md border bg-background p-3 shadow-lg"
+                                            onMouseEnter={() => {
+                                              if (citationHideTimer) window.clearTimeout(citationHideTimer);
+                                            }}
+                                            onMouseLeave={() => {
+                                              if (citationHideTimer) window.clearTimeout(citationHideTimer);
+                                              const t = window.setTimeout(() => setHoveredCitation(null), 1200);
+                                              setCitationHideTimer(t);
+                                            }}
                                           >
                                             <div className="text-sm leading-relaxed text-muted-foreground">
                                               Highlighted passage preview from the referenced material. This UI is illustrative for provenance.
                                             </div>
-                                            <div className="mt-2 border-t pt-2 text-xs font-medium text-muted-foreground text-right">
-                                              {citation}
+                                            <div className="mt-2 border-t pt-2 text-xs font-medium text-muted-foreground">
+                                              Cited from: {citation}
                                             </div>
                                           </div>
                                         )}
