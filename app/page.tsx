@@ -110,7 +110,10 @@ export default function Dashboard() {
             <span className="text-sm font-medium">{name}</span>
           </div>
           <div className="mt-1 text-xs text-muted-foreground">
-            Mastery: <span className="font-semibold" style={{ color }}>{value}%</span>
+            Mastery:{" "}
+            <span className="font-semibold" style={{ color }}>
+              {value}%
+            </span>
           </div>
         </div>
       );
@@ -375,12 +378,8 @@ export default function Dashboard() {
                               hoveredMathIndex === null
                                 ? 0.9
                                 : hoveredMathIndex === index
-                                ? 1
-                                : 0.35
-                            }
-                            stroke={entry.color}
-                            strokeOpacity={
-                              hoveredMathIndex === index ? 0.9 : 0.3
+                                  ? 1
+                                  : 0.35
                             }
                             style={{ cursor: "pointer" }}
                             onMouseEnter={() => setHoveredMathIndex(index)}
@@ -445,12 +444,8 @@ export default function Dashboard() {
                               hoveredScienceIndex === null
                                 ? 0.9
                                 : hoveredScienceIndex === index
-                                ? 1
-                                : 0.35
-                            }
-                            stroke={entry.color}
-                            strokeOpacity={
-                              hoveredScienceIndex === index ? 0.9 : 0.3
+                                  ? 1
+                                  : 0.35
                             }
                             style={{ cursor: "pointer" }}
                             onMouseEnter={() => setHoveredScienceIndex(index)}
