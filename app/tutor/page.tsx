@@ -216,9 +216,9 @@ export default function TutorPage() {
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col min-h-0">
+            <CardContent className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <div
-                className="flex-1 overflow-y-auto space-y-4 mb-4 pb-32"
+                className="flex-1 overflow-y-auto space-y-4 pb-40"
                 ref={messagesContainerRef}
               >
                 {messages.length === 0 ? (
@@ -464,7 +464,7 @@ export default function TutorPage() {
                 <div ref={messagesEndRef} />
               </div>
 
-              <div className="relative">
+              <div className="relative flex-shrink-0 pt-4 border-t">
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}

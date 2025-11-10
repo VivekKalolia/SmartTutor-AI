@@ -281,6 +281,16 @@ export default function QuizPage() {
   return (
     <Layout>
       <div className="space-y-6">
+        {!currentSubject && (
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold tracking-tight">Smart Quiz</h1>
+            <p className="text-muted-foreground">
+              AI-powered, personalized assessments that adapt to your mastery
+              and keep your learning journey on track.
+            </p>
+          </div>
+        )}
+
         {!currentSubject ? (
           <Card>
             <CardHeader>
