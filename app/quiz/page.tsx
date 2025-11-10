@@ -610,37 +610,7 @@ export default function QuizPage() {
                 </div>
 
                 <Card>
-                  <CardHeader className="space-y-4">
-                    <div className="flex items-start gap-2">
-                      <CardTitle className="flex-1">
-                        <span className="text-lg font-semibold sm:text-xl">
-                          {questions[currentQuestionIndex]?.question}
-                        </span>
-                      </CardTitle>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() =>
-                          handleTTS(
-                            questions[currentQuestionIndex]?.question || "",
-                            "question"
-                          )
-                        }
-                        style={{ cursor: "pointer" }}
-                        title={
-                          speakingType === "question"
-                            ? "Stop reading"
-                            : "Read question aloud"
-                        }
-                      >
-                        {speakingType === "question" ? (
-                          <VolumeX className="h-4 w-4" />
-                        ) : (
-                          <Volume2 className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
+                  <CardHeader className="space-y-0 pb-4">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-sm font-medium text-muted-foreground">
                         Question {currentQuestionIndex + 1}
@@ -671,6 +641,34 @@ export default function QuizPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
+                    <div className="flex items-start gap-2">
+                      <CardTitle className="flex-1 text-lg font-semibold sm:text-xl">
+                        {questions[currentQuestionIndex]?.question}
+                      </CardTitle>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() =>
+                          handleTTS(
+                            questions[currentQuestionIndex]?.question || "",
+                            "question"
+                          )
+                        }
+                        style={{ cursor: "pointer" }}
+                        title={
+                          speakingType === "question"
+                            ? "Stop reading"
+                            : "Read question aloud"
+                        }
+                      >
+                        {speakingType === "question" ? (
+                          <VolumeX className="h-4 w-4" />
+                        ) : (
+                          <Volume2 className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
                     {showHint && (
                       <Alert className="border-primary bg-primary/5">
                         <Sparkles className="h-4 w-4 text-primary" />
