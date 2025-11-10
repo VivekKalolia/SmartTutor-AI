@@ -7,11 +7,7 @@ import { addMessage, setLoading } from "@/lib/features/tutor/tutorSlice";
 import Layout from "@/components/layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -102,6 +98,7 @@ export default function TutorPage() {
   const [selectedModel, setSelectedModel] = useState("deepseek");
   const [isRecording, setIsRecording] = useState(false);
   const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
+  const [openCitation, setOpenCitation] = useState<{ title: string } | null>(null);
 
   const handleTTS = (text: string, messageId: string) => {
     if (speakingMessageId === messageId) {
@@ -244,31 +241,15 @@ export default function TutorPage() {
                               {message.role === "assistant" && citationList.length > 0 && (
                                 <div className="flex flex-wrap gap-2">
                                   {citationList.map((citation, idx) => (
-                                    <Popover key={`${message.id}-citation-${idx}`}>
-                                      <PopoverTrigger asChild>
-                                        <button
-                                          type="button"
-                                          className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full border border-primary/40 bg-primary/10 px-2 text-[10px] font-semibold text-primary transition hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary"
-                                          aria-label={`View citation ${idx + 1}`}
-                                        >
-                                          {idx + 1}
-                                        </button>
-                                      </PopoverTrigger>
-                                      <PopoverContent className="w-72 space-y-3 text-sm">
-                                        <div className="flex items-start gap-2">
-                                          <FileText className="h-4 w-4 text-primary" />
-                                          <div>
-                                            <p className="font-semibold">{citation}</p>
-                                            <p className="text-xs text-muted-foreground">
-                                              Referenced from uploaded course materials
-                                            </p>
-                                          </div>
-                                        </div>
-                                        <div className="rounded-md bg-muted/60 p-3 text-xs text-muted-foreground">
-                                          Highlighted passage preview from the referenced material. This UI is illustrative for provenance.
-                                        </div>
-                                      </PopoverContent>
-                                    </Popover>
+                                    <button
+                                      key={`${message.id}-citation-${idx}`}
+                                      type="button"
+                                      className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full border border-primary/40 bg-primary/10 px-2 text-[10px] font-semibold text-primary transition hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary"
+                                      aria-label={`View citation ${idx + 1}`}
+                                      onClick={() => setOpenCitation({ title: citation })}
+                                    >
+                                      {idx + 1}
+                                    </button>
                                   ))}
                                 </div>
                               )}
@@ -415,6 +396,25 @@ export default function TutorPage() {
           </Card>
         </div>
       </div>
+      {/* Global citation sheet */}
+      <Sheet open={!!openCitation} onOpenChange={(o) => !o && setOpenCitation(null)} modal={false}>
+        <SheetContent className="w-full sm:max-w-md" side="bottom" noOverlay={true}>
+          <SheetHeader>
+            <SheetTitle className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-primary" />
+              {openCitation?.title || "Citation"}
+            </SheetTitle>
+          </SheetHeader>
+          <div className="mt-4 space-y-3 text-sm">
+            <div className="rounded-md bg-muted/60 p-3 text-muted-foreground">
+              Highlighted passage preview from the referenced material. This is a static UI placeholder for provenance.
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Metadata: uploaded on 2024-11-05 • Type: PDF
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </Layout>
   );
 }
