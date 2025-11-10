@@ -256,7 +256,7 @@ export default function TutorPage() {
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1 space-y-2">
-                              <p className="text-sm whitespace-pre-wrap">
+                              <p className="text-sm whitespace-pre-wrap max-h-60 overflow-y-auto pr-1 custom-scrollbar">
                                 {displayContent}
                               </p>
                               {message.role === "assistant" &&
@@ -280,7 +280,7 @@ export default function TutorPage() {
                                             );
                                           const t = window.setTimeout(
                                             () => setHoveredCitation(null),
-                                            250
+                                            200
                                           );
                                           setCitationHideTimer(t);
                                         }}
@@ -296,7 +296,7 @@ export default function TutorPage() {
                                           message.id &&
                                           hoveredCitation.index === idx && (
                                             <div
-                                              className="absolute z-30 mt-2 w-64 rounded-md border bg-background p-3 shadow-lg"
+                                              className="absolute z-30 mt-2 w-96 rounded-md border bg-background p-3 shadow-lg"
                                               onMouseEnter={() => {
                                                 if (citationHideTimer)
                                                   window.clearTimeout(
@@ -316,10 +316,8 @@ export default function TutorPage() {
                                                 setCitationHideTimer(t);
                                               }}
                                             >
-                                              <div className="text-sm leading-relaxed text-muted-foreground">
-                                                Highlighted passage preview from
-                                                the referenced material. This UI
-                                                is illustrative for provenance.
+                                              <div className="text-sm leading-relaxed text-muted-foreground max-h-60 overflow-y-auto pr-1 custom-scrollbar">
+                                                Highlighted passage preview from the referenced material. This UI is illustrative for provenance.
                                               </div>
                                               <div className="mt-2 border-t pt-2 text-xs font-medium text-muted-foreground">
                                                 Cited from: {citation}
