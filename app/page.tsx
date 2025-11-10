@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Layout from "@/components/layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -85,6 +86,37 @@ export default function Dashboard() {
     { name: "Science", value: overallScienceMastery, color: SCIENCE_COLOR },
   ];
   const latestMilestone = masteryPathway[masteryPathway.length - 1];
+
+  // Hover state for radial charts
+  const [hoveredMathIndex, setHoveredMathIndex] = useState<number | null>(null);
+  const [hoveredScienceIndex, setHoveredScienceIndex] = useState<number | null>(
+    null
+  );
+
+  // Custom tooltip for radial charts
+  const RadialTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const p = payload[0];
+      const name = p?.payload?.name;
+      const value = p?.payload?.mastery;
+      const color = p?.payload?.fill;
+      return (
+        <div className="rounded-md border bg-background p-2 shadow-sm">
+          <div className="flex items-center gap-2">
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ backgroundColor: color }}
+            />
+            <span className="text-sm font-medium">{name}</span>
+          </div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            Mastery: <span className="font-semibold" style={{ color }}>{value}%</span>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
 
   // Learning statistics
   const assessmentsCompleted = 24;
@@ -336,10 +368,27 @@ export default function Dashboard() {
                         fill="#8884d8"
                       >
                         {mathTopics.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={entry.color}
+                            fillOpacity={
+                              hoveredMathIndex === null
+                                ? 0.9
+                                : hoveredMathIndex === index
+                                ? 1
+                                : 0.35
+                            }
+                            stroke={entry.color}
+                            strokeOpacity={
+                              hoveredMathIndex === index ? 0.9 : 0.3
+                            }
+                            style={{ cursor: "pointer" }}
+                            onMouseEnter={() => setHoveredMathIndex(index)}
+                            onMouseLeave={() => setHoveredMathIndex(null)}
+                          />
                         ))}
                       </RadialBar>
-                      <Tooltip />
+                      <Tooltip content={<RadialTooltip />} />
                       <Legend />
                     </RadialBarChart>
                   </ResponsiveContainer>
@@ -389,10 +438,27 @@ export default function Dashboard() {
                         fill="#8884d8"
                       >
                         {scienceTopics.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={entry.color}
+                            fillOpacity={
+                              hoveredScienceIndex === null
+                                ? 0.9
+                                : hoveredScienceIndex === index
+                                ? 1
+                                : 0.35
+                            }
+                            stroke={entry.color}
+                            strokeOpacity={
+                              hoveredScienceIndex === index ? 0.9 : 0.3
+                            }
+                            style={{ cursor: "pointer" }}
+                            onMouseEnter={() => setHoveredScienceIndex(index)}
+                            onMouseLeave={() => setHoveredScienceIndex(null)}
+                          />
                         ))}
                       </RadialBar>
-                      <Tooltip />
+                      <Tooltip content={<RadialTooltip />} />
                       <Legend />
                     </RadialBarChart>
                   </ResponsiveContainer>
