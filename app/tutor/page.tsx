@@ -244,9 +244,15 @@ export default function TutorPage() {
                                     <button
                                       key={`${message.id}-citation-${idx}`}
                                       type="button"
-                                      className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full border border-primary/40 bg-primary/10 px-2 text-[10px] font-semibold text-primary transition hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary"
+                                      className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-[11px] font-semibold text-primary transition hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary"
                                       aria-label={`View citation ${idx + 1}`}
-                                      onClick={() => setOpenCitation({ title: citation })}
+                                      onClick={() =>
+                                        setOpenCitation({
+                                          title: citation,
+                                          passage:
+                                            "Highlighted passage preview from the referenced material. This UI is illustrative for provenance.",
+                                        })
+                                      }
                                     >
                                       {idx + 1}
                                     </button>
@@ -397,20 +403,24 @@ export default function TutorPage() {
         </div>
       </div>
       {/* Global citation sheet */}
-      <Sheet open={!!openCitation} onOpenChange={(o) => !o && setOpenCitation(null)} modal={false}>
+      <Sheet
+        open={!!openCitation}
+        onOpenChange={(o) => !o && setOpenCitation(null)}
+        modal={false}
+      >
         <SheetContent className="w-full sm:max-w-md" side="bottom" noOverlay={true}>
           <SheetHeader>
             <SheetTitle className="flex items-center gap-2">
               <FileText className="h-4 w-4 text-primary" />
-              {openCitation?.title || "Citation"}
+              Citation
             </SheetTitle>
           </SheetHeader>
           <div className="mt-4 space-y-3 text-sm">
-            <div className="rounded-md bg-muted/60 p-3 text-muted-foreground">
-              Highlighted passage preview from the referenced material. This is a static UI placeholder for provenance.
+            <div className="rounded-md bg-muted/80 p-4 text-sm leading-relaxed text-muted-foreground">
+              {openCitation?.passage}
             </div>
-            <div className="text-xs text-muted-foreground">
-              Metadata: uploaded on 2024-11-05 • Type: PDF
+            <div className="text-xs font-medium text-muted-foreground text-right">
+              {openCitation?.title}
             </div>
           </div>
         </SheetContent>
