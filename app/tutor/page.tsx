@@ -448,7 +448,7 @@ export default function TutorPage() {
                 )}
               </div>
 
-              <div className="flex gap-2 items-center">
+              <div className="relative">
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
@@ -459,69 +459,77 @@ export default function TutorPage() {
                     }
                   }}
                   placeholder="Ask a question about your coursework..."
-                  className="flex-1"
+                  className="pr-32"
                 />
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      style={{ cursor: "pointer" }}
-                      title={`${selectedModelData.name} - ${selectedModelData.description}`}
-                    >
-                      <Cpu className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuLabel>Select AI Model</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {aiModels.map((model) => (
-                      <DropdownMenuItem
-                        key={model.id}
-                        onClick={() => setSelectedModel(model.id)}
-                        className={
-                          selectedModel === model.id ? "bg-accent" : ""
-                        }
+                <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center gap-1">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="pointer-events-auto h-8 w-8 bg-transparent"
                         style={{ cursor: "pointer" }}
+                        title={`${selectedModelData.name} - ${selectedModelData.description}`}
                       >
-                        <div className="flex flex-col">
-                          <span className="font-medium">{model.name}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {model.description}
-                          </span>
-                        </div>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleFileAttach}
-                  style={{ cursor: "pointer" }}
-                >
-                  <Paperclip className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleVoiceRecord}
-                  className={isRecording ? "bg-red-500 hover:bg-red-600" : ""}
-                  style={{ cursor: "pointer" }}
-                >
-                  {isRecording ? (
-                    <Square className="h-4 w-4 text-white fill-white" />
-                  ) : (
-                    <Mic className="h-4 w-4" />
-                  )}
-                </Button>
-                <Button
-                  onClick={handleSend}
-                  disabled={!input.trim() || isLoading}
-                  style={{ cursor: "pointer" }}
-                >
-                  <Send className="h-4 w-4" />
-                </Button>
+                        <Cpu className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <DropdownMenuLabel>Select AI Model</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {aiModels.map((model) => (
+                        <DropdownMenuItem
+                          key={model.id}
+                          onClick={() => setSelectedModel(model.id)}
+                          className={
+                            selectedModel === model.id ? "bg-accent" : ""
+                          }
+                          style={{ cursor: "pointer" }}
+                        >
+                          <div className="flex flex-col">
+                            <span className="font-medium">{model.name}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {model.description}
+                            </span>
+                          </div>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="pointer-events-auto h-8 w-8 bg-transparent"
+                    onClick={handleFileAttach}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <Paperclip className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`pointer-events-auto h-8 w-8 ${
+                      isRecording ? "bg-red-100" : "bg-transparent"
+                    }`}
+                    onClick={handleVoiceRecord}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {isRecording ? (
+                      <Square className="h-4 w-4 text-red-600" />
+                    ) : (
+                      <Mic className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </Button>
+                  <Button
+                    size="icon"
+                    className="pointer-events-auto h-8 w-8 bg-primary text-primary-foreground hover:bg-primary/90"
+                    onClick={handleSend}
+                    disabled={!input.trim() || isLoading}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
