@@ -246,7 +246,7 @@ export default function TutorPage() {
                                   {citationList.map((citation, idx) => (
                                     <div
                                       key={`${message.id}-citation-${idx}`}
-                                      className="relative"
+                                      className="relative inline-block"
                                       onMouseEnter={() =>
                                         setHoveredCitation({
                                           messageId: message.id,
@@ -265,11 +265,21 @@ export default function TutorPage() {
                                       </button>
                                       {hoveredCitation?.messageId === message.id &&
                                         hoveredCitation.index === idx && (
-                                          <div className="absolute z-30 mt-2 w-64 rounded-md border bg-background p-3 shadow-lg">
+                                          <div
+                                            className="absolute left-1/2 z-30 mt-2 w-72 -translate-x-1/2 rounded-md border bg-background p-3 shadow-lg"
+                                            onMouseEnter={() =>
+                                              setHoveredCitation({
+                                                messageId: message.id,
+                                                index: idx,
+                                                title: citation,
+                                              })
+                                            }
+                                            onMouseLeave={() => setHoveredCitation(null)}
+                                          >
                                             <div className="text-sm leading-relaxed text-muted-foreground">
                                               Highlighted passage preview from the referenced material. This UI is illustrative for provenance.
                                             </div>
-                                            <div className="mt-3 text-xs font-medium text-muted-foreground text-right">
+                                            <div className="mt-2 border-t pt-2 text-xs font-medium text-muted-foreground text-right">
                                               {citation}
                                             </div>
                                           </div>
