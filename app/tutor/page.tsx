@@ -216,9 +216,9 @@ export default function TutorPage() {
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col min-h-0 overflow-hidden">
+            <CardContent className="flex-1 flex flex-col min-h-0">
               <div
-                className="flex-1 overflow-y-auto space-y-4 pb-40"
+                className="flex-1 overflow-y-auto space-y-4 pb-48"
                 ref={messagesContainerRef}
               >
                 {messages.length === 0 ? (
