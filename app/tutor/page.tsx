@@ -40,7 +40,7 @@ const aiModels = [
 
 const mockResponses: Record<string, string> = {
   default:
-    "I'm here to help you with your academic questions. Feel free to ask me anything about mathematics, science, or your coursework.\n\nTo give you a sense of how extended explanations appear in the interface, here's a longer illustrative response. When exploring a complex topic—such as preparing for a comprehensive exam—it's useful to break your study plan into manageable stages: review foundational material, tackle problem sets that gradually increase in challenge, reflect on mistakes, and revisit concepts from multiple perspectives.\n\nRemember that active recall, spaced repetition, and discussion-based learning dramatically improve retention. Consider forming a small study group, summarising each chapter in your own words, and building flashcards for tricky definitions. If you get stuck at any point, let me know and I can surface a relevant excerpt from your uploaded notes or textbooks.",
+    "I'm here to help you with your academic questions. Feel free to ask me anything about mathematics, science, or your coursework. Based on the uploaded course materials, I can provide contextually relevant answers.",
   calculus:
     "Based on the uploaded Calculus textbook, the Fundamental Theorem of Calculus connects differentiation and integration. It states that if a function is continuous on an interval, then the derivative of its integral equals the original function. This theorem is crucial for solving many calculus problems. [Retrieved from: Calculus_Textbook_Chapter1.pdf]",
   physics:
@@ -317,9 +317,9 @@ export default function TutorPage() {
                                               }}
                                             >
                                               <div className="text-sm leading-relaxed text-muted-foreground max-h-60 overflow-y-auto pr-1 custom-scrollbar">
-                                                Highlighted passage preview from
-                                                the referenced material. This UI
-                                                is illustrative for provenance.
+                                                Sample passage (excerpt): In differential calculus, the Fundamental Theorem of Calculus bridges antiderivatives with definite integrals by showing that accumulation of rates reconstructs the original quantity. When a function f is continuous on [a, b], any antiderivative F satisfies ∫ₐᵇ f(x) dx = F(b) − F(a). This identity not only provides an efficient strategy for evaluation, but also clarifies why differentiation and integration act as inverse processes under appropriate regularity conditions. In applications, one often selects a convenient antiderivative—sometimes built from elementary transformations, sometimes via substitution—so that boundary evaluation yields a closed‑form result.
+
+                                                Longer note: For sequences of increasingly refined partitions, the Riemann sums converge provided oscillations diminish sufficiently; continuity ensures this. In practice, numerical quadrature approximates the integral when symbolic antiderivatives are unavailable. Error bounds depend on smoothness (e.g., the trapezoidal and Simpson rules exploit first and second derivatives respectively). These ideas generalize to measure‑theoretic integration, where limits, dominated convergence, and absolute integrability formalize the intuition that “small pieces” add up consistently.
                                               </div>
                                               <div className="mt-2 border-t pt-2 text-xs font-medium text-muted-foreground">
                                                 Cited from: {citation}
