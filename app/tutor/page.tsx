@@ -206,7 +206,7 @@ export default function TutorPage() {
 
   return (
     <Layout>
-      <div className="flex h-[calc(100vh-8rem)] flex-col gap-6">
+      <div className="flex h-[calc(100vh-8rem)] flex-col gap-6 -mb-4">
         <PageHero
           title="AI Tutor"
           description="Conversational guidance grounded in your course materials with context-aware suggestions and study support."
@@ -222,7 +222,7 @@ export default function TutorPage() {
           </CardHeader>
           <CardContent className="flex-1 flex flex-col min-h-0 overflow-hidden">
             <div
-              className="flex-1 overflow-y-auto space-y-4 pb-48"
+              className="flex-1 overflow-y-auto space-y-4 pb-56"
               ref={messagesContainerRef}
             >
               {messages.length === 0 ? (
