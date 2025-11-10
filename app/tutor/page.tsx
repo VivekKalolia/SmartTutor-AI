@@ -7,6 +7,11 @@ import { addMessage, setLoading } from "@/lib/features/tutor/tutorSlice";
 import Layout from "@/components/layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -74,9 +79,18 @@ function getMockResponse(userMessage: string): string {
   return mockResponses.default;
 }
 
-function extractCitation(text: string): string | null {
-  const match = text.match(/\[Retrieved from:\s*(.+?)\]/i);
-  return match ? match[1] : null;
+function extractCitations(text: string): string[] {
+  const regex = /\[Retrieved from:\s*([^\]]+)\]/gi;
+  const matches: string[] = [];
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    matches.push(match[1]);
+  }
+  return matches;
+}
+
+function stripCitationTags(text: string): string {
+  return text.replace(/\s*\[Retrieved from:[^\]]+\]/gi, "").trim();
 }
 
 export default function TutorPage() {
@@ -192,75 +206,124 @@ export default function TutorPage() {
                     </div>
                   </div>
                 ) : (
-                  messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`flex ${
-                        message.role === "user" ? "justify-end" : "justify-start"
-                      }`}
-                    >
+                  messages.map((message) => {
+                    const rawCitations =
+                      message.role === "assistant"
+                        ? extractCitations(message.content)
+                        : [];
+                    const citationList =
+                      rawCitations.length > 0
+                        ? rawCitations
+                        : message.role === "assistant"
+                        ? ["Knowledge Base"]
+                        : [];
+                    const displayContent =
+                      message.role === "assistant"
+                        ? stripCitationTags(message.content)
+                        : message.content;
+
+                    return (
                       <div
-                        className={`max-w-[80%] rounded-lg p-4 ${
-                          message.role === "user"
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted"
+                        key={message.id}
+                        className={`flex ${
+                          message.role === "user" ? "justify-end" : "justify-start"
                         }`}
                       >
-                        <div className="flex items-start justify-between gap-2">
-                          <p className="text-sm whitespace-pre-wrap">
-                            {message.content}
-                          </p>
-                          <div className="flex gap-1 flex-shrink-0">
-                            {message.role === "assistant" && (
-                              <>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-6 w-6"
-                                  onClick={() => handleTTS(message.content, message.id)}
-                                  style={{ cursor: "pointer" }}
-                                  title={speakingMessageId === message.id ? "Stop reading" : "Read answer aloud"}
-                                >
-                                  {speakingMessageId === message.id ? (
-                                    <VolumeX className="h-3 w-3" />
-                                  ) : (
-                                    <Volume2 className="h-3 w-3" />
-                                  )}
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-6 w-6"
-                                  onClick={() => handleCopy(message.content)}
-                                  style={{ cursor: "pointer" }}
-                                >
-                                  <Copy className="h-3 w-3" />
-                                </Button>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                        {message.role === "assistant" && (
-                          (() => {
-                            const citation = extractCitation(message.content) || "Knowledge Base";
-                            return (
-                              <Alert className="mt-2 py-2 pr-3">
-                                <div className="flex items-center gap-2">
-                                  <FileText className="h-4 w-4 text-muted-foreground" />
-                                  <AlertDescription className="text-xs">
-                                    Source: <span className="font-medium">{citation}</span>
-                                  </AlertDescription>
+                        <div
+                          className={`max-w-[80%] rounded-lg p-4 ${
+                            message.role === "user"
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-muted"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 space-y-2">
+                              <p className="text-sm whitespace-pre-wrap">
+                                {displayContent}
+                              </p>
+                              {message.role === "assistant" && citationList.length > 0 && (
+                                <div className="flex flex-wrap gap-2">
+                                  {citationList.map((citation, idx) => (
+                                    <Popover key={`${message.id}-citation-${idx}`}>
+                                      <PopoverTrigger asChild>
+                                        <button
+                                          type="button"
+                                          className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full border border-primary/40 bg-primary/10 px-2 text-[10px] font-semibold text-primary transition hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary"
+                                          aria-label={`View citation ${idx + 1}`}
+                                        >
+                                          {idx + 1}
+                                        </button>
+                                      </PopoverTrigger>
+                                      <PopoverContent className="w-72 space-y-3 text-sm">
+                                        <div className="flex items-start gap-2">
+                                          <FileText className="h-4 w-4 text-primary" />
+                                          <div>
+                                            <p className="font-semibold">{citation}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                              Referenced from uploaded course materials
+                                            </p>
+                                          </div>
+                                        </div>
+                                        <div className="rounded-md bg-muted/60 p-3 text-xs text-muted-foreground">
+                                          Highlighted passage preview from the referenced material. This UI is illustrative for provenance.
+                                        </div>
+                                      </PopoverContent>
+                                    </Popover>
+                                  ))}
                                 </div>
-                              </Alert>
-                            );
-                          })()
-                        )}
-                        <p className="text-xs opacity-70 mt-2">
-                          {message.timestamp.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit", hour12: true })}
-                        </p>
+                              )}
+                            </div>
+                            <div className="flex gap-1 flex-shrink-0">
+                              {message.role === "assistant" && (
+                                <>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-6 w-6"
+                                    onClick={() => handleTTS(message.content, message.id)}
+                                    style={{ cursor: "pointer" }}
+                                    title={speakingMessageId === message.id ? "Stop reading" : "Read answer aloud"}
+                                  >
+                                    {speakingMessageId === message.id ? (
+                                      <VolumeX className="h-3 w-3" />
+                                    ) : (
+                                      <Volume2 className="h-3 w-3" />
+                                    )}
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-6 w-6"
+                                    onClick={() => handleCopy(message.content)}
+                                    style={{ cursor: "pointer" }}
+                                  >
+                                    <Copy className="h-3 w-3" />
+                                  </Button>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                          {message.role === "assistant" && citationList.length > 0 && (
+                            <Alert className="mt-2 w-fit px-2.5 py-1.5">
+                              <div className="flex items-center gap-2">
+                                <FileText className="h-4 w-4 text-muted-foreground" />
+                                <AlertDescription className="text-xs">
+                                  Source: <span className="font-medium">{citationList[0]}</span>
+                                </AlertDescription>
+                              </div>
+                            </Alert>
+                          )}
+                          <p className="text-xs opacity-70 mt-2">
+                            {message.timestamp.toLocaleTimeString(undefined, {
+                              hour: "numeric",
+                              minute: "2-digit",
+                              hour12: true,
+                            })}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
                 {isLoading && (
                   <div className="flex justify-start">
