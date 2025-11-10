@@ -252,7 +252,7 @@ export default function TutorPage() {
                 ref={messagesContainerRef}
               >
                 {messages.length === 0 ? (
-                  <div className="flex h-full flex-col items-center justify-center text-center space-y-6 pt-24">
+                  <div className="flex h-full flex-col items-center justify-center text-center space-y-6 pt-40">
                     <div className="rounded-full bg-primary/10 p-4">
                       <Sparkles className="h-8 w-8 text-primary" />
                     </div>
