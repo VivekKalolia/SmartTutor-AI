@@ -118,9 +118,16 @@ export default function TutorPage() {
     null
   );
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    if (!messagesContainerRef.current) return;
+    const container = messagesContainerRef.current;
+    const scrollOptions: ScrollToOptions = {
+      top: container.scrollHeight,
+      behavior: "smooth",
+    };
+    container.scrollTo(scrollOptions);
   }, [messages]);
 
   const handleTTS = (text: string, messageId: string) => {
@@ -210,7 +217,10 @@ export default function TutorPage() {
               </div>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col min-h-0">
-              <div className="flex-1 overflow-y-auto space-y-4 mb-4 pb-20">
+              <div
+                className="flex-1 overflow-y-auto space-y-4 mb-4 pb-32"
+                ref={messagesContainerRef}
+              >
                 {messages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                     <div className="rounded-full bg-primary/10 p-4">

@@ -281,26 +281,6 @@ export default function QuizPage() {
   return (
     <Layout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Smart Quiz</h1>
-            <p className="text-muted-foreground mt-2">
-              Test your knowledge with adaptive quizzes
-            </p>
-          </div>
-          {currentSubject && (
-          <Button
-            onClick={() => dispatch(toggleAIAssist())}
-            variant="outline"
-            className="gap-2"
-            style={{ cursor: "pointer" }}
-          >
-            <Brain className="h-4 w-4" />
-            AI Assist
-          </Button>
-          )}
-        </div>
-
         {!currentSubject ? (
           <Card>
             <CardHeader>
@@ -609,7 +589,7 @@ export default function QuizPage() {
                 <Card>
                   <CardHeader>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 flex-1">
+                    <div className="flex items-center gap-2 flex-1">
                         <CardTitle>
                           {questions[currentQuestionIndex]?.question}
                         </CardTitle>
@@ -637,17 +617,29 @@ export default function QuizPage() {
                           )}
                         </Button>
                       </div>
-                      <Button
-                        onClick={handleHint}
-                        variant="outline"
-                        size="sm"
-                        className="gap-2"
-                        disabled={showHint}
-                        style={{ cursor: showHint ? "not-allowed" : "pointer" }}
-                      >
-                        <Lightbulb className="h-4 w-4" />
-                        Hint
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          onClick={() => dispatch(toggleAIAssist())}
+                          variant="outline"
+                          size="sm"
+                          className="gap-2"
+                          style={{ cursor: "pointer" }}
+                        >
+                          <Brain className="h-4 w-4" />
+                          AI Assist
+                        </Button>
+                        <Button
+                          onClick={handleHint}
+                          variant="outline"
+                          size="sm"
+                          className="gap-2"
+                          disabled={showHint}
+                          style={{ cursor: showHint ? "not-allowed" : "pointer" }}
+                        >
+                          <Lightbulb className="h-4 w-4" />
+                          Hint
+                        </Button>
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
