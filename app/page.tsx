@@ -369,6 +369,7 @@ export default function Dashboard() {
                         name="Mastery"
                         cornerRadius={4}
                         fill="#8884d8"
+                        stroke="none"
                       >
                         {mathTopics.map((entry, index) => (
                           <Cell
@@ -435,6 +436,7 @@ export default function Dashboard() {
                         name="Mastery"
                         cornerRadius={4}
                         fill="#8884d8"
+                        stroke="none"
                       >
                         {scienceTopics.map((entry, index) => (
                           <Cell
