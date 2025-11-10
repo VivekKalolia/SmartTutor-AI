@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Send, Copy, Sparkles, Paperclip, Cpu, Mic, Volume2, VolumeX, Square } from "lucide-react";
+import { FileText } from "lucide-react";
 
 const aiModels = [
   { id: "llama-3b", name: "Llama 3B", description: "Lightweight, fast" },
@@ -70,6 +71,11 @@ function getMockResponse(userMessage: string): string {
     return mockResponses.algebra;
   }
   return mockResponses.default;
+}
+
+function extractCitation(text: string): string | null {
+  const match = text.match(/\[Retrieved from:\s*(.+?)\]/i);
+  return match ? match[1] : null;
 }
 
 export default function TutorPage() {
@@ -233,8 +239,21 @@ export default function TutorPage() {
                             )}
                           </div>
                         </div>
+                        {message.role === "assistant" && (
+                          (() => {
+                            const citation = extractCitation(message.content);
+                            return citation ? (
+                              <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+                                <FileText className="h-3 w-3" />
+                                <span>
+                                  Source: <span className="font-medium">{citation}</span>
+                                </span>
+                              </div>
+                            ) : null;
+                          })()
+                        )}
                         <p className="text-xs opacity-70 mt-2">
-                          {message.timestamp.toLocaleTimeString()}
+                          {message.timestamp.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit", hour12: true })}
                         </p>
                       </div>
                     </div>
