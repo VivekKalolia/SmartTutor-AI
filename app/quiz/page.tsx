@@ -257,8 +257,9 @@ export default function QuizPage() {
   };
 
   const answeredCount = Object.keys(answers).length;
+  const submittedCount = Object.keys(questionTimes).length;
   const questionCompletion =
-    questions.length > 0 ? (answeredCount / questions.length) * 100 : 0;
+    questions.length > 0 ? (submittedCount / questions.length) * 100 : 0;
   const correctCount = questions.reduce((count, q, idx) => {
     const userAnswer = answers[idx];
     return userAnswer && parseInt(userAnswer) === q.correctAnswer
@@ -552,7 +553,7 @@ export default function QuizPage() {
                         : `${questionTime}s`}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {answeredCount} answered
+                      {submittedCount} answered
                     </div>
                   </div>
                 </div>
@@ -585,12 +586,12 @@ export default function QuizPage() {
                       Questions Completed
                     </div>
                     <span className="text-muted-foreground">
-                      {answeredCount} / {questions.length}
+                      {submittedCount} / {questions.length}
                     </span>
                   </div>
                   <Progress value={questionCompletion} className="mt-3 h-2" />
                   <div className="mt-2 flex items-center justify-start text-xs text-muted-foreground">
-                    {answeredCount === questions.length && questions.length > 0 && (
+                    {submittedCount === questions.length && questions.length > 0 && (
                       <span>All questions answered</span>
                     )}
                   </div>
