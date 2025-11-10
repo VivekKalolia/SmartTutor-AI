@@ -611,29 +611,6 @@ export default function QuizPage() {
 
                 <Card>
                   <CardHeader className="space-y-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button
-                        onClick={() => dispatch(toggleAIAssist())}
-                        variant="outline"
-                        size="sm"
-                        className="gap-2"
-                        style={{ cursor: "pointer" }}
-                      >
-                        <Brain className="h-4 w-4" />
-                        AI Assist
-                      </Button>
-                      <Button
-                        onClick={handleHint}
-                        variant="outline"
-                        size="sm"
-                        className="gap-2"
-                        disabled={showHint}
-                        style={{ cursor: showHint ? "not-allowed" : "pointer" }}
-                      >
-                        <Lightbulb className="h-4 w-4" />
-                        Hint
-                      </Button>
-                    </div>
                     <div className="flex items-start gap-2">
                       <CardTitle className="flex-1">
                         <span className="text-lg font-semibold sm:text-xl">
@@ -663,6 +640,34 @@ export default function QuizPage() {
                           <Volume2 className="h-4 w-4" />
                         )}
                       </Button>
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-sm font-medium text-muted-foreground">
+                        Question {currentQuestionIndex + 1}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          onClick={() => dispatch(toggleAIAssist())}
+                          variant="outline"
+                          size="sm"
+                          className="gap-2"
+                          style={{ cursor: "pointer" }}
+                        >
+                          <Brain className="h-4 w-4" />
+                          AI Assist
+                        </Button>
+                        <Button
+                          onClick={handleHint}
+                          variant="outline"
+                          size="sm"
+                          className="gap-2"
+                          disabled={showHint}
+                          style={{ cursor: showHint ? "not-allowed" : "pointer" }}
+                        >
+                          <Lightbulb className="h-4 w-4" />
+                          Hint
+                        </Button>
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
