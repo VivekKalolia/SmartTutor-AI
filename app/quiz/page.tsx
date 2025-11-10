@@ -546,24 +546,22 @@ export default function QuizPage() {
             ) : (
               <div className="space-y-6 max-w-3xl mx-auto w-full">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <Badge
-                      variant="secondary"
-                      className="mb-2"
-                      style={{
-                        backgroundColor:
-                          currentSubject === "math" ? "#1E3A8A" : "#059669",
-                        color: "white",
-                      }}
-                    >
-                      {currentSubject === "math" ? "Math" : "Science"}
-                    </Badge>
-                    <p className="text-sm text-muted-foreground">
-                      Question {currentQuestionIndex + 1} of {questions.length}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Badge
+                    variant="secondary"
+                    className="px-3 py-1 text-sm"
+                    style={{
+                      backgroundColor:
+                        currentSubject === "math" ? "#1E3A8A" : "#059669",
+                      color: "white",
+                    }}
+                  >
+                    {currentSubject === "math" ? "Math" : "Science"}
+                  </Badge>
+                  <div className="flex flex-col items-end gap-1 text-sm text-muted-foreground">
+                    <span className="text-xs uppercase tracking-wide text-muted-foreground/80">
+                      Time Elapsed
+                    </span>
+                    <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                       <Clock className="h-4 w-4" />
                       {isSubmitted && questionTimes[currentQuestionIndex]
                         ? formatTime(questionTimes[currentQuestionIndex])
