@@ -599,13 +599,10 @@ export default function QuizPage() {
                     </span>
                   </div>
                   <Progress value={questionCompletion} className="mt-3 h-2" />
-                  <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                    <span>
-                      {answeredCount === questions.length && questions.length > 0
-                        ? "All questions answered"
-                        : "Keep going!"}
-                    </span>
-                    <span>{Math.round(questionCompletion)}%</span>
+                  <div className="mt-2 flex items-center justify-start text-xs text-muted-foreground">
+                    {answeredCount === questions.length && questions.length > 0 && (
+                      <span>All questions answered</span>
+                    )}
                   </div>
                 </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/store";
 import { addMessage, setLoading } from "@/lib/features/tutor/tutorSlice";
@@ -117,6 +117,11 @@ export default function TutorPage() {
   const [citationHideTimer, setCitationHideTimer] = useState<number | null>(
     null
   );
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages]);
 
   const handleTTS = (text: string, messageId: string) => {
     if (speakingMessageId === messageId) {
@@ -205,7 +210,7 @@ export default function TutorPage() {
               </div>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col min-h-0">
-              <div className="flex-1 overflow-y-auto space-y-4 mb-4">
+              <div className="flex-1 overflow-y-auto space-y-4 mb-4 pb-20">
                 {messages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                     <div className="rounded-full bg-primary/10 p-4">
@@ -245,9 +250,7 @@ export default function TutorPage() {
                           message.role === "user"
                             ? "justify-end"
                             : "justify-start"
-                        } ${
-                          message.role === "assistant" ? "mb-6" : "mb-3"
-                        }`}
+                        } ${message.role === "assistant" ? "mb-6" : "mb-3"}`}
                       >
                         <div
                           className={`max-w-[80%] rounded-lg p-4 ${
@@ -448,6 +451,7 @@ export default function TutorPage() {
                     </div>
                   </div>
                 )}
+                <div ref={messagesEndRef} />
               </div>
 
               <div className="relative">

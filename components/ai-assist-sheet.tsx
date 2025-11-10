@@ -102,7 +102,7 @@ export function AIAssistSheet({
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <Brain className="h-5 w-5 text-primary" />
-            Learning Assistant
+            AI Learning Assistant
           </SheetTitle>
           <SheetDescription>
             Ask questions about the current problem or concept. I'll provide
