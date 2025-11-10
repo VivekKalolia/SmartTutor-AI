@@ -206,12 +206,12 @@ export default function TutorPage() {
 
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="flex h-[calc(100vh-8rem)] flex-col gap-6">
         <PageHero
           title="AI Tutor"
           description="Conversational guidance grounded in your course materials with context-aware suggestions and study support."
         />
-        <Card className="flex flex-1 flex-col overflow-hidden min-h-[600px] lg:min-h-[calc(100vh-22rem)]">
+        <Card className="flex flex-1 flex-col overflow-hidden min-h-[500px] lg:min-h-0">
           <CardHeader className="flex-shrink-0">
             <div className="flex items-center justify-center">
               <CardTitle className="flex items-center gap-2">
@@ -221,340 +221,336 @@ export default function TutorPage() {
             </div>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col min-h-0 overflow-hidden">
-              <div
-                className="flex-1 overflow-y-auto space-y-4 pb-48"
-                ref={messagesContainerRef}
-              >
-                {messages.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
-                    <div className="rounded-full bg-primary/10 p-4">
-                      <Sparkles className="h-8 w-8 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold">
-                        How can I help you today?
-                      </h3>
-                      <p className="text-muted-foreground mt-2">
-                        Ask me anything about your coursework, concepts, or
-                        study strategies.
-                      </p>
-                    </div>
+            <div
+              className="flex-1 overflow-y-auto space-y-4 pb-48"
+              ref={messagesContainerRef}
+            >
+              {messages.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+                  <div className="rounded-full bg-primary/10 p-4">
+                    <Sparkles className="h-8 w-8 text-primary" />
                   </div>
-                ) : (
-                  messages.map((message) => {
-                    const rawCitations =
-                      message.role === "assistant"
-                        ? extractCitations(message.content)
-                        : [];
-                    const citationList =
-                      rawCitations.length > 0
-                        ? rawCitations
-                        : message.role === "assistant"
-                          ? ["Knowledge Base"]
-                          : [];
-                    const displayContent =
-                      message.role === "assistant"
-                        ? stripCitationTags(message.content)
-                        : message.content;
-
-                    return (
-                      <div
-                        key={message.id}
-                        className={`flex ${
-                          message.role === "user"
-                            ? "justify-end"
-                            : "justify-start"
-                        } ${message.role === "assistant" ? "mb-6" : "mb-3"}`}
-                      >
-                        <div
-                          className={`max-w-[80%] rounded-lg p-4 ${
-                            message.role === "user"
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-muted"
-                          }`}
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="flex-1 space-y-2">
-                              <p className="text-sm whitespace-pre-wrap max-h-60 overflow-y-auto pr-1 custom-scrollbar">
-                                {displayContent}
-                              </p>
-                              {message.role === "assistant" &&
-                                citationList.length > 0 && (
-                                  <div className="flex flex-wrap gap-2">
-                                    {citationList.map((citation, idx) => (
-                                      <div
-                                        key={`${message.id}-citation-${idx}`}
-                                        className="relative"
-                                        onMouseEnter={() =>
-                                          setHoveredCitation({
-                                            messageId: message.id,
-                                            index: idx,
-                                            title: citation,
-                                          })
-                                        }
-                                        onMouseLeave={() => {
-                                          if (citationHideTimer)
-                                            window.clearTimeout(
-                                              citationHideTimer
-                                            );
-                                          const t = window.setTimeout(
-                                            () => setHoveredCitation(null),
-                                            200
-                                          );
-                                          setCitationHideTimer(t);
-                                        }}
-                                      >
-                                        <button
-                                          type="button"
-                                          className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-[11px] font-semibold text-primary transition hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary"
-                                          aria-label={`View citation ${idx + 1}`}
-                                        >
-                                          {idx + 1}
-                                        </button>
-                                        {hoveredCitation?.messageId ===
-                                          message.id &&
-                                          hoveredCitation.index === idx && (
-                                            <div
-                                              className="absolute z-30 mt-2 w-96 rounded-md border bg-background p-3 shadow-lg"
-                                              onMouseEnter={() => {
-                                                if (citationHideTimer)
-                                                  window.clearTimeout(
-                                                    citationHideTimer
-                                                  );
-                                              }}
-                                              onMouseLeave={() => {
-                                                if (citationHideTimer)
-                                                  window.clearTimeout(
-                                                    citationHideTimer
-                                                  );
-                                                const t = window.setTimeout(
-                                                  () =>
-                                                    setHoveredCitation(null),
-                                                  450
-                                                );
-                                                setCitationHideTimer(t);
-                                              }}
-                                            >
-                                              <div className="text-sm leading-relaxed text-muted-foreground max-h-60 overflow-y-auto pr-1 custom-scrollbar">
-                                                In differential calculus, the
-                                                Fundamental Theorem of Calculus
-                                                bridges antiderivatives with
-                                                definite integrals by showing
-                                                that accumulation of rates
-                                                reconstructs the original
-                                                quantity. When a function f is
-                                                continuous on [a, b], any
-                                                antiderivative F satisfies ∫ₐᵇ
-                                                f(x) dx = F(b) − F(a). This
-                                                identity not only provides an
-                                                efficient strategy for
-                                                evaluation, but also clarifies
-                                                why differentiation and
-                                                integration act as inverse
-                                                processes under appropriate
-                                                regularity conditions. In
-                                                applications, one often selects
-                                                a convenient
-                                                antiderivative—sometimes built
-                                                from elementary transformations,
-                                                sometimes via substitution—so
-                                                that boundary evaluation yields
-                                                a closed‑form result. Longer
-                                                note: For sequences of
-                                                increasingly refined partitions,
-                                                the Riemann sums converge
-                                                provided oscillations diminish
-                                                sufficiently; continuity ensures
-                                                this. In practice, numerical
-                                                quadrature approximates the
-                                                integral when symbolic
-                                                antiderivatives are unavailable.
-                                                Error bounds depend on
-                                                smoothness (e.g., the
-                                                trapezoidal and Simpson rules
-                                                exploit first and second
-                                                derivatives respectively). These
-                                                ideas generalize to
-                                                measure‑theoretic integration,
-                                                where limits, dominated
-                                                convergence, and absolute
-                                                integrability formalize the
-                                                intuition that “small pieces”
-                                                add up consistently.
-                                              </div>
-                                              <div className="mt-2 border-t pt-2 text-xs font-medium text-muted-foreground">
-                                                Cited from: {citation}
-                                              </div>
-                                            </div>
-                                          )}
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                            </div>
-                            <div className="flex gap-1 flex-shrink-0">
-                              {message.role === "assistant" && (
-                                <>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-6 w-6"
-                                    onClick={() =>
-                                      handleTTS(message.content, message.id)
-                                    }
-                                    style={{ cursor: "pointer" }}
-                                    title={
-                                      speakingMessageId === message.id
-                                        ? "Stop reading"
-                                        : "Read answer aloud"
-                                    }
-                                  >
-                                    {speakingMessageId === message.id ? (
-                                      <VolumeX className="h-3 w-3" />
-                                    ) : (
-                                      <Volume2 className="h-3 w-3" />
-                                    )}
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-6 w-6"
-                                    onClick={() => handleCopy(message.content)}
-                                    style={{ cursor: "pointer" }}
-                                  >
-                                    <Copy className="h-3 w-3" />
-                                  </Button>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                          {message.role === "assistant" &&
-                            citationList.length > 0 && (
-                              <Alert className="mt-2 w-fit px-2.5 py-1.5">
-                                <div className="flex items-center gap-2">
-                                  <FileText className="h-4 w-4 text-muted-foreground" />
-                                  <AlertDescription className="text-xs">
-                                    Source:{" "}
-                                    <span className="font-medium">
-                                      {citationList[0]}
-                                    </span>
-                                  </AlertDescription>
-                                </div>
-                              </Alert>
-                            )}
-                          <p className="text-xs opacity-70 mt-2">
-                            {message.timestamp.toLocaleTimeString(undefined, {
-                              hour: "numeric",
-                              minute: "2-digit",
-                              hour12: true,
-                            })}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-                {isLoading && (
-                  <div className="flex justify-start">
-                    <div className="bg-muted rounded-lg p-4">
-                      <div className="flex gap-1">
-                        <div className="h-2 w-2 bg-muted-foreground rounded-full animate-bounce" />
-                        <div className="h-2 w-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.2s]" />
-                        <div className="h-2 w-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.4s]" />
-                      </div>
-                    </div>
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
-
-              <div className="flex-shrink-0 border-t pt-4">
-                <div className="flex items-center gap-3 rounded-2xl border border-border bg-background px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-primary/20">
-                  <Input
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSend();
-                      }
-                    }}
-                    placeholder="Ask a question about your coursework..."
-                    className="flex-1 border-0 bg-transparent px-0 py-0 text-base shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                  />
-                  <div className="flex items-center gap-2">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-10 w-10 rounded-full bg-transparent"
-                          style={{ cursor: "pointer" }}
-                          title={`${selectedModelData.name} - ${selectedModelData.description}`}
-                        >
-                          <Cpu className="h-4 w-4 text-muted-foreground" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-56">
-                        <DropdownMenuLabel>Select AI Model</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        {aiModels.map((model) => (
-                          <DropdownMenuItem
-                            key={model.id}
-                            onClick={() => setSelectedModel(model.id)}
-                            className={
-                              selectedModel === model.id ? "bg-accent" : ""
-                            }
-                            style={{ cursor: "pointer" }}
-                          >
-                            <div className="flex flex-col">
-                              <span className="font-medium">{model.name}</span>
-                              <span className="text-xs text-muted-foreground">
-                                {model.description}
-                              </span>
-                            </div>
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-10 w-10 rounded-full bg-transparent"
-                      onClick={handleFileAttach}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <Paperclip className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className={`h-10 w-10 rounded-full ${
-                        isRecording ? "bg-red-100" : "bg-transparent"
-                      }`}
-                      onClick={handleVoiceRecord}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {isRecording ? (
-                        <Square className="h-4 w-4 text-red-600" />
-                      ) : (
-                        <Mic className="h-4 w-4 text-muted-foreground" />
-                      )}
-                    </Button>
-                    <Button
-                      size="icon"
-                      className="h-10 w-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
-                      onClick={handleSend}
-                      disabled={!input.trim() || isLoading}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
+                  <div>
+                    <h3 className="text-lg font-semibold">
+                      How can I help you today?
+                    </h3>
+                    <p className="text-muted-foreground mt-2">
+                      Ask me anything about your coursework, concepts, or study
+                      strategies.
+                    </p>
                   </div>
                 </div>
+              ) : (
+                messages.map((message) => {
+                  const rawCitations =
+                    message.role === "assistant"
+                      ? extractCitations(message.content)
+                      : [];
+                  const citationList =
+                    rawCitations.length > 0
+                      ? rawCitations
+                      : message.role === "assistant"
+                        ? ["Knowledge Base"]
+                        : [];
+                  const displayContent =
+                    message.role === "assistant"
+                      ? stripCitationTags(message.content)
+                      : message.content;
+
+                  return (
+                    <div
+                      key={message.id}
+                      className={`flex ${
+                        message.role === "user"
+                          ? "justify-end"
+                          : "justify-start"
+                      } ${message.role === "assistant" ? "mb-6" : "mb-3"}`}
+                    >
+                      <div
+                        className={`max-w-[80%] rounded-lg p-4 ${
+                          message.role === "user"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 space-y-2">
+                            <p className="text-sm whitespace-pre-wrap max-h-60 overflow-y-auto pr-1 custom-scrollbar">
+                              {displayContent}
+                            </p>
+                            {message.role === "assistant" &&
+                              citationList.length > 0 && (
+                                <div className="flex flex-wrap gap-2">
+                                  {citationList.map((citation, idx) => (
+                                    <div
+                                      key={`${message.id}-citation-${idx}`}
+                                      className="relative"
+                                      onMouseEnter={() =>
+                                        setHoveredCitation({
+                                          messageId: message.id,
+                                          index: idx,
+                                          title: citation,
+                                        })
+                                      }
+                                      onMouseLeave={() => {
+                                        if (citationHideTimer)
+                                          window.clearTimeout(
+                                            citationHideTimer
+                                          );
+                                        const t = window.setTimeout(
+                                          () => setHoveredCitation(null),
+                                          200
+                                        );
+                                        setCitationHideTimer(t);
+                                      }}
+                                    >
+                                      <button
+                                        type="button"
+                                        className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-[11px] font-semibold text-primary transition hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary"
+                                        aria-label={`View citation ${idx + 1}`}
+                                      >
+                                        {idx + 1}
+                                      </button>
+                                      {hoveredCitation?.messageId ===
+                                        message.id &&
+                                        hoveredCitation.index === idx && (
+                                          <div
+                                            className="absolute z-30 mt-2 w-96 rounded-md border bg-background p-3 shadow-lg"
+                                            onMouseEnter={() => {
+                                              if (citationHideTimer)
+                                                window.clearTimeout(
+                                                  citationHideTimer
+                                                );
+                                            }}
+                                            onMouseLeave={() => {
+                                              if (citationHideTimer)
+                                                window.clearTimeout(
+                                                  citationHideTimer
+                                                );
+                                              const t = window.setTimeout(
+                                                () => setHoveredCitation(null),
+                                                450
+                                              );
+                                              setCitationHideTimer(t);
+                                            }}
+                                          >
+                                            <div className="text-sm leading-relaxed text-muted-foreground max-h-60 overflow-y-auto pr-1 custom-scrollbar">
+                                              In differential calculus, the
+                                              Fundamental Theorem of Calculus
+                                              bridges antiderivatives with
+                                              definite integrals by showing that
+                                              accumulation of rates reconstructs
+                                              the original quantity. When a
+                                              function f is continuous on [a,
+                                              b], any antiderivative F satisfies
+                                              ∫ₐᵇ f(x) dx = F(b) − F(a). This
+                                              identity not only provides an
+                                              efficient strategy for evaluation,
+                                              but also clarifies why
+                                              differentiation and integration
+                                              act as inverse processes under
+                                              appropriate regularity conditions.
+                                              In applications, one often selects
+                                              a convenient
+                                              antiderivative—sometimes built
+                                              from elementary transformations,
+                                              sometimes via substitution—so that
+                                              boundary evaluation yields a
+                                              closed‑form result. Longer note:
+                                              For sequences of increasingly
+                                              refined partitions, the Riemann
+                                              sums converge provided
+                                              oscillations diminish
+                                              sufficiently; continuity ensures
+                                              this. In practice, numerical
+                                              quadrature approximates the
+                                              integral when symbolic
+                                              antiderivatives are unavailable.
+                                              Error bounds depend on smoothness
+                                              (e.g., the trapezoidal and Simpson
+                                              rules exploit first and second
+                                              derivatives respectively). These
+                                              ideas generalize to
+                                              measure‑theoretic integration,
+                                              where limits, dominated
+                                              convergence, and absolute
+                                              integrability formalize the
+                                              intuition that “small pieces” add
+                                              up consistently.
+                                            </div>
+                                            <div className="mt-2 border-t pt-2 text-xs font-medium text-muted-foreground">
+                                              Cited from: {citation}
+                                            </div>
+                                          </div>
+                                        )}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                          </div>
+                          <div className="flex gap-1 flex-shrink-0">
+                            {message.role === "assistant" && (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6"
+                                  onClick={() =>
+                                    handleTTS(message.content, message.id)
+                                  }
+                                  style={{ cursor: "pointer" }}
+                                  title={
+                                    speakingMessageId === message.id
+                                      ? "Stop reading"
+                                      : "Read answer aloud"
+                                  }
+                                >
+                                  {speakingMessageId === message.id ? (
+                                    <VolumeX className="h-3 w-3" />
+                                  ) : (
+                                    <Volume2 className="h-3 w-3" />
+                                  )}
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6"
+                                  onClick={() => handleCopy(message.content)}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  <Copy className="h-3 w-3" />
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        {message.role === "assistant" &&
+                          citationList.length > 0 && (
+                            <Alert className="mt-2 w-fit px-2.5 py-1.5">
+                              <div className="flex items-center gap-2">
+                                <FileText className="h-4 w-4 text-muted-foreground" />
+                                <AlertDescription className="text-xs">
+                                  Source:{" "}
+                                  <span className="font-medium">
+                                    {citationList[0]}
+                                  </span>
+                                </AlertDescription>
+                              </div>
+                            </Alert>
+                          )}
+                        <p className="text-xs opacity-70 mt-2">
+                          {message.timestamp.toLocaleTimeString(undefined, {
+                            hour: "numeric",
+                            minute: "2-digit",
+                            hour12: true,
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-muted rounded-lg p-4">
+                    <div className="flex gap-1">
+                      <div className="h-2 w-2 bg-muted-foreground rounded-full animate-bounce" />
+                      <div className="h-2 w-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.2s]" />
+                      <div className="h-2 w-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.4s]" />
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            <div className="flex-shrink-0 border-t pt-4">
+              <div className="flex items-center gap-3 rounded-2xl border border-border bg-background px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-primary/20">
+                <Input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSend();
+                    }
+                  }}
+                  placeholder="Ask a question about your coursework..."
+                  className="flex-1 border-0 bg-transparent px-0 py-0 text-base shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                />
+                <div className="flex items-center gap-2">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-10 w-10 rounded-full bg-transparent"
+                        style={{ cursor: "pointer" }}
+                        title={`${selectedModelData.name} - ${selectedModelData.description}`}
+                      >
+                        <Cpu className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <DropdownMenuLabel>Select AI Model</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {aiModels.map((model) => (
+                        <DropdownMenuItem
+                          key={model.id}
+                          onClick={() => setSelectedModel(model.id)}
+                          className={
+                            selectedModel === model.id ? "bg-accent" : ""
+                          }
+                          style={{ cursor: "pointer" }}
+                        >
+                          <div className="flex flex-col">
+                            <span className="font-medium">{model.name}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {model.description}
+                            </span>
+                          </div>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 rounded-full bg-transparent"
+                    onClick={handleFileAttach}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <Paperclip className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`h-10 w-10 rounded-full ${
+                      isRecording ? "bg-red-100" : "bg-transparent"
+                    }`}
+                    onClick={handleVoiceRecord}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {isRecording ? (
+                      <Square className="h-4 w-4 text-red-600" />
+                    ) : (
+                      <Mic className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </Button>
+                  <Button
+                    size="icon"
+                    className="h-10 w-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    onClick={handleSend}
+                    disabled={!input.trim() || isLoading}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </CardContent>
+        </Card>
       </div>
       {/* tooltip handled inline per citation */}
     </Layout>
