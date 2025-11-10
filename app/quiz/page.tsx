@@ -210,6 +210,10 @@ export default function QuizPage() {
     setIsSubmitted(false);
     setShowToast(false);
     setToastMessage(null);
+    setQuestionTimes({});
+    setQuestionTime(0);
+    setQuestionStartTime(null);
+    setMasteryProgress(65);
   };
 
   const handleHint = () => {
@@ -527,7 +531,7 @@ export default function QuizPage() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-6 max-w-3xl mx-auto w-full">
                 <div className="flex items-center justify-between">
                   <div>
                     <Badge
