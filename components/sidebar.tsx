@@ -111,6 +111,7 @@ export function Sidebar() {
             </div>
           )}
         </div>
+        </div>
         <Button
           variant="ghost"
           size="icon"
