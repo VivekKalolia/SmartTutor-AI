@@ -5,6 +5,10 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  replyingTo?: {
+    text: string;
+    messageId: string;
+  };
 }
 
 interface TutorState {

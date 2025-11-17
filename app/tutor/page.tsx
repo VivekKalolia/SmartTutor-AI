@@ -8,6 +8,14 @@ import Layout from "@/components/layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -28,8 +36,13 @@ import {
   Volume2,
   VolumeX,
   Square,
+  HelpCircle,
+  X,
+  MessageSquare,
+  CornerDownLeft,
 } from "lucide-react";
 import { FileText } from "lucide-react";
+import { toast } from "sonner";
 
 const aiModels = [
   { id: "llama-3b", name: "Llama 3B", description: "Lightweight, fast" },
@@ -119,8 +132,19 @@ export default function TutorPage() {
   );
   const [showTopFade, setShowTopFade] = useState(false);
   const [showBottomFade, setShowBottomFade] = useState(false);
+  const [showRAGInfo, setShowRAGInfo] = useState(false);
+  const [selectedText, setSelectedText] = useState<{
+    text: string;
+    messageId: string;
+    position: { top: number; left: number };
+  } | null>(null);
+  const [replyingTo, setReplyingTo] = useState<{
+    text: string;
+    messageId: string;
+  } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+  const selectionRef = useRef<Selection | null>(null);
 
   const updateScrollFades = () => {
     const container = messagesContainerRef.current;
@@ -152,6 +176,109 @@ export default function TutorPage() {
     return () => container.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Handle text selection for AI assistant messages only
+  useEffect(() => {
+    const handleSelection = () => {
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) {
+        setSelectedText(null);
+        return;
+      }
+
+      const range = selection.getRangeAt(0);
+      const selectedTextContent = selection.toString().trim();
+
+      if (!selectedTextContent) {
+        setSelectedText(null);
+        return;
+      }
+
+      // Check if selection is within an AI assistant message
+      const ancestor = range.commonAncestorContainer;
+      const assistantMessageElement =
+        ancestor.nodeType === Node.ELEMENT_NODE
+          ? (ancestor as Element).closest('[data-message-role="assistant"]')
+          : ancestor.parentElement?.closest('[data-message-role="assistant"]');
+
+      if (!assistantMessageElement) {
+        setSelectedText(null);
+        return;
+      }
+
+      // Check if selection is within non-selectable elements (citations, source, timestamp)
+      // Only allow selection from the main content paragraph
+      const selectableContent = assistantMessageElement.querySelector(
+        '[data-selectable-content="true"]'
+      );
+
+      if (!selectableContent) {
+        setSelectedText(null);
+        return;
+      }
+
+      // Check if the selection is actually within the selectable content
+      const isWithinSelectable =
+        selectableContent.contains(range.startContainer) &&
+        selectableContent.contains(range.endContainer);
+
+      if (!isWithinSelectable) {
+        setSelectedText(null);
+        return;
+      }
+
+      // Get message ID from the element
+      const messageId = assistantMessageElement.getAttribute("data-message-id");
+      if (!messageId) {
+        setSelectedText(null);
+        return;
+      }
+
+      // Get position for floating button (using viewport coordinates for fixed positioning)
+      const rect = range.getBoundingClientRect();
+
+      setSelectedText({
+        text: selectedTextContent,
+        messageId,
+        position: {
+          top: rect.top - 50, // Position above selection
+          left: rect.left + rect.width / 2, // Center horizontally
+        },
+      });
+      selectionRef.current = selection;
+    };
+
+    const handleMouseUp = () => {
+      setTimeout(handleSelection, 10);
+    };
+
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Don't clear selection if clicking on input field or its container
+      if (
+        target.closest("input") ||
+        target.closest('[role="textbox"]') ||
+        target.closest(".rounded-2xl") // Input container
+      ) {
+        return;
+      }
+      // Clear selection if clicking outside assistant messages
+      if (!target.closest('[data-message-role="assistant"]')) {
+        setSelectedText(null);
+        if (window.getSelection) {
+          window.getSelection()?.removeAllRanges();
+        }
+      }
+    };
+
+    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("click", handleClick);
+
+    return () => {
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("click", handleClick);
+    };
+  }, []);
+
   const handleTTS = (text: string, messageId: string) => {
     if (speakingMessageId === messageId) {
       window.speechSynthesis.cancel();
@@ -176,9 +303,11 @@ export default function TutorPage() {
         role: "user",
         content: userMessage,
         timestamp: new Date(),
+        ...(replyingTo && { replyingTo }), // Include reply reference if exists
       })
     );
     setInput("");
+    setReplyingTo(null); // Clear reply preview when sending
     dispatch(setLoading(true));
 
     setTimeout(() => {
@@ -197,6 +326,7 @@ export default function TutorPage() {
 
   const handleCopy = (content: string) => {
     navigator.clipboard.writeText(content);
+    toast.success("Copied to clipboard!");
   };
 
   const handleFileAttach = () => {
@@ -230,21 +360,152 @@ export default function TutorPage() {
       <div className="flex h-[calc(100vh-8rem)] flex-col gap-6 -mb-4">
         <Card className="flex flex-1 flex-col overflow-hidden">
           <CardHeader className="flex-shrink-0">
-            <div className="flex items-center justify-center">
+            <div className="relative flex items-center justify-center">
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-primary" />
                 AI Tutor
               </CardTitle>
+              <Sheet open={showRAGInfo} onOpenChange={setShowRAGInfo}>
+                <SheetTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 h-8 w-8"
+                    style={{ cursor: "pointer" }}
+                  >
+                    <HelpCircle className="h-5 w-5 text-muted-foreground" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-full sm:max-w-lg">
+                  <SheetHeader>
+                    <SheetTitle className="flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 text-primary" />
+                      How AI Tutor Works
+                    </SheetTitle>
+                    <SheetDescription className="text-left">
+                      Understanding RAG (Retrieval-Augmented Generation)
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="mt-6 space-y-6">
+                    <div className="space-y-3">
+                      <h3 className="text-lg font-semibold">What is RAG?</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        RAG (Retrieval-Augmented Generation) is an advanced AI
+                        technique that combines the power of large language
+                        models with your course materials to provide accurate,
+                        contextually relevant answers.
+                      </p>
+                    </div>
+                    <div className="space-y-3">
+                      <h3 className="text-lg font-semibold">How It Works</h3>
+                      <div className="space-y-3 text-sm text-muted-foreground">
+                        <div className="flex gap-3">
+                          <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs">
+                            1
+                          </div>
+                          <div>
+                            <p className="font-medium text-foreground mb-1">
+                              Document Upload
+                            </p>
+                            <p>
+                              Your course materials (PDFs, documents, notes) are
+                              uploaded and processed into a searchable knowledge
+                              base.
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-3">
+                          <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs">
+                            2
+                          </div>
+                          <div>
+                            <p className="font-medium text-foreground mb-1">
+                              Question Processing
+                            </p>
+                            <p>
+                              When you ask a question, the system searches
+                              through your uploaded documents to find relevant
+                              information.
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-3">
+                          <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs">
+                            3
+                          </div>
+                          <div>
+                            <p className="font-medium text-foreground mb-1">
+                              Context Retrieval
+                            </p>
+                            <p>
+                              Relevant passages and sections are retrieved from
+                              your documents and provided as context to the AI
+                              model.
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-3">
+                          <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs">
+                            4
+                          </div>
+                          <div>
+                            <p className="font-medium text-foreground mb-1">
+                              Answer Generation
+                            </p>
+                            <p>
+                              The AI generates a response based on both its
+                              training knowledge and the retrieved context from
+                              your documents, ensuring accurate and relevant
+                              answers.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <h3 className="text-lg font-semibold">Benefits</h3>
+                      <ul className="space-y-2 text-sm text-muted-foreground list-disc list-inside">
+                        <li>
+                          <span className="font-medium text-foreground">
+                            Accurate Answers:
+                          </span>{" "}
+                          Responses are grounded in your actual course materials
+                        </li>
+                        <li>
+                          <span className="font-medium text-foreground">
+                            Citations:
+                          </span>{" "}
+                          See exactly which documents and sections support each
+                          answer
+                        </li>
+                        <li>
+                          <span className="font-medium text-foreground">
+                            Up-to-Date:
+                          </span>{" "}
+                          Always uses your latest uploaded materials
+                        </li>
+                        <li>
+                          <span className="font-medium text-foreground">
+                            Personalized:
+                          </span>{" "}
+                          Tailored to your specific coursework and learning
+                          materials
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col min-h-0 overflow-hidden">
             <div className="relative flex-1 min-h-0">
               <div
-                className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-background to-transparent transition-opacity duration-300 z-10"
+                className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-white to-transparent transition-opacity duration-300 z-10 dark:from-card"
                 style={{ opacity: showTopFade ? 1 : 0 }}
               />
               <div
-                className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-background to-transparent transition-opacity duration-300 z-10"
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white to-transparent transition-opacity duration-300 z-10 dark:from-card"
                 style={{ opacity: showBottomFade ? 1 : 0 }}
               />
               <div
@@ -286,13 +547,21 @@ export default function TutorPage() {
                     return (
                       <div
                         key={message.id}
-                        className={`flex ${
-                          message.role === "user"
-                            ? "justify-end"
-                            : "justify-start"
+                        className={`flex flex-col ${
+                          message.role === "user" ? "items-end" : "items-start"
                         } ${message.role === "assistant" ? "mb-6" : "mb-3"}`}
                       >
+                        {message.role === "user" && message.replyingTo && (
+                          <div className="mb-1.5 max-w-[80%] flex items-start gap-2">
+                            <CornerDownLeft className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0 mt-0.5" />
+                            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                              {message.replyingTo.text}
+                            </p>
+                          </div>
+                        )}
                         <div
+                          data-message-role={message.role}
+                          data-message-id={message.id}
                           className={`max-w-[80%] rounded-lg p-4 ${
                             message.role === "user"
                               ? "bg-primary text-primary-foreground"
@@ -301,12 +570,23 @@ export default function TutorPage() {
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1 space-y-2">
-                              <p className="text-sm whitespace-pre-wrap max-h-60 overflow-y-auto pr-1 custom-scrollbar">
+                              {message.role === "assistant" && (
+                                <div className="flex items-center gap-2 mb-1">
+                                  <Sparkles className="h-4 w-4 text-primary" />
+                                  <span className="text-xs font-medium text-muted-foreground">
+                                    AI Response
+                                  </span>
+                                </div>
+                              )}
+                              <p
+                                className="text-sm whitespace-pre-wrap max-h-60 overflow-y-auto pr-1 custom-scrollbar select-text"
+                                data-selectable-content="true"
+                              >
                                 {displayContent}
                               </p>
                               {message.role === "assistant" &&
                                 citationList.length > 0 && (
-                                  <div className="flex flex-wrap gap-2">
+                                  <div className="flex flex-wrap gap-2 select-none">
                                     {citationList.map((citation, idx) => (
                                       <div
                                         key={`${message.id}-citation-${idx}`}
@@ -424,7 +704,7 @@ export default function TutorPage() {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-6 w-6"
+                                    className="h-8 w-8"
                                     onClick={() =>
                                       handleTTS(message.content, message.id)
                                     }
@@ -436,19 +716,20 @@ export default function TutorPage() {
                                     }
                                   >
                                     {speakingMessageId === message.id ? (
-                                      <VolumeX className="h-3 w-3" />
+                                      <VolumeX className="h-4 w-4" />
                                     ) : (
-                                      <Volume2 className="h-3 w-3" />
+                                      <Volume2 className="h-4 w-4" />
                                     )}
                                   </Button>
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-6 w-6"
+                                    className="h-8 w-8"
                                     onClick={() => handleCopy(message.content)}
                                     style={{ cursor: "pointer" }}
+                                    title="Copy to clipboard"
                                   >
-                                    <Copy className="h-3 w-3" />
+                                    <Copy className="h-4 w-4" />
                                   </Button>
                                 </>
                               )}
@@ -456,7 +737,7 @@ export default function TutorPage() {
                           </div>
                           {message.role === "assistant" &&
                             citationList.length > 0 && (
-                              <Alert className="mt-2 w-fit px-2.5 py-1.5">
+                              <Alert className="mt-2 w-fit px-2.5 py-1.5 select-none">
                                 <div className="flex items-center gap-2">
                                   <FileText className="h-4 w-4 text-muted-foreground" />
                                   <AlertDescription className="text-xs">
@@ -468,12 +749,15 @@ export default function TutorPage() {
                                 </div>
                               </Alert>
                             )}
-                          <p className="text-xs opacity-70 mt-2">
-                            {message.timestamp.toLocaleTimeString(undefined, {
-                              hour: "numeric",
-                              minute: "2-digit",
-                              hour12: true,
-                            })}
+                          <p className="text-xs opacity-70 mt-2 select-none">
+                            {message.timestamp
+                              .toLocaleTimeString(undefined, {
+                                hour: "numeric",
+                                minute: "2-digit",
+                                hour12: true,
+                              })
+                              .replace("am", "AM")
+                              .replace("pm", "PM")}
                           </p>
                         </div>
                       </div>
@@ -493,10 +777,73 @@ export default function TutorPage() {
                 )}
                 <div ref={messagesEndRef} />
               </div>
+
+              {/* Floating "Ask AI" button when text is selected */}
+              {selectedText && (
+                <div
+                  className="fixed z-50 pointer-events-none"
+                  style={{
+                    top: `${selectedText.position.top}px`,
+                    left: `${selectedText.position.left}px`,
+                    transform: "translateX(-50%)",
+                  }}
+                >
+                  <Button
+                    size="sm"
+                    className="gap-2 shadow-lg pointer-events-auto"
+                    onClick={() => {
+                      setReplyingTo({
+                        text: selectedText.text,
+                        messageId: selectedText.messageId,
+                      });
+                      setSelectedText(null);
+                      if (window.getSelection) {
+                        window.getSelection()?.removeAllRanges();
+                      }
+                      // Focus input field
+                      setTimeout(() => {
+                        const input = document.querySelector(
+                          'input[placeholder*="Ask a question"]'
+                        ) as HTMLInputElement;
+                        input?.focus();
+                      }, 100);
+                    }}
+                  >
+                    <MessageSquare className="h-4 w-4" />
+                    Ask AI
+                  </Button>
+                </div>
+              )}
             </div>
 
-            <div className="flex-shrink-0 border-t pt-4">
-              <div className="flex items-center gap-3 rounded-2xl border border-border bg-background px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-primary/20">
+            <div className="flex-shrink-0 pt-4">
+              {/* Reply Preview */}
+              {replyingTo && (
+                <div className="mb-3 mx-4">
+                  <div className="flex items-start gap-2 rounded-lg border bg-muted/50 p-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Sparkles className="h-3 w-3 text-primary flex-shrink-0" />
+                        <span className="text-xs font-medium text-muted-foreground">
+                          Replying to:
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {replyingTo.text}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 flex-shrink-0"
+                      onClick={() => setReplyingTo(null)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+              <div className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 shadow-sm focus-within:ring-2 focus-within:ring-primary/20">
                 <Input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
@@ -507,7 +854,7 @@ export default function TutorPage() {
                     }
                   }}
                   placeholder="Ask a question about your coursework..."
-                  className="flex-1 border-0 bg-transparent px-0 py-0 text-base shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="flex-1 border-0 bg-transparent px-0 py-0 text-sm shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
                 />
                 <div className="flex items-center gap-2">
                   <DropdownMenu>
@@ -515,7 +862,7 @@ export default function TutorPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-10 w-10 rounded-full bg-transparent"
+                        className="h-8 w-8 rounded-full bg-transparent"
                         style={{ cursor: "pointer" }}
                         title={`${selectedModelData.name} - ${selectedModelData.description}`}
                       >
@@ -547,7 +894,7 @@ export default function TutorPage() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-10 w-10 rounded-full bg-transparent"
+                    className="h-8 w-8 rounded-full bg-transparent"
                     onClick={handleFileAttach}
                     style={{ cursor: "pointer" }}
                   >
@@ -556,7 +903,7 @@ export default function TutorPage() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className={`h-10 w-10 rounded-full ${
+                    className={`h-8 w-8 rounded-full ${
                       isRecording ? "bg-red-100" : "bg-transparent"
                     }`}
                     onClick={handleVoiceRecord}
@@ -570,7 +917,7 @@ export default function TutorPage() {
                   </Button>
                   <Button
                     size="icon"
-                    className="h-10 w-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    className="h-8 w-8 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 flex-shrink-0"
                     onClick={handleSend}
                     disabled={!input.trim() || isLoading}
                     style={{ cursor: "pointer" }}

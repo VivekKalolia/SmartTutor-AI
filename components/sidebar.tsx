@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Brain,
@@ -11,6 +11,7 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -25,25 +26,40 @@ const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Smart Quiz", href: "/quiz", icon: Brain },
   { name: "AI Tutor", href: "/tutor", icon: MessageSquare },
+  { name: "AI Flashcards", href: "/flashcards", icon: Sparkles },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
+  const router = useRouter();
+  
+  // Initialize collapsed state from localStorage
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window !== "undefined") {
+      const savedCollapsed = localStorage.getItem("sidebar-collapsed");
+      return savedCollapsed === "true";
+    }
+    return false;
+  });
+
+  // Save collapsed state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("sidebar-collapsed", collapsed.toString());
+  }, [collapsed]);
 
   const toggleCollapsed = () => setCollapsed((prev) => !prev);
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={100}>
       <div className="relative">
         <div
           className={cn(
             "flex h-screen flex-col border-r bg-background transition-all duration-300",
-            collapsed ? "w-20" : "w-64"
+            collapsed ? "w-16" : "w-64"
           )}
         >
-          <div className={cn("flex h-16 items-center border-b px-4", collapsed ? "justify-center" : "justify-start")}>
+          <div className={cn("relative flex h-16 items-center border-b", collapsed ? "justify-center px-4" : "justify-start px-6")}>
             <Link
               href="/"
               className={cn("flex items-center gap-2", collapsed && "justify-center")}
@@ -51,9 +67,22 @@ export function Sidebar() {
             >
               <GraduationCap className="h-6 w-6 text-primary" />
               {!collapsed && (
-                <h1 className="text-xl font-bold text-primary">SmartTutor AI</h1>
+                <span className="text-xl font-bold text-primary">SmartTutor AI</span>
               )}
             </Link>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleCollapsed}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 h-8 w-8 rounded-full border bg-background shadow-sm hover:bg-accent z-10"
+              style={{ cursor: "pointer" }}
+            >
+              {collapsed ? (
+                <ChevronRight className="h-4 w-4" />
+              ) : (
+                <ChevronLeft className="h-4 w-4" />
+              )}
+            </Button>
           </div>
         <nav className={cn("flex-1 space-y-1", collapsed ? "px-2 py-4" : "p-4")}>
           {navigation.map((item) => {
@@ -77,11 +106,23 @@ export function Sidebar() {
             return collapsed ? (
               <Tooltip key={item.name}>
                 <TooltipTrigger asChild>
-                  <Link href={item.href} style={{ cursor: "pointer" }}>
+                  <Link 
+                    href={item.href} 
+                    style={{ cursor: "pointer" }}
+                    onClick={(e) => {
+                      // Prevent sidebar from expanding when clicking navigation items while collapsed
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // Navigate using Next.js router
+                      router.push(item.href);
+                    }}
+                  >
                     {button}
                   </Link>
                 </TooltipTrigger>
-                <TooltipContent side="right">{item.name}</TooltipContent>
+                <TooltipContent side="right" sideOffset={8} align="center" alignOffset={-2}>
+                  {item.name}
+                </TooltipContent>
               </Tooltip>
             ) : (
               <Link
@@ -102,7 +143,9 @@ export function Sidebar() {
                   <GraduationCap className="h-5 w-5 text-muted-foreground" />
                 </div>
               </TooltipTrigger>
-              <TooltipContent side="right">Student Portal</TooltipContent>
+              <TooltipContent side="right" sideOffset={8} align="center" alignOffset={-2}>
+                Student Portal
+              </TooltipContent>
             </Tooltip>
           ) : (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -112,19 +155,6 @@ export function Sidebar() {
           )}
         </div>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleCollapsed}
-          className="absolute right-0 top-1/2 -translate-y-1/2 -translate-x-1/2 h-8 w-8 rounded-full border bg-background shadow-sm hover:bg-accent z-10"
-          style={{ cursor: "pointer" }}
-        >
-          {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <ChevronLeft className="h-4 w-4" />
-          )}
-        </Button>
       </div>
     </TooltipProvider>
   );

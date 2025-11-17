@@ -11,7 +11,8 @@ import { Settings, Shield, Palette } from "lucide-react";
 export default function TeacherSettings() {
   return (
     <TeacherLayout>
-      <div className="space-y-8">
+      <div className="flex justify-center">
+        <div className="w-full max-w-4xl space-y-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
           <p className="text-muted-foreground mt-2">
@@ -57,6 +58,7 @@ export default function TeacherSettings() {
             </div>
           </CardContent>
         </Card>
+        </div>
       </div>
     </TeacherLayout>
   );

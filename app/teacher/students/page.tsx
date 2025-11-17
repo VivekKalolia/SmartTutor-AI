@@ -62,7 +62,8 @@ const students = [
 export default function StudentManagement() {
   return (
     <TeacherLayout>
-      <div className="space-y-8">
+      <div className="flex justify-center">
+        <div className="w-full max-w-4xl space-y-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
@@ -74,22 +75,13 @@ export default function StudentManagement() {
           </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Search Students</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search by name..."
-                  className="pl-10"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by name..."
+            className="pl-10"
+          />
+        </div>
 
         <Card>
           <CardHeader>
@@ -103,72 +95,73 @@ export default function StudentManagement() {
               {students.map((student) => (
                 <div
                   key={student.id}
-                  className="flex items-start justify-between p-4 border rounded-lg gap-4"
+                  className="p-4 border rounded-lg"
                 >
-                  <div className="flex items-center gap-4 flex-1">
-                    <div className="rounded-full bg-primary/10 p-2">
+                  <div className="flex items-center gap-4 mb-2">
+                    <div className="rounded-full bg-primary/10 p-2 flex-shrink-0">
                       <Users className="h-5 w-5 text-primary" />
                     </div>
-                    <div className="flex-1">
-                      <p className="font-medium">{student.name}</p>
-                      <div className="flex flex-col gap-2 mt-2">
-                        <Card className="bg-[#1E3A8A]/10 border-[#1E3A8A]/20">
-                          <CardContent className="p-3">
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm font-medium" style={{ color: "#1E3A8A" }}>
-                                Math
-                              </span>
-                              <span className="text-sm font-bold" style={{ color: "#1E3A8A" }}>
-                                {student.mathScore}%
-                              </span>
-                            </div>
-                          </CardContent>
-                        </Card>
-                        <Card className="bg-[#059669]/10 border-[#059669]/20">
-                          <CardContent className="p-3">
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm font-medium" style={{ color: "#059669" }}>
-                                Science
-                              </span>
-                              <span className="text-sm font-bold" style={{ color: "#059669" }}>
-                                {student.scienceScore}%
-                              </span>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </div>
-                    </div>
+                    <p className="font-medium">{student.name}</p>
                   </div>
-                  <div className="flex-1 max-w-md">
-                    <Card className="bg-muted/30 border-muted">
-                      <CardContent className="p-3">
-                        <p className="text-sm text-muted-foreground mb-2">
-                          {student.helpSummary}
-                        </p>
-                        {student.weakAreas.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {student.weakAreas.map((area) => (
-                              <Badge
-                                key={area}
-                                className="text-xs"
-                                style={{
-                                  backgroundColor: topicColors[area] || "#dc2626",
-                                  color: "white",
-                                }}
-                              >
-                                {area}
-                              </Badge>
-                            ))}
+                  <div className="flex items-stretch gap-4">
+                    <div className="flex flex-col gap-2 flex-1">
+                      <Card className="bg-[#1E3A8A]/10 border-[#1E3A8A]/20">
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium" style={{ color: "#1E3A8A" }}>
+                              Math
+                            </span>
+                            <span className="text-sm font-bold" style={{ color: "#1E3A8A" }}>
+                              {student.mathScore}%
+                            </span>
                           </div>
-                        )}
-                      </CardContent>
-                    </Card>
+                        </CardContent>
+                      </Card>
+                      <Card className="bg-[#059669]/10 border-[#059669]/20">
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium" style={{ color: "#059669" }}>
+                              Science
+                            </span>
+                            <span className="text-sm font-bold" style={{ color: "#059669" }}>
+                              {student.scienceScore}%
+                            </span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                    <div className="flex-1 max-w-md">
+                      <Card className="bg-muted/30 border-muted h-full flex flex-col">
+                        <CardContent className="p-3 flex-1 flex flex-col justify-between">
+                          <p className="text-sm text-muted-foreground">
+                            {student.helpSummary}
+                          </p>
+                          {student.weakAreas.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {student.weakAreas.map((area) => (
+                                <Badge
+                                  key={area}
+                                  className="text-xs"
+                                  style={{
+                                    backgroundColor: topicColors[area] || "#dc2626",
+                                    color: "white",
+                                  }}
+                                >
+                                  {area}
+                                </Badge>
+                              ))}
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
+        </div>
       </div>
     </TeacherLayout>
   );

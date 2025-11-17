@@ -38,14 +38,57 @@ import {
   VolumeX,
   Clock,
   TrendingUp,
+  HelpCircle,
+  ArrowLeft,
 } from "lucide-react";
 import {
   mathQuestions,
   scienceQuestions,
   aiAssistResponses,
 } from "@/lib/demo-data";
+
+// Topic mappings based on question content
+// Math: [Derivative, Algebra, Integral, Limit, Geometry]
+const mathTopics = ["Calculus", "Algebra", "Calculus", "Calculus", "Geometry"];
+// Science: [Gravity, Water formula, Newton's law, pH, Speed of light]
+const scienceTopics = [
+  "Physics",
+  "Chemistry",
+  "Physics",
+  "Chemistry",
+  "Physics",
+];
+
+// Add topic to questions
+const mathQuestionsWithTopics = mathQuestions.map((q, idx) => ({
+  ...q,
+  topic: mathTopics[idx % mathTopics.length],
+}));
+
+const scienceQuestionsWithTopics = scienceQuestions.map((q, idx) => ({
+  ...q,
+  topic: scienceTopics[idx % scienceTopics.length],
+}));
 import { AIAssistSheet } from "@/components/ai-assist-sheet";
-import { toast } from "sonner";
+import { Progress as MantineProgress } from "@mantine/core";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function QuizPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -58,27 +101,43 @@ export default function QuizPage() {
   const [showReview, setShowReview] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [speakingType, setSpeakingType] = useState<
-    "question" | "feedback" | null
+    "question" | "feedback" | "hint" | null
   >(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
   const [questionTime, setQuestionTime] = useState(0);
   const [questionStartTime, setQuestionStartTime] = useState<number | null>(
     null
   );
-  const [masteryProgress, setMasteryProgress] = useState(65); // Mock initial mastery: 65%
+  // Track mastery per topic
+  const [topicMastery, setTopicMastery] = useState<Record<string, number>>({});
+  const [displayedMastery, setDisplayedMastery] = useState(65); // For smooth animation
   const [questionTimes, setQuestionTimes] = useState<Record<number, number>>(
     {}
   );
   const [retryCounts, setRetryCounts] = useState<Record<number, number>>({});
-  const [correctAnswers, setCorrectAnswers] = useState<Record<number, boolean>>({});
+  const [correctAnswers, setCorrectAnswers] = useState<Record<number, boolean>>(
+    {}
+  );
+  const [showMasteryInfo, setShowMasteryInfo] = useState(false);
+  const [showExitDialog, setShowExitDialog] = useState(false);
 
   const questions =
-    currentSubject === "math" ? mathQuestions : scienceQuestions;
+    currentSubject === "math"
+      ? mathQuestionsWithTopics
+      : scienceQuestionsWithTopics;
+
+  // Get current question's topic
+  const currentTopic = questions[currentQuestionIndex]?.topic || "";
+
+  // Get current topic's mastery progress (default to 65% if not set)
+  const currentTopicMastery = currentTopic
+    ? (topicMastery[currentTopic] ?? 65)
+    : 65;
+
+  // Update displayed mastery with smooth animation when topic or mastery changes
+  useEffect(() => {
+    setDisplayedMastery(currentTopicMastery);
+  }, [currentTopicMastery, currentTopic]);
 
   const formatTime = (totalSeconds: number) => {
     const hours = Math.floor(totalSeconds / 3600);
@@ -93,7 +152,7 @@ export default function QuizPage() {
     return parts.join(" ");
   };
 
-  const handleTTS = (text: string, type: "question" | "feedback") => {
+  const handleTTS = (text: string, type: "question" | "feedback" | "hint") => {
     if (speakingType === type) {
       window.speechSynthesis.cancel();
       setSpeakingType(null);
@@ -114,11 +173,9 @@ export default function QuizPage() {
     setShowReview(false);
     setShowHint(false);
     setIsSubmitted(false);
-    setShowToast(false);
-    setToastMessage(null);
     setQuestionTime(0);
     setQuestionStartTime(null);
-    setMasteryProgress(65); // Reset to mock initial mastery
+    setTopicMastery({}); // Reset all topic mastery
     setQuestionTimes({});
     setRetryCounts({});
     setCorrectAnswers({});
@@ -171,31 +228,34 @@ export default function QuizPage() {
       }));
     }
 
-    // Update mastery progress based on correctness
-    setMasteryProgress((prev) => {
-      if (isCorrect) {
-        // Increase mastery by 3-5% for correct answers
-        const increase = 3 + Math.random() * 2; // Random between 3-5%
-        return Math.min(100, prev + increase);
-      } else {
-        // Decrease mastery by 2-4% for incorrect answers
-        const decrease = 2 + Math.random() * 2; // Random between 2-4%
-        return Math.max(0, prev - decrease);
-      }
-    });
+    // Update mastery progress for current topic based on correctness
+    const currentTopic = questions[currentQuestionIndex]?.topic;
+    if (currentTopic) {
+      setTopicMastery((prev) => {
+        const currentMastery = prev[currentTopic] ?? 65;
+        if (isCorrect) {
+          // Increase mastery by 3-5% for correct answers
+          const increase = 3 + Math.random() * 2; // Random between 3-5%
+          return {
+            ...prev,
+            [currentTopic]: Math.min(100, currentMastery + increase),
+          };
+        } else {
+          // Decrease mastery by 2-4% for incorrect answers
+          const decrease = 2 + Math.random() * 2; // Random between 2-4%
+          return {
+            ...prev,
+            [currentTopic]: Math.max(0, currentMastery - decrease),
+          };
+        }
+      });
+    }
 
-    const message = isCorrect
-      ? "Correct! Well done."
-      : "Incorrect. Please try again.";
-
-    setToastMessage({
-      type: isCorrect ? "success" : "error",
-      message,
-    });
-    setShowToast(true);
     setFeedback({
       type: isCorrect ? "correct" : "incorrect",
-      message,
+      message: isCorrect
+        ? "Correct! Well done."
+        : "Incorrect. Please try again.",
     });
     setIsSubmitted(true);
   };
@@ -209,8 +269,6 @@ export default function QuizPage() {
       })
     );
     setIsSubmitted(false);
-    setShowToast(false);
-    setToastMessage(null);
     setFeedback({ type: null, message: "" });
     setShowHint(false);
     setQuestionTime(0);
@@ -219,8 +277,6 @@ export default function QuizPage() {
 
   const handleNextQuestion = () => {
     setIsSubmitted(false);
-    setShowToast(false);
-    setToastMessage(null);
     setFeedback({ type: null, message: "" });
     setShowHint(false);
     setQuestionTime(0);
@@ -242,8 +298,6 @@ export default function QuizPage() {
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
       setIsSubmitted(false);
-      setShowToast(false);
-      setToastMessage(null);
       dispatch(setQuestionIndex(currentQuestionIndex - 1));
       setFeedback({ type: null, message: "" });
       setShowHint(false);
@@ -256,14 +310,12 @@ export default function QuizPage() {
     setShowReview(false);
     setShowHint(false);
     setIsSubmitted(false);
-    setShowToast(false);
-    setToastMessage(null);
     setQuestionTimes({});
     setRetryCounts({});
     setCorrectAnswers({});
     setQuestionTime(0);
     setQuestionStartTime(null);
-    setMasteryProgress(65);
+    setTopicMastery({});
   };
 
   const handleHint = () => {
@@ -335,136 +387,337 @@ export default function QuizPage() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        {!currentSubject && (
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight">Smart Quiz</h1>
-            <p className="text-muted-foreground">
-              AI-powered, personalized assessments that adapt to your mastery
-              and keep your learning journey on track.
-            </p>
+      {!currentSubject ? (
+        <div className="flex justify-center">
+          <div className="w-full max-w-4xl space-y-6">
+            <div className="space-y-2">
+              <div className="relative flex items-center">
+                <h1 className="text-3xl font-bold tracking-tight">
+                  Smart Quiz
+                </h1>
+                <Sheet open={showMasteryInfo} onOpenChange={setShowMasteryInfo}>
+                  <SheetTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-0 h-8 w-8"
+                      style={{ cursor: "pointer" }}
+                    >
+                      <HelpCircle className="h-5 w-5 text-muted-foreground" />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent
+                    side="right"
+                    className="w-full sm:max-w-lg overflow-y-auto"
+                  >
+                    <SheetHeader>
+                      <SheetTitle className="flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5 text-primary" />
+                        How Smart Quiz Works
+                      </SheetTitle>
+                      <SheetDescription className="text-left">
+                        Understanding how your learning is tracked and measured
+                      </SheetDescription>
+                    </SheetHeader>
+                    <div className="mt-6 space-y-6">
+                      <div className="space-y-3">
+                        <h3 className="text-lg font-semibold">
+                          What is Deep Knowledge Tracing (DKT)?
+                        </h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          Smart Quiz uses Deep Knowledge Tracing (DKT), an
+                          AI-powered system that learns from your answers to
+                          understand what you know and what you&apos;re still
+                          learning. Think of it like a smart tutor that watches
+                          how you solve problems and figures out your strengths
+                          and areas that need more practice.
+                        </p>
+                      </div>
+                      <div className="space-y-3">
+                        <h3 className="text-lg font-semibold">How DKT Works</h3>
+                        <div className="space-y-3 text-sm text-muted-foreground">
+                          <div className="flex gap-3">
+                            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs">
+                              1
+                            </div>
+                            <div>
+                              <p className="font-medium text-foreground mb-1">
+                                Learning from Your Answers
+                              </p>
+                              <p>
+                                Every time you answer a question, DKT analyzes
+                                whether you got it right or wrong. It looks at
+                                patterns in your responses to understand your
+                                knowledge level.
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-3">
+                            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs">
+                              2
+                            </div>
+                            <div>
+                              <p className="font-medium text-foreground mb-1">
+                                Tracking Your Progress
+                              </p>
+                              <p>
+                                The system tracks multiple factors: how accurate
+                                your answers are, how many times you need to
+                                retry, how quickly you respond, and the
+                                difficulty of questions you master.
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-3">
+                            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs">
+                              3
+                            </div>
+                            <div>
+                              <p className="font-medium text-foreground mb-1">
+                                Building Your Knowledge Profile
+                              </p>
+                              <p>
+                                Over time, DKT builds a personalized model of
+                                your understanding. It identifies which topics
+                                you&apos;ve mastered and which ones need more
+                                attention.
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-3">
+                            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs">
+                              4
+                            </div>
+                            <div>
+                              <p className="font-medium text-foreground mb-1">
+                                Adapting to Your Learning
+                              </p>
+                              <p>
+                                Based on your performance, the system adjusts to
+                                provide questions that match your current skill
+                                level, helping you learn more effectively.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <h3 className="text-lg font-semibold">
+                          Metrics We Track
+                        </h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          To understand your learning, we measure several
+                          things:
+                        </p>
+                        <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
+                          <li>
+                            <span className="font-medium text-foreground">
+                              Answer Accuracy:
+                            </span>{" "}
+                            Whether you get questions right on your first try
+                          </li>
+                          <li>
+                            <span className="font-medium text-foreground">
+                              Retry Count:
+                            </span>{" "}
+                            How many attempts you need before getting the
+                            correct answer
+                          </li>
+                          <li>
+                            <span className="font-medium text-foreground">
+                              Time Elapsed:
+                            </span>{" "}
+                            How long you take to answer each question
+                          </li>
+                          <li>
+                            <span className="font-medium text-foreground">
+                              Question Difficulty:
+                            </span>{" "}
+                            The complexity of questions you successfully answer
+                          </li>
+                        </ul>
+                        <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+                          These metrics help DKT create a comprehensive picture
+                          of your knowledge and learning progress. The system
+                          uses advanced machine learning algorithms to combine
+                          all this information and estimate your mastery level
+                          for each topic.
+                        </p>
+                      </div>
+                      <div className="space-y-3">
+                        <h3 className="text-lg font-semibold">
+                          Understanding Your Progress
+                        </h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          Your mastery progress percentage reflects how well DKT
+                          estimates you understand the material. This percentage
+                          updates as you answer more questions, giving you
+                          real-time feedback on your learning journey.
+                        </p>
+                        <div className="space-y-2 text-sm mt-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full bg-green-500" />
+                            <span className="text-muted-foreground">
+                              <span className="font-medium text-foreground">
+                                70%+
+                              </span>{" "}
+                              - Strong understanding
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                            <span className="text-muted-foreground">
+                              <span className="font-medium text-foreground">
+                                50-69%
+                              </span>{" "}
+                              - Good progress, keep practicing
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full bg-red-500" />
+                            <span className="text-muted-foreground">
+                              <span className="font-medium text-foreground">
+                                &lt;50%
+                              </span>{" "}
+                              - More practice needed
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </div>
+              <p className="text-muted-foreground">
+                AI-powered, personalized assessments that adapt to your mastery
+                and keep your learning journey on track.
+              </p>
+            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Select a Subject</CardTitle>
+                <CardDescription>
+                  Choose a subject to begin your adaptive quiz session
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="math" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="math">Math</TabsTrigger>
+                    <TabsTrigger value="science">Science</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="math" className="mt-6">
+                    <Card className="border-2">
+                      <CardContent className="pt-6">
+                        <div className="space-y-6">
+                          <div className="flex items-start gap-4">
+                            <div className="rounded-full bg-[#1E3A8A]/10 p-3">
+                              <Calculator className="h-8 w-8 text-[#1E3A8A]" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-xl font-bold mb-2">
+                                Mathematics Quiz
+                              </h3>
+                              <p className="text-muted-foreground mb-4">
+                                Practice calculus, algebra, geometry, and
+                                advanced mathematics concepts. This adaptive
+                                quiz will test your understanding across
+                                multiple mathematical domains and provide
+                                detailed feedback on your performance.
+                              </p>
+                              <div className="grid grid-cols-2 gap-4 mb-4">
+                                <div>
+                                  <p className="text-sm font-medium">
+                                    Topics Covered
+                                  </p>
+                                  <p className="text-sm text-muted-foreground">
+                                    Algebra, Calculus, Geometry, Statistics
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-sm font-medium">
+                                    Questions
+                                  </p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {mathQuestions.length} questions
+                                  </p>
+                                </div>
+                              </div>
+                              <Button
+                                onClick={() => handleSubjectSelect("math")}
+                                className="w-full"
+                                size="lg"
+                                style={{ cursor: "pointer" }}
+                              >
+                                <Play className="mr-2 h-5 w-5" />
+                                Start Math Quiz
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                  <TabsContent value="science" className="mt-6">
+                    <Card className="border-2">
+                      <CardContent className="pt-6">
+                        <div className="space-y-6">
+                          <div className="flex items-start gap-4">
+                            <div className="rounded-full bg-[#059669]/10 p-3">
+                              <Atom className="h-8 w-8 text-[#059669]" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-xl font-bold mb-2">
+                                Science Quiz
+                              </h3>
+                              <p className="text-muted-foreground mb-4">
+                                Test your understanding of physics, chemistry,
+                                biology, and scientific principles. This
+                                comprehensive quiz covers fundamental concepts
+                                and real-world applications across various
+                                scientific disciplines.
+                              </p>
+                              <div className="grid grid-cols-2 gap-4 mb-4">
+                                <div>
+                                  <p className="text-sm font-medium">
+                                    Topics Covered
+                                  </p>
+                                  <p className="text-sm text-muted-foreground">
+                                    Physics, Chemistry, Biology, Earth Science
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-sm font-medium">
+                                    Questions
+                                  </p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {scienceQuestions.length} questions
+                                  </p>
+                                </div>
+                              </div>
+                              <Button
+                                onClick={() => handleSubjectSelect("science")}
+                                className="w-full"
+                                size="lg"
+                                style={{ cursor: "pointer" }}
+                              >
+                                <Play className="mr-2 h-5 w-5" />
+                                Start Science Quiz
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
           </div>
-        )}
-
-        {!currentSubject ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>Select a Subject</CardTitle>
-              <CardDescription>
-                Choose a subject to begin your adaptive quiz session
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="math" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="math">Math</TabsTrigger>
-                  <TabsTrigger value="science">Science</TabsTrigger>
-                </TabsList>
-                <TabsContent value="math" className="mt-6">
-                  <Card className="border-2">
-                    <CardContent className="pt-6">
-                      <div className="space-y-6">
-                        <div className="flex items-start gap-4">
-                          <div className="rounded-full bg-[#1E3A8A]/10 p-3">
-                            <Calculator className="h-8 w-8 text-[#1E3A8A]" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-xl font-bold mb-2">
-                              Mathematics Quiz
-                            </h3>
-                            <p className="text-muted-foreground mb-4">
-                              Practice calculus, algebra, geometry, and advanced
-                              mathematics concepts. This adaptive quiz will test
-                              your understanding across multiple mathematical
-                              domains and provide detailed feedback on your
-                              performance.
-                            </p>
-                            <div className="grid grid-cols-2 gap-4 mb-4">
-                              <div>
-                                <p className="text-sm font-medium">
-                                  Topics Covered
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                  Algebra, Calculus, Geometry, Statistics
-                                </p>
-                              </div>
-                              <div>
-                                <p className="text-sm font-medium">Questions</p>
-                                <p className="text-sm text-muted-foreground">
-                                  {mathQuestions.length} questions
-                                </p>
-                              </div>
-                            </div>
-                            <Button
-                              onClick={() => handleSubjectSelect("math")}
-                              className="w-full"
-                              size="lg"
-                              style={{ cursor: "pointer" }}
-                            >
-                              <Play className="mr-2 h-5 w-5" />
-                              Start Math Quiz
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-                <TabsContent value="science" className="mt-6">
-                  <Card className="border-2">
-                    <CardContent className="pt-6">
-                      <div className="space-y-6">
-                        <div className="flex items-start gap-4">
-                          <div className="rounded-full bg-[#059669]/10 p-3">
-                            <Atom className="h-8 w-8 text-[#059669]" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-xl font-bold mb-2">
-                              Science Quiz
-                            </h3>
-                            <p className="text-muted-foreground mb-4">
-                              Test your understanding of physics, chemistry,
-                              biology, and scientific principles. This
-                              comprehensive quiz covers fundamental concepts and
-                              real-world applications across various scientific
-                              disciplines.
-                            </p>
-                            <div className="grid grid-cols-2 gap-4 mb-4">
-                              <div>
-                                <p className="text-sm font-medium">
-                                  Topics Covered
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                  Physics, Chemistry, Biology, Earth Science
-                                </p>
-                              </div>
-                              <div>
-                                <p className="text-sm font-medium">Questions</p>
-                                <p className="text-sm text-muted-foreground">
-                                  {scienceQuestions.length} questions
-                                </p>
-                              </div>
-                            </div>
-                            <Button
-                              onClick={() => handleSubjectSelect("science")}
-                              className="w-full"
-                              size="lg"
-                              style={{ cursor: "pointer" }}
-                            >
-                              <Play className="mr-2 h-5 w-5" />
-                              Start Science Quiz
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
-        ) : (
-          <>
+        </div>
+      ) : (
+        <div className="flex justify-center">
+          <div className="w-full max-w-3xl space-y-6">
             {showReview ? (
               <Card>
                 <CardHeader>
@@ -484,6 +737,44 @@ export default function QuizPage() {
                       className="mt-4"
                     />
                   </div>
+
+                  {/* Topic Mastery Summary */}
+                  {Object.keys(topicMastery).length > 0 && (
+                    <div className="rounded-lg border bg-background p-4 space-y-4">
+                      <h3 className="text-lg font-semibold">
+                        Topic Mastery Progress
+                      </h3>
+                      <div className="space-y-3">
+                        {Object.entries(topicMastery)
+                          .sort(([, a], [, b]) => b - a) // Sort by mastery percentage (highest first)
+                          .map(([topic, mastery]) => (
+                            <div key={topic} className="space-y-2">
+                              <div className="flex items-center justify-between text-sm">
+                                <span className="font-medium">{topic}</span>
+                                <span className="text-muted-foreground">
+                                  {mastery.toFixed(1)}%
+                                </span>
+                              </div>
+                              <MantineProgress
+                                value={mastery}
+                                color={
+                                  mastery >= 70
+                                    ? "green"
+                                    : mastery >= 50
+                                      ? "yellow"
+                                      : "red"
+                                }
+                                radius="md"
+                                size="md"
+                                striped
+                                animated
+                                transitionDuration={500}
+                              />
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="space-y-4">
                     {questions.map((question, idx) => {
@@ -583,17 +874,28 @@ export default function QuizPage() {
             ) : (
               <div className="space-y-6 max-w-3xl mx-auto w-full">
                 <div className="flex items-center justify-between">
-                  <Badge
-                    variant="secondary"
-                    className="px-3 py-1 text-sm"
-                    style={{
-                      backgroundColor:
-                        currentSubject === "math" ? "#1E3A8A" : "#059669",
-                      color: "white",
-                    }}
-                  >
-                    {currentSubject === "math" ? "Math" : "Science"}
-                  </Badge>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setShowExitDialog(true)}
+                      className="h-8 w-8"
+                      style={{ cursor: "pointer" }}
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                    </Button>
+                    <Badge
+                      variant="secondary"
+                      className="px-3 py-1 text-sm"
+                      style={{
+                        backgroundColor:
+                          currentSubject === "math" ? "#1E3A8A" : "#059669",
+                        color: "white",
+                      }}
+                    >
+                      {currentSubject === "math" ? "Math" : "Science"}
+                    </Badge>
+                  </div>
                   <div className="flex flex-col items-end gap-1 text-sm text-muted-foreground">
                     <span className="text-xs uppercase tracking-wide text-muted-foreground/80">
                       Time Elapsed
@@ -609,23 +911,33 @@ export default function QuizPage() {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">Mastery Progress</span>
+                    <span className="font-medium">
+                      Mastery Progress
+                      {currentTopic && (
+                        <span className="text-muted-foreground font-normal ml-2">
+                          - {currentTopic}
+                        </span>
+                      )}
+                    </span>
                     <span className="text-muted-foreground">
-                      {masteryProgress.toFixed(1)}%
+                      {displayedMastery.toFixed(1)}%
                     </span>
                   </div>
-                  <div className="relative h-3 w-full overflow-hidden rounded-full bg-secondary">
-                    <div
-                      className={`h-full transition-all duration-500 ${
-                        masteryProgress >= 70
-                          ? "bg-green-500"
-                          : masteryProgress >= 50
-                            ? "bg-yellow-500"
-                            : "bg-red-500"
-                      }`}
-                      style={{ width: `${masteryProgress}%` }}
-                    />
-                  </div>
+                  <MantineProgress
+                    value={displayedMastery}
+                    color={
+                      displayedMastery >= 70
+                        ? "green"
+                        : displayedMastery >= 50
+                          ? "yellow"
+                          : "red"
+                    }
+                    radius="md"
+                    size="lg"
+                    striped
+                    animated
+                    transitionDuration={500}
+                  />
                 </div>
 
                 <div className="rounded-lg border bg-background p-4 shadow-sm">
@@ -640,9 +952,10 @@ export default function QuizPage() {
                   </div>
                   <Progress value={questionCompletion} className="mt-3 h-2" />
                   <div className="mt-2 flex items-center justify-start text-xs text-muted-foreground">
-                    {submittedCount === questions.length && questions.length > 0 && (
-                      <span>All questions answered</span>
-                    )}
+                    {submittedCount === questions.length &&
+                      questions.length > 0 && (
+                        <span>All questions answered</span>
+                      )}
                   </div>
                 </div>
 
@@ -667,9 +980,11 @@ export default function QuizPage() {
                           onClick={handleHint}
                           variant="outline"
                           size="sm"
-                          className="gap-2"
+                          className="gap-2 border-amber-500/50 text-amber-700 hover:bg-amber-50 hover:text-amber-800 dark:text-amber-400 dark:hover:bg-amber-950/30"
                           disabled={showHint}
-                          style={{ cursor: showHint ? "not-allowed" : "pointer" }}
+                          style={{
+                            cursor: showHint ? "not-allowed" : "pointer",
+                          }}
                         >
                           <Lightbulb className="h-4 w-4" />
                           Hint
@@ -707,28 +1022,62 @@ export default function QuizPage() {
                       </Button>
                     </div>
                     {showHint && (
-                      <Alert className="border-primary bg-primary/5">
-                        <Sparkles className="h-4 w-4 text-primary" />
-                        <AlertDescription className="mt-2">
-                          <p className="font-medium mb-2">Hint:</p>
-                          <p className="text-sm whitespace-pre-wrap">
-                            {getHintResponse()}
-                          </p>
-                        </AlertDescription>
+                      <Alert className="border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/30">
+                        <div className="flex items-start gap-2">
+                          <Lightbulb className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5" />
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between gap-2 mb-2">
+                              <p className="font-medium text-amber-900 dark:text-amber-100">
+                                Hint:
+                              </p>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6"
+                                onClick={() =>
+                                  handleTTS(getHintResponse(), "hint")
+                                }
+                                style={{ cursor: "pointer" }}
+                                title={
+                                  speakingType === "hint"
+                                    ? "Stop reading"
+                                    : "Read hint aloud"
+                                }
+                              >
+                                {speakingType === "hint" ? (
+                                  <VolumeX className="h-4 w-4" />
+                                ) : (
+                                  <Volume2 className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </div>
+                            <AlertDescription>
+                              <p className="text-sm whitespace-pre-wrap text-amber-800 dark:text-amber-200">
+                                {getHintResponse()}
+                              </p>
+                            </AlertDescription>
+                          </div>
+                        </div>
                       </Alert>
                     )}
 
                     <div className="space-y-2">
                       {questions[currentQuestionIndex]?.options.map(
                         (option, idx) => {
-                            const userAnswer = answers[currentQuestionIndex];
-                            const isSelected = userAnswer === idx.toString();
-                            const isCorrect =
-                              idx ===
-                              questions[currentQuestionIndex].correctAnswer;
-                            const showCorrect = isSubmitted && isCorrect && correctAnswers[currentQuestionIndex];
-                            const showIncorrect =
-                              isSubmitted && isSelected && !isCorrect && !correctAnswers[currentQuestionIndex];
+                          const userAnswer = answers[currentQuestionIndex];
+                          const isSelected = userAnswer === idx.toString();
+                          const isCorrect =
+                            idx ===
+                            questions[currentQuestionIndex].correctAnswer;
+                          const showCorrect =
+                            isSubmitted &&
+                            isCorrect &&
+                            correctAnswers[currentQuestionIndex];
+                          const showIncorrect =
+                            isSubmitted &&
+                            isSelected &&
+                            !isCorrect &&
+                            !correctAnswers[currentQuestionIndex];
 
                           return (
                             <Card
@@ -765,33 +1114,6 @@ export default function QuizPage() {
                         }
                       )}
                     </div>
-
-                    {showToast && toastMessage && (
-                      <div
-                        className={`rounded-lg border p-4 shadow-lg ${
-                          toastMessage.type === "success"
-                            ? "border-green-500 bg-green-50 dark:bg-green-950"
-                            : "border-red-500 bg-red-50 dark:bg-red-950"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          {toastMessage.type === "success" ? (
-                            <CheckCircle2 className="h-4 w-4 text-green-600" />
-                          ) : (
-                            <XCircle className="h-4 w-4 text-red-600" />
-                          )}
-                          <p
-                            className={`text-sm font-medium ${
-                              toastMessage.type === "success"
-                                ? "text-green-800 dark:text-green-200"
-                                : "text-red-800 dark:text-red-200"
-                            }`}
-                          >
-                            {toastMessage.message}
-                          </p>
-                        </div>
-                      </div>
-                    )}
 
                     <div className="flex gap-3 pt-4">
                       <Button
@@ -831,36 +1153,87 @@ export default function QuizPage() {
                             : "Next"}
                         </Button>
                       ) : (
-                        <Button
-                          onClick={handleRetryQuestion}
-                          variant="outline"
-                          className="flex-1"
-                          style={{ cursor: "pointer" }}
-                        >
-                          Retry
-                        </Button>
+                        <>
+                          <Button
+                            onClick={handleRetryQuestion}
+                            variant="outline"
+                            className="border-amber-500/50 text-amber-700 hover:bg-amber-50 hover:text-amber-800 dark:text-amber-400 dark:hover:bg-amber-950/30"
+                            style={{ cursor: "pointer" }}
+                          >
+                            Retry
+                          </Button>
+                          <Button
+                            onClick={handleNextQuestion}
+                            className="flex-1"
+                            style={{ cursor: "pointer" }}
+                          >
+                            {currentQuestionIndex === questions.length - 1
+                              ? "Review Answers"
+                              : "Next"}
+                          </Button>
+                        </>
                       )}
                     </div>
                   </CardContent>
                 </Card>
               </div>
             )}
-          </>
-        )}
+          </div>
+        </div>
+      )}
 
-        <AIAssistSheet
-          open={showAIAssist}
-          onOpenChange={(open) => {
-            if (!open) dispatch(toggleAIAssist());
-          }}
-          currentQuestion={
-            currentSubject && questions[currentQuestionIndex]
-              ? questions[currentQuestionIndex]
-              : null
-          }
-          subject={currentSubject}
-        />
-      </div>
+      <AIAssistSheet
+        open={showAIAssist}
+        onOpenChange={(open) => {
+          if (!open) dispatch(toggleAIAssist());
+        }}
+        currentQuestion={
+          currentSubject && questions[currentQuestionIndex]
+            ? questions[currentQuestionIndex]
+            : null
+        }
+        subject={currentSubject}
+      />
+      <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Exit Quiz Session?</AlertDialogTitle>
+            <AlertDialogDescription className="text-left">
+              If you exit now, your current quiz session will end and your
+              progress will not be recorded in your learning profile. Any
+              mastery progress updates, time tracking, and answer submissions
+              from this session will be lost.
+              <br />
+              <br />
+              You can always start a new quiz session later, but you&apos;ll
+              need to begin from the first question again.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowExitDialog(false)}>
+              Continue Quiz
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                dispatch(setSubject(null));
+                dispatch(resetQuiz());
+                setShowExitDialog(false);
+                setShowReview(false);
+                setIsSubmitted(false);
+                setQuestionTime(0);
+                setQuestionStartTime(null);
+                setQuestionTimes({});
+                setRetryCounts({});
+                setCorrectAnswers({});
+                setTopicMastery({});
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Exit Quiz
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Layout>
   );
 }

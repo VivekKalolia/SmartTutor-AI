@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Layout from "@/components/layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -86,12 +85,6 @@ export default function Dashboard() {
     { name: "Science", value: overallScienceMastery, color: SCIENCE_COLOR },
   ];
   const latestMilestone = masteryPathway[masteryPathway.length - 1];
-
-  // Hover state for radial charts
-  const [hoveredMathIndex, setHoveredMathIndex] = useState<number | null>(null);
-  const [hoveredScienceIndex, setHoveredScienceIndex] = useState<number | null>(
-    null
-  );
 
   // Custom tooltip for radial charts
   const RadialTooltip = ({ active, payload }: any) => {
@@ -375,16 +368,7 @@ export default function Dashboard() {
                           <Cell
                             key={`cell-${index}`}
                             fill={entry.color}
-                            fillOpacity={
-                              hoveredMathIndex === null
-                                ? 0.9
-                                : hoveredMathIndex === index
-                                  ? 1
-                                  : 0.35
-                            }
-                            style={{ cursor: "pointer" }}
-                            onMouseEnter={() => setHoveredMathIndex(index)}
-                            onMouseLeave={() => setHoveredMathIndex(null)}
+                            fillOpacity={0.9}
                           />
                         ))}
                       </RadialBar>
@@ -442,16 +426,7 @@ export default function Dashboard() {
                           <Cell
                             key={`cell-${index}`}
                             fill={entry.color}
-                            fillOpacity={
-                              hoveredScienceIndex === null
-                                ? 0.9
-                                : hoveredScienceIndex === index
-                                  ? 1
-                                  : 0.35
-                            }
-                            style={{ cursor: "pointer" }}
-                            onMouseEnter={() => setHoveredScienceIndex(index)}
-                            onMouseLeave={() => setHoveredScienceIndex(null)}
+                            fillOpacity={0.9}
                           />
                         ))}
                       </RadialBar>
