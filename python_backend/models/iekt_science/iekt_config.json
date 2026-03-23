@@ -1,0 +1,77 @@
+{
+  "num_questions": 13680,
+  "num_kcs": 6,
+  "embed_dim": 64,
+  "hidden_dim": 128,
+  "num_layers": 1,
+  "dropout": 0.2,
+  "max_len": 120,
+  "dataset": "SciQ_synthetic_KT",
+  "best_val_auc": 0.6322,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.6395,
+      "train_auc": 0.5652,
+      "train_acc": 0.6529,
+      "val_loss": 0.6329,
+      "val_auc": 0.5998,
+      "val_acc": 0.6525,
+      "time_s": 149.7
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.6266,
+      "train_auc": 0.6181,
+      "train_acc": 0.6564,
+      "val_loss": 0.625,
+      "val_auc": 0.6251,
+      "val_acc": 0.6564,
+      "time_s": 97.6
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.6213,
+      "train_auc": 0.6329,
+      "train_acc": 0.6601,
+      "val_loss": 0.623,
+      "val_auc": 0.6301,
+      "val_acc": 0.658,
+      "time_s": 90.3
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.6195,
+      "train_auc": 0.6375,
+      "train_acc": 0.6616,
+      "val_loss": 0.6224,
+      "val_auc": 0.6315,
+      "val_acc": 0.6588,
+      "time_s": 78.7
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.6186,
+      "train_auc": 0.6396,
+      "train_acc": 0.6624,
+      "val_loss": 0.6222,
+      "val_auc": 0.6322,
+      "val_acc": 0.6581,
+      "time_s": 70.7
+    }
+  ],
+  "sciq_kc_mapping": {
+    "SCIENCE_PHYSICS": 1,
+    "SCIENCE_CHEMISTRY": 2,
+    "SCIENCE_BIOLOGY": 3,
+    "SCIENCE_EARTH_SPACE": 4,
+    "SCIENCE_GENERAL": 5
+  },
+  "mathbench_kc_mapping": {
+    "SCIENCE_PHYSICS": 1,
+    "SCIENCE_CHEMISTRY": 2,
+    "SCIENCE_BIOLOGY": 3,
+    "SCIENCE_EARTH_SPACE": 4,
+    "SCIENCE_GENERAL": 5
+  }
+}

@@ -1,0 +1,48 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+__pycache__/
+*.py[cod]
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# RAG data (SQLite DB + uploaded documents)
+/data/rag/
+
+documents/
+python_backend/mathbench_data/
+python_backend/mathbench_v1/
+python_backend/models/iekt/*.pt
+python_backend/venv/
+REPORT/
+.cursor/

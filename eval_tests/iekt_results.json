@@ -1,0 +1,281 @@
+[
+  {
+    "session": 1,
+    "label": "CHEMISTRY correct / PHYSICS wrong",
+    "final": {
+      "student_id": "eval_s1",
+      "mastery_per_kc": {
+        "SCIENCE_PHYSICS": 0.5781,
+        "SCIENCE_CHEMISTRY": 0.6021,
+        "SCIENCE_BIOLOGY": 0.5863,
+        "SCIENCE_EARTH_SPACE": 0.6338,
+        "SCIENCE_GENERAL": 0.6252
+      },
+      "recommended_kcs": [
+        "SCIENCE_PHYSICS",
+        "SCIENCE_BIOLOGY",
+        "SCIENCE_CHEMISTRY"
+      ],
+      "overall_mastery": 0.6051,
+      "num_interactions": 10
+    },
+    "evolution": [
+      {
+        "step": 1,
+        "kc": "SCIENCE_CHEMISTRY",
+        "correct": 1,
+        "mastery_kc": 0.599,
+        "overall": 0.605
+      },
+      {
+        "step": 2,
+        "kc": "SCIENCE_PHYSICS",
+        "correct": 0,
+        "mastery_kc": 0.572,
+        "overall": 0.602
+      },
+      {
+        "step": 3,
+        "kc": "SCIENCE_CHEMISTRY",
+        "correct": 1,
+        "mastery_kc": 0.6,
+        "overall": 0.603
+      },
+      {
+        "step": 4,
+        "kc": "SCIENCE_PHYSICS",
+        "correct": 0,
+        "mastery_kc": 0.576,
+        "overall": 0.604
+      },
+      {
+        "step": 5,
+        "kc": "SCIENCE_CHEMISTRY",
+        "correct": 1,
+        "mastery_kc": 0.601,
+        "overall": 0.604
+      },
+      {
+        "step": 6,
+        "kc": "SCIENCE_PHYSICS",
+        "correct": 0,
+        "mastery_kc": 0.579,
+        "overall": 0.605
+      },
+      {
+        "step": 7,
+        "kc": "SCIENCE_CHEMISTRY",
+        "correct": 1,
+        "mastery_kc": 0.602,
+        "overall": 0.604
+      },
+      {
+        "step": 8,
+        "kc": "SCIENCE_PHYSICS",
+        "correct": 0,
+        "mastery_kc": 0.572,
+        "overall": 0.6
+      },
+      {
+        "step": 9,
+        "kc": "SCIENCE_CHEMISTRY",
+        "correct": 1,
+        "mastery_kc": 0.6,
+        "overall": 0.603
+      },
+      {
+        "step": 10,
+        "kc": "SCIENCE_PHYSICS",
+        "correct": 0,
+        "mastery_kc": 0.578,
+        "overall": 0.605
+      }
+    ]
+  },
+  {
+    "session": 2,
+    "label": "All correct across all KCs",
+    "final": {
+      "student_id": "eval_s2",
+      "mastery_per_kc": {
+        "SCIENCE_PHYSICS": 0.5836,
+        "SCIENCE_CHEMISTRY": 0.6058,
+        "SCIENCE_BIOLOGY": 0.5806,
+        "SCIENCE_EARTH_SPACE": 0.6385,
+        "SCIENCE_GENERAL": 0.6322
+      },
+      "recommended_kcs": [
+        "SCIENCE_BIOLOGY",
+        "SCIENCE_PHYSICS",
+        "SCIENCE_CHEMISTRY"
+      ],
+      "overall_mastery": 0.6081,
+      "num_interactions": 10
+    },
+    "evolution": [
+      {
+        "step": 1,
+        "kc": "SCIENCE_CHEMISTRY",
+        "correct": 1,
+        "mastery_kc": 0.599,
+        "overall": 0.604
+      },
+      {
+        "step": 2,
+        "kc": "SCIENCE_PHYSICS",
+        "correct": 1,
+        "mastery_kc": 0.577,
+        "overall": 0.603
+      },
+      {
+        "step": 3,
+        "kc": "SCIENCE_BIOLOGY",
+        "correct": 1,
+        "mastery_kc": 0.585,
+        "overall": 0.605
+      },
+      {
+        "step": 4,
+        "kc": "SCIENCE_EARTH_SPACE",
+        "correct": 1,
+        "mastery_kc": 0.64,
+        "overall": 0.607
+      },
+      {
+        "step": 5,
+        "kc": "SCIENCE_GENERAL",
+        "correct": 1,
+        "mastery_kc": 0.627,
+        "overall": 0.604
+      },
+      {
+        "step": 6,
+        "kc": "SCIENCE_CHEMISTRY",
+        "correct": 1,
+        "mastery_kc": 0.605,
+        "overall": 0.606
+      },
+      {
+        "step": 7,
+        "kc": "SCIENCE_PHYSICS",
+        "correct": 1,
+        "mastery_kc": 0.579,
+        "overall": 0.606
+      },
+      {
+        "step": 8,
+        "kc": "SCIENCE_BIOLOGY",
+        "correct": 1,
+        "mastery_kc": 0.584,
+        "overall": 0.605
+      },
+      {
+        "step": 9,
+        "kc": "SCIENCE_EARTH_SPACE",
+        "correct": 1,
+        "mastery_kc": 0.647,
+        "overall": 0.61
+      },
+      {
+        "step": 10,
+        "kc": "SCIENCE_GENERAL",
+        "correct": 1,
+        "mastery_kc": 0.632,
+        "overall": 0.608
+      }
+    ]
+  },
+  {
+    "session": 3,
+    "label": "Alternating correct/incorrect",
+    "final": {
+      "student_id": "eval_s3",
+      "mastery_per_kc": {
+        "SCIENCE_PHYSICS": 0.5847,
+        "SCIENCE_CHEMISTRY": 0.6086,
+        "SCIENCE_BIOLOGY": 0.5781,
+        "SCIENCE_EARTH_SPACE": 0.6322,
+        "SCIENCE_GENERAL": 0.6314
+      },
+      "recommended_kcs": [
+        "SCIENCE_BIOLOGY",
+        "SCIENCE_PHYSICS",
+        "SCIENCE_CHEMISTRY"
+      ],
+      "overall_mastery": 0.607,
+      "num_interactions": 10
+    },
+    "evolution": [
+      {
+        "step": 1,
+        "kc": "SCIENCE_CHEMISTRY",
+        "correct": 0,
+        "mastery_kc": 0.606,
+        "overall": 0.609
+      },
+      {
+        "step": 2,
+        "kc": "SCIENCE_PHYSICS",
+        "correct": 1,
+        "mastery_kc": 0.581,
+        "overall": 0.607
+      },
+      {
+        "step": 3,
+        "kc": "SCIENCE_BIOLOGY",
+        "correct": 1,
+        "mastery_kc": 0.583,
+        "overall": 0.605
+      },
+      {
+        "step": 4,
+        "kc": "SCIENCE_EARTH_SPACE",
+        "correct": 0,
+        "mastery_kc": 0.626,
+        "overall": 0.603
+      },
+      {
+        "step": 5,
+        "kc": "SCIENCE_GENERAL",
+        "correct": 1,
+        "mastery_kc": 0.638,
+        "overall": 0.609
+      },
+      {
+        "step": 6,
+        "kc": "SCIENCE_CHEMISTRY",
+        "correct": 1,
+        "mastery_kc": 0.603,
+        "overall": 0.606
+      },
+      {
+        "step": 7,
+        "kc": "SCIENCE_PHYSICS",
+        "correct": 0,
+        "mastery_kc": 0.576,
+        "overall": 0.604
+      },
+      {
+        "step": 8,
+        "kc": "SCIENCE_BIOLOGY",
+        "correct": 1,
+        "mastery_kc": 0.583,
+        "overall": 0.604
+      },
+      {
+        "step": 9,
+        "kc": "SCIENCE_EARTH_SPACE",
+        "correct": 1,
+        "mastery_kc": 0.641,
+        "overall": 0.608
+      },
+      {
+        "step": 10,
+        "kc": "SCIENCE_GENERAL",
+        "correct": 0,
+        "mastery_kc": 0.631,
+        "overall": 0.607
+      }
+    ]
+  }
+]

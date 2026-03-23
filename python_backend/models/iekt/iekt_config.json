@@ -1,0 +1,85 @@
+{
+  "num_questions": 7652,
+  "num_kcs": 865,
+  "embed_dim": 64,
+  "hidden_dim": 128,
+  "num_layers": 1,
+  "dropout": 0.2,
+  "max_len": 200,
+  "dataset": "XES3G5M",
+  "best_val_auc": 0.8199,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.4287,
+      "train_auc": 0.765,
+      "train_acc": 0.8117,
+      "val_loss": 0.4059,
+      "val_auc": 0.8054,
+      "val_acc": 0.8201,
+      "time_s": 92.7
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.399,
+      "train_auc": 0.8075,
+      "train_acc": 0.8241,
+      "val_loss": 0.4,
+      "val_auc": 0.8138,
+      "val_acc": 0.8226,
+      "time_s": 87.4
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.3941,
+      "train_auc": 0.8134,
+      "train_acc": 0.8265,
+      "val_loss": 0.3953,
+      "val_auc": 0.8167,
+      "val_acc": 0.8251,
+      "time_s": 93.7
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.3913,
+      "train_auc": 0.8165,
+      "train_acc": 0.8278,
+      "val_loss": 0.3933,
+      "val_auc": 0.8187,
+      "val_acc": 0.826,
+      "time_s": 89.7
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.3894,
+      "train_auc": 0.8185,
+      "train_acc": 0.8287,
+      "val_loss": 0.3925,
+      "val_auc": 0.8199,
+      "val_acc": 0.8261,
+      "time_s": 89.3
+    }
+  ],
+  "top_kcs": [
+    78,
+    18,
+    155,
+    55,
+    24,
+    138,
+    208,
+    257,
+    57,
+    34
+  ],
+  "mathbench_kc_mapping": {
+    "ALGEBRA_GENERAL": 78,
+    "GEOMETRY_SHAPES": 18,
+    "PROBABILITY_STATISTICS": 155,
+    "FUNCTIONS_GRAPHS": 55,
+    "MATH_OTHER": 24
+  },
+  "test_loss": 0.4071,
+  "test_auc": 0.8139,
+  "test_acc": 0.8179
+}

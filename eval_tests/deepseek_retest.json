@@ -1,0 +1,44 @@
+{
+  "results": [
+    {
+      "q": 1,
+      "topic": "Algebra",
+      "correct": true,
+      "lat": 215.34,
+      "snippet": "To solve the equation \\(2x + 5 = 13\\), follow these steps:\n\n1. **Subtract 5 from both sides** to isolate the term with \\(x\\):\n   \\[\n   2x + 5 - 5 = 13 - 5\n   \\]\n   Simplifying:\n   \\[\n   2x = 8\n   \\]\n\n2. **Divide both sides by 2** to solve for \\(x\\):\n   \\[\n   \\frac{2x}{2} = \\frac{8}{2}\n   \\]\n   Simplifying:\n   \\[\n   x = 4\n   \\]\n\nTo verify, substitute \\(x = 4\\) back into the original equation:\n\\[\n2("
+    },
+    {
+      "q": 2,
+      "topic": "Geometry",
+      "correct": true,
+      "lat": 200.1,
+      "snippet": "To find the hypotenuse of a right triangle with legs 3 cm and 4 cm, we apply the Pythagorean theorem:\n\n1. **Identify the legs**: Let \\( a = 3 \\) cm and \\( b = 4 \\) cm.\n\n2. **Apply the theorem**:\n   \\[\n   c^2 = a^2 + b^2\n   \\]\n   Substituting the values:\n   \\[\n   c^2 = 3^2 + 4^2 = 9 + 16 = 25\n   \\]\n\n3. **Solve for \\( c \\)**:\n   \\[\n   c = \\sqrt{25} = 5 \\text{ cm}\n   \\]\n\n**Answer**: The hypotenuse is"
+    },
+    {
+      "q": 3,
+      "topic": "Physics",
+      "correct": false,
+      "lat": 183.49,
+      "snippet": "Newton's Second Law of Motion states that the acceleration of an object is directly proportional to the net force acting on it and inversely proportional to its mass. This relationship can be expressed with the formula:\n\n$$ F = m \\cdot a $$\n\nWhere:\n- \\( F \\) represents the net force applied to the object (in newtons, N),\n- \\( m \\) is the mass of the object (in kilograms, kg),\n- \\( a \\) is the acce"
+    },
+    {
+      "q": 4,
+      "topic": "Chemistry",
+      "correct": true,
+      "lat": 146.07,
+      "snippet": "A physical change involves a transformation in the state or form of a substance without altering its fundamental composition. For example, melting ice into water remains H\u2082O throughout the process.\n\nIn contrast, a chemical change occurs when substances react to form new substances with distinct properties. Burning wood into ash and carbon dioxide is an instance where the original material is trans"
+    },
+    {
+      "q": 5,
+      "topic": "Geometry",
+      "correct": true,
+      "lat": 186.83,
+      "snippet": "To calculate the area of a circle with a radius of 7 cm:\n\n1. **Use the formula for the area of a circle**:\n   \\[\n   A = \\pi r^2\n   \\]\n   \n2. **Substitute the given radius (r = 7 cm)** into the formula:\n   \\[\n   A = \\pi (7)^2\n   \\]\n\n3. **Calculate the square of the radius**:\n   \\[\n   7^2 = 49\n   \\]\n\n4. **Multiply by \u03c0 to find the area**:\n   \\[\n   A = 49\\pi \\, \\text{cm}^2\n   \\]\n\nSo, the area of the "
+    }
+  ],
+  "summary": {
+    "correct": 4,
+    "total": 5,
+    "avg_lat_s": 186.37
+  }
+}

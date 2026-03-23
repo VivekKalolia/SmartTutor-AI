@@ -1,0 +1,33 @@
+# Whisper - OpenAI's speech recognition
+openai-whisper
+
+# Vision-Language Models
+# transformers>=4.57.1 required for GLM-4.1V-9B-Thinking
+transformers>=4.57.1
+torch>=2.0.0
+torchvision>=0.15.0
+accelerate
+bitsandbytes
+pillow
+
+# PDF image extraction
+pymupdf
+
+# API server
+fastapi
+uvicorn[standard]
+python-multipart
+
+# Audio processing
+ffmpeg-python
+
+# Text-to-Speech - Kokoro ONNX (offline, CPU-only)
+kokoro-onnx
+soundfile
+
+# IEKT Knowledge Tracing (training + inference)
+scikit-learn
+pandas
+numpy
+datasets
+
